@@ -1,7 +1,16 @@
 #!/usr/bin/env Rscript
 
-system("R CMD INSTALL blocfit")
-library(blocfit)
-load("/Users/cameron/Desktop/codes/classy/data/blocfit/data/sample-set.Rdata")
+system("R CMD INSTALL --no-docs blocfit")
+require(blocfit)
+require(locfit)
+data(ethanol)
+data(oneD)
 
-blocfit(blocfit.data$x,blocfit.data$y, a=.3, kern='none')
+#x <- oneD$x; y <- oneD$y
+x <- ethanol$E; y <- ethanol$NOx
+
+values <- blocfit(x, y, a=.3, kern='bisq')
+print(values)
+plot(x,y)
+lines(sort(x),values[order(x)])
+abline(lm(y~x),col='red')
