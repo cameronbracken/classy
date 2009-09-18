@@ -12,14 +12,17 @@ function(x, y, a = 0.7, p = 1, kern = 'bisq'){
 				)
 	
 	class( obj ) <- "blocfit"
+	return( obj )
 
 }
 
 predict.point <- function(obj, at, dist = 'global'){
 
+	
 	X <- ifelse(obj$p == 1, 
 			cbind(rep(1,n),obj$x), 
 			cbind(rep(1,n),obj$x,obj$x^2))
+	
 
 }
 
