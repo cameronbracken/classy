@@ -19,14 +19,21 @@ function(x, y, a = 0.7, p = 1, kern = 'bisq'){
 predict.point <- function(obj, at, dist = 'global'){
 
 	
-	X <- ifelse(obj$p == 1, 
-			cbind(rep(1,n),obj$x), 
-			cbind(rep(1,n),obj$x,obj$x^2))
+	X <- if(obj$p == 1)
+			cbind(rep(1,n), obj$x)
+		else if(obj$p == 2)
+			cbind(rep(1,n), obj$x, obj$x^2))
+		else
+			cbind(rep(1,n), obj$x, obj$x^2, obj$x^3))
+			
+	d <- as.matrix(dist(scale(c(at,obj$x))))[1,]
+	d <- d/max(d)
+	
 	
 
 }
 
-predict.blocfit <- function(fit, dist = 'global', at = fit$x){
+predict.blocfit <- function(fit, at = fit$x){
 	
 	#calculate distance
 	d <- dist[i,]
