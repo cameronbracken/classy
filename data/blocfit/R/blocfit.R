@@ -19,19 +19,20 @@ predict.point <- function(obj, at, dist = 'global'){
 
 		# create the "design" matrix, from taylor expansion
 	x <- obj$x - at
-	X <- if(obj$p == 1)
+	X <- if(obj$p == 1){
 			cbind(rep(1,obj$n), x)
-		else if(obj$p == 2)
+		}else if(obj$p == 2){
 			cbind(rep(1,obj$n), x, x^2)
-		else
+		}else
 			cbind(rep(1,obj$n), x, x^2, x^3)
+		
 			
 		# Distance from estimate to other points
 	d <- as.matrix( dist( scale( c(at, obj$x) ) ) )[1,2:(obj$n+1)]
 		
 		#scale distances to [0,1]
 	dk <- d[order(d)[obj$nn]]
-	d[d > dk] = dk
+	d[d > dk] <- dk
 	d <- d/dk
 	
 		#calculate weights
@@ -49,19 +50,31 @@ predict.point <- function(obj, at, dist = 'global'){
 			c(1,at,at^2,at^3)
 			
 		# get estimate at new point
-	yhat <- sum(betai * ld)
+	yhat <- sum(betas * ld)
+	
+		# get influence vector
+	e1 <- c(1,rep(0,obj$p))
+	li <- e1 %*% ( solve(t(X) %*% W %*% X) ) %*% ( t(X) %*% W )
+	
+	yhat <- sum(li * obj$y)
+	
+	o <- list(at = at, yhat = yhat, li = li)
+	return(o)
+	
 }
 
-predict.blocfit <- function(fit, at = fit$x){
+predict.blocfit <- function(fit, at = fit$x, Lmat = TRUE){
 	
-	#calculate distance
-	d <- dist[i,]
-	d <- d/max(d)
-	nearest <- order(d)[1:nn]
-			
-	#fit the local model
-	lfit <- lm( y[nearest] ~ x[nearest], weights = W(d[nearest]) )
-	values[i] <- lfit$fitted.values[1]
+	np <- length(at)
+	fittedValues <- numeric(np)
+	if(Lmat) L <- matrix(NA, nrow = np, ncol = np)
+	for(i in 1:np){
+		
+		pred <- predict.point(fit, at[i])
+		fittedValues[i] <- pred$yhat
+		if(Lmat) L[i,] <- pred$li
+	}
+	return( list(fittedValues = fittedValues, L = ifelse(Lmat, L, NULL)) )
 	
 }
 
