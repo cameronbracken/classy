@@ -5,10 +5,9 @@ function(x, y, a = 0.7, p = 1, kern = 'bisq'){
 				y = y, 
 				a = a, 
 				n = length( y ), 
-				nn = round( a*n ), 
+				nn = round( a*length( y ) ), 
 				p = p, 
-				W = chooseWeightFunction( kern ),
-				d = as.matrix(dist(scale(x)))
+				W = chooseWeightFunction( kern )
 				)
 	
 	class( obj ) <- "blocfit"
@@ -18,19 +17,39 @@ function(x, y, a = 0.7, p = 1, kern = 'bisq'){
 
 predict.point <- function(obj, at, dist = 'global'){
 
-	
+		# create the "design" matrix, from taylor expansion
+	x <- obj$x - at
 	X <- if(obj$p == 1)
-			cbind(rep(1,n), obj$x)
+			cbind(rep(1,obj$n), x)
 		else if(obj$p == 2)
-			cbind(rep(1,n), obj$x, obj$x^2))
+			cbind(rep(1,obj$n), x, x^2)
 		else
-			cbind(rep(1,n), obj$x, obj$x^2, obj$x^3))
+			cbind(rep(1,obj$n), x, x^2, x^3)
 			
-	d <- as.matrix(dist(scale(c(at,obj$x))))[1,]
-	d <- d/max(d)
+		# Distance from estimate to other points
+	d <- as.matrix( dist( scale( c(at, obj$x) ) ) )[1,2:(obj$n+1)]
+		
+		#scale distances to [0,1]
+	dk <- d[order(d)[obj$nn]]
+	d[d > dk] = dk
+	d <- d/dk
 	
+		#calculate weights
+	W <- diag(obj$W(d))
 	
-
+		#solve for local betas
+	betas <- solve(t(X) %*% W %*% X) %*% (t(X) %*% W %*% obj$y)
+	
+		# make local design vector
+	ld <-if(obj$p == 1)
+			c(1,at)
+		else if(obj$p == 2)
+			c(1,at,at^2)
+		else
+			c(1,at,at^2,at^3)
+			
+		# get estimate at new point
+	yhat <- sum(betai * ld)
 }
 
 predict.blocfit <- function(fit, at = fit$x){
