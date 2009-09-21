@@ -195,7 +195,8 @@ Two Similar Initial Conditions:\\
 {\color{DeepSkyBlue4} $IC = [20,0,30]$}\\
 {\color{Sienna4} $IC = [20,0,30] + 0.1$}
 \pause
-<<sensitive,cache=T,external=T,fig=T,width=4,height=3>>=
+<<sensitive,cache=T,external=T,fig=T,width=4,height=2>>=
+	 par(mar=c(4.1,4,.4,1))
 	plot(lorenz.ts[1:2000,1],col="deepskyblue4",type='l',xlab='t',ylab='x',lwd=2)
 	lines(lorenz.ts2[1:2000,1],col="sienna4",lwd=2)
 @
@@ -208,8 +209,8 @@ Two Similar Initial Conditions:\\
 \begin{frame}{\scshape Lorenz Equations}
 \begin{itemize}
 	\item Equations of convection ``stripped to the bone''
-	\item Unrealistically simple
-	\item Terminal state of system is drastically different under different driving conditions (i.e. parameter values and bifurcation)
+	\item Unrealistically simple for climate modeling
+	\item Terminal state of system is drastically different under different driving conditions (i.e. parameter values, bifurcation)
 	\item Under certain parameter values, the system never settles down to a fixed point, or a stable limit cycle
 \end{itemize}
 \end{frame}
