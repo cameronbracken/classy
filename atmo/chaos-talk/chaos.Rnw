@@ -1,0 +1,226 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  This Beamer template was created by Cameron Bracken.
+%%  Anyone can freely use or modify it for any purpose
+%%  without attribution.
+%%
+%%  Last Modified: January 9, 2009
+%%
+
+\documentclass[xcolor=x11names,compress]{beamer}
+
+%% General document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{decorations.fractals,positioning,arrows}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Sweave
+<<sweave,echo=F,results=hide,fig=F>>=
+if(!file.exists('Sweave.sty'))
+	file.copy(file.path(R.home(),'share','texmf','Sweave.sty'),'.')
+@
+
+%% Beamer Layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\useoutertheme[subsection=false,shadow]{miniframes}
+\useinnertheme{default}
+\usefonttheme{serif}
+\usepackage{palatino}
+
+\setbeamerfont{title like}{shape=\scshape}
+\setbeamerfont{frametitle}{shape=\scshape}
+
+\setbeamercolor*{lower separation line head}{bg=DeepSkyBlue4} 
+\setbeamercolor*{normal text}{fg=black,bg=white} 
+\setbeamercolor*{alerted text}{fg=red} 
+\setbeamercolor*{example text}{fg=black} 
+\setbeamercolor*{structure}{fg=black} 
+ 
+\setbeamercolor*{palette tertiary}{fg=black,bg=black!10} 
+\setbeamercolor*{palette quaternary}{fg=black,bg=black!10} 
+
+\renewcommand{\(}{\begin{columns}}
+\renewcommand{\)}{\end{columns}}
+\newcommand{\<}[1]{\begin{column}{#1}}
+\renewcommand{\>}{\end{column}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<setup,echo=F,results=hide>>=
+	library(tseriesChaos)
+	library(scatterplot3d)
+	library(pgfSweave)
+
+	cashdir = "./cache"
+	setCacheDir(cashdir)
+	
+	if(!file.exists('figs')) dir.create('figs')
+	
+
+@
+
+<<lorenz-sim,echo=F,results=hide,cache=T>>=
+
+sim.cont.full <- function(syst, start.time, end.time, dt, start.x, 
+                          parms = NULL){
+
+     times <- seq(start.time, end.time, by = dt)
+     series <- lsoda(start.x, times, func = syst, parms = parms)[,-1]
+     series
+}
+
+lorenz.ts <- sim.cont.full(lorenz.syst, 0, 50, 0.01, 
+                           start.x=c(20,0,30), parms=c(10, 28, -8/3))
+lorenz.ts2 <- sim.cont.full(lorenz.syst, 0, 100, 0.01, 
+                           start.x=c(20,0,30)+.1, parms=c(10, 28, -8/3))
+@
+
+
+
+\begin{document}
+\SweaveOpts{prefix.string=figs/fig,external=T,echo=F}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\title{A Brief History of Climate Modeling, Chaos and the lorenzEquations}
+%\subtitle{SUBTITLE}
+\author{
+	Cameron Bracken\\
+	{\it Humboldt State University}\\
+}
+\date{
+	\begin{tikzpicture}[decoration=Koch curve type 2] 
+		\draw[DeepSkyBlue4] decorate{ (0,0) -- (3,0) }; 
+	\end{tikzpicture}  
+	\begin{tikzpicture}[decoration=Koch curve type 2] 
+		\draw[DeepSkyBlue4] decorate{ decorate{ (0,0) -- (3,0) }}; 
+	\end{tikzpicture}  
+	\begin{tikzpicture}[decoration=Koch curve type 2] 
+		\draw[DeepSkyBlue4] decorate{ decorate{ decorate{ (0,0) -- (3,0) }}}; 
+	\end{tikzpicture}  
+	\\
+	\vspace{1cm}
+	{September 20, 2009}
+}
+\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape Background}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape Chaotic Systems}
+
+{\it\bf Chaos} is: \begin{quote}``(1) \alert<5>{Aperiodic long-term behavior} in a (2) \alert<2-3>{deterministic system} that exhibits (3) \alert<4>{sensitive dependence on initial conditions}.'' {\rm[Strogatz, 1994]}\end{quote}
+
+\(
+\<{.5\textwidth}
+\only<2->{
+Lorenz System:
+
+\begin{align}
+\dot{x}&=\sigma(y-x)\nonumber\\
+\dot{y}&=rx-y-\alert<3>{xz}\nonumber\\
+\dot{z}&=\alert<3>{xy}-bz\nonumber
+\end{align}
+}
+\only<3->{$\rightarrow$\alert<3>{Nonlinear}}
+\vspace{.8cm}
+
+
+\>
+\<{.5\textwidth}
+\only<1-3>{\vspace{5.4cm}}
+\only<4>{
+\scalebox{.97}{
+    \begin{tikzpicture}[scale=.2]
+        \node (a) {$t=0$};
+        \node (t) [below=of a, text width=10em,outer sep=-10mm] {Two indistinguishable initial conditions};
+        \node (x) [above right=of a] {};
+        \node (b) [above left=of x] {};
+        \node (c) [above right=of b] {};
+        \node (lab) [below=of x,outer sep=-10mm] {$t_{horizon}$};
+        \node (fail) [above=of b,outer sep=-10mm,text width=5em] {Prediction fails out here};
+
+
+        \draw[thick,-stealth'] (a) to [out=80,in=180] (x) to [out=0,in=0] (b);
+        \draw[thick,-stealth'] (a) to [out=80,in=180] (x) to [out=0,in=-90] (c);
+    \end{tikzpicture}
+}}
+\only<5->{
+\scalebox{.95}{
+<<lorenz,fig=T,external=T,echo=F,cache=T,width=2.3,height=2>>=
+    par(mar=c(1,1,0,1))#,axes=FALSE)
+    scatterplot3d(lorenz.ts, 
+                      type="l",
+                      scale.y=.5,
+                      mar=c(1,1,0,1)+0.1, 
+                      color="deepskyblue4",
+                      xlab="",
+                      ylab="",
+                      zlab="",
+                      x.ticklabs="", 
+                      y.ticklabs="", 
+                      z.ticklabs="",
+                      angle=20,
+                      lwd=.5)
+                      mtext("$x$",1,at=0,padj=.1) 
+                      mtext("$y$",1,at=3,padj=-1)
+                      mtext("$z$",2,at=2,padj=-.2)
+@
+}
+}
+\>
+\)
+\only<6>{\alert{Statistically, high dimensional chaos = randomness.}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{\scshape Aperiodic Longterm Behavior}
+
+<<longTerm,cache=T,fig=T,external=T,width=4,height=3>>=
+	plot(lorenz.ts[,1],col="deepskyblue4",type='l',xlab='t',ylab='x',axes=F)
+	box()
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape Sensitive Dependence on Initial Conditions}
+
+Two Similar Initial Conditions:\\
+{\color{DeepSkyBlue4} $IC = [20,0,30]$}\\
+{\color{Sienna4} $IC = [20,0,30] + 0.1$}
+<<sensitive,cache=T,external=T,fig=T,width=4,height=3>>=
+	plot(lorenz.ts[1:2000,1],col="deepskyblue4",type='l',xlab='t',ylab='x',lwd=2)
+	lines(lorenz.ts2[1:2000,1],col="sienna4",lwd=2)
+@
+
+\end{frame}
+
+\begin{frame}{\scshape Sensitive Dependence on Initial Conditions}
+
+What does this mean for predictability?\\
+
+\pause
+Say we ``somehow manage to measure the initial state [of the system] a {\it million} times better ...''\\
+
+\pause
+`` we can predict only 2.5 times longer! [Strogatz, 1995]''
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The Chaotic (Malkus) Water Wheel}
+\href{http://www.youtube.com/watch?v=zhOBibeW5J0}{Chaotic Water Wheel}
+\end{frame}
+
+
+\end{document}  
+
