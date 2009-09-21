@@ -59,7 +59,7 @@
 		- _Unstable_: If Solar constant is reduced below mucS, the albedo is nearly 1, the global energy balance cannot be maintained, and an equilibrium solution is not possible. 
 		- _Stable_: Model functions as normal
 	- 'Internal Stability'	
-		- If we started a transient model with a solution near an equilibrium soution, would the model tent toward that solution
+		- If we started a transient model with a solution near an equilibrium solution, would the model tent toward that solution
 		- _Transitive_: Different IC lead to same ending (normal) state
 		- _Intransitive_: Different IC leads to different ending state
 		- _Almost Intransitive_: Model acts transitively but eventually flips to alternate state. Extremely difficult to successfully. 
@@ -71,8 +71,8 @@
 ## Chaotic Systems
 - Scientific Climate
 	- Skeptical of Computers
-	- Universe is well behaved, ``Belief in approximation and convergence''
-		- ``Arbitrarily small influenced do not blow up to have arbitrarily large effects ... approximately accurate input gives approximately accurate output'' 
+	- Universe is well behaved, 'Belief in approximation and convergence'
+		- 'Arbitrarily small influenced do not blow up to have arbitrarily large effects ... approximately accurate input gives approximately accurate output' 
 - First discovered by Edward Lorenz
 	- Meteorologist and Mathematician 
 	- Weather forecaster for Army in WWII
