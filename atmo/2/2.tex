@@ -1,0 +1,88 @@
+\documentclass[11pt,oneside]{article}
+\usepackage{geometry}			% See geometry.pdf to learn the layout options.								
+\geometry{letterpaper}			% ... or a4paper or a5paper or ... 
+\usepackage[parfill]{parskip}	% Activate to begin paragraphs with an empty  line rather than an indent
+\usepackage{mathpazo}
+\usepackage{amsmath}		
+
+\begin{document}
+
+
+\begin{center}
+	\textbf{Assignment 2 - GEOG 5100}\\
+	{\itshape Cameron Bracken}
+\end{center}
+
+
+\begin{enumerate}
+\item
+\begin{enumerate}
+	\item[a)] A world with daisies has a long period (of change of luminosity) where the temperature is relatively stable while the temperature in the non-daisy world increases steadily.
+
+	\item[b)] Yes, daisies have a large regulative effect on temperature over a range of about 0.7 -- 1.6.  In this range of solar luminosity, there is only about a 10 degree fluctuation in temperature. 
+
+	\item[c)] Regulation starts as the black daisies grow, and stops as the white daisies die. 
+
+	\item[d)] As black daisies grow, they cover the land, outcompeting the white daisies because of their ability to raise the temperature of the planet. As solar luminosity grows, the temperature starts rising and white daisies begin to outcompete the black because they have a stronger regulative effect on the temperature. As the solar luminosity increases even more, the white daisies reach their regulatory limit on the climate and begin to die due to temperature increase. 
+
+	\item[e)] The fundamentals of the model do not change at all, there is still temperature regulation, and different colors flourish under different conditions. 
+\end{enumerate}
+
+\item 
+\begin{enumerate}
+\item[a)] For equation (1)
+\begin{align}
+	\frac{dx_b}{dt} \approx 
+	\frac{\Delta x_b}{\Delta t} & =
+	x_b[ x_g \beta(T_b) - \gamma ]	\nonumber\\
+%
+	\frac{x_{b,t+1} - x_{b,t}}{\Delta t}&=
+	x_b\left[ x_g \beta (T_b) - \gamma \right]\nonumber\\
+%
+	x_{b,t+1} &=
+	x_b\Delta t\left[ x_g \beta(T_b) - \gamma \right] + x_{b,t}.\nonumber
+\end{align}
+Similarly for equation (2)
+\[
+	x_{w,t+1} =
+	x_w\Delta t\left[ x_g \beta(T_w) - \gamma \right] + x_{b,t}.\nonumber
+\]
+
+\item[b)]  With these equations we can predict the daisy populations one time step in the future, as long as we start with some initial population values. 
+
+\item[c)] I suspect a time step less than the rate of change of the solar luminosity and the die back rate would be sufficient. 
+
+\item[d)] The major constraint is that the population fractions plus the fraction of bare ground must add up to 1. 
+
+\item[e)] The major tunable parameters are the limiting temperature ranges and optimal growth temperatures for the daisies, the die back rate ($\gamma$), the coefficients of the linearized longwave radiation emission equation ($\lambda, E$) and the rate of heat redistribution ($q$). 
+
+\item[f)] The model assumes a colonization rate function that is parabolic, the long wave radiation emission is linearized, and that the system redistributes head based on local albedo differences. 
+
+\item[g)] The major difference between the daisies is that the black daisies have a lower albedo than the white daisies. 
+\end{enumerate}
+
+\item The amount of CO$_2$ and methane have varied greatly in the past.  We cannot know for sure if this is not an equilibrium situation, but is seems as though life has created feedback loops which sustain itself. 
+
+\item If the \% oxygen went up in our atmosphere, there would likely be less CO$_2$ and water vapor, and the greenhouse effect would be less strong. 
+
+\item See 2.f).
+
+\item Teleology is the study of purpose and need as a cause.   The Teleological argument for the Gaia theory would say that the atmosphere is sustained by and for the biota because the biota need it to survive.
+
+\item By observing other planets in contrast to our own, we see negative feedback by the biota, that serves to sustain conditions favorable to life.  Examples include the Amazon rainforest creating moist conditions favorable to plant growth and the boreal forests warming their surroundings. 
+
+\item The development of an ice age would run counter to the Gaian hypothesis. 
+
+\item
+\begin{enumerate}
+\item[a)] The shape of the lorenz attractor is that of an oblique figure eight. 
+\item[b)] The equations are the same as those in the handout, just with different symbols and with specific parameter values plugged in. 
+\item[c)] The tunable parameters are $\sigma,r,b$.  The values used on the website are 10, 28 and 8/3, respectively. 
+
+\end{enumerate}
+
+
+\end{enumerate}
+
+
+\end{document}
