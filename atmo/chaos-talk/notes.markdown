@@ -69,7 +69,20 @@
 	
 
 ## Chaotic Systems
+- Scientific Climate
+	- Skeptical of Computers
+	- Universe is well behaved, ``Belief in approximation and convergence''
+		- ``Arbitrarily small influenced do not blow up to have arbitrarily large effects ... approximately accurate input gives approximately accurate output'' 
+- First discovered by Edward Lorenz
+	- Meteorologist and Mathematician 
+	- Weather forecaster for Army in WWII
+	- Embraced computers
+	- Roundoff error lead to Lorenz first notice the phenomenon of chaos
+- Slap in the face of the ideas and optimism of Von Neuman
+	- Controlling the weather and knowing long term how the climate system will react
 		
+		
+	
 		
 		
 		

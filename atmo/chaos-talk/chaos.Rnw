@@ -80,11 +80,11 @@ lorenz.ts2 <- sim.cont.full(lorenz.syst, 0, 100, 0.01,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\title{A Brief History of Climate Modeling, Chaos and the lorenzEquations}
+\title{A Brief History of Climate Modeling, Chaos and the Lorenz Equations}
 %\subtitle{SUBTITLE}
 \author{
 	Cameron Bracken\\
-	{\it Humboldt State University}\\
+	{\it CU Boulder}\\
 }
 \date{
 	\begin{tikzpicture}[decoration=Koch curve type 2] 
@@ -103,16 +103,121 @@ lorenz.ts2 <- sim.cont.full(lorenz.syst, 0, 100, 0.01,
 \titlepage
 \end{frame}
 
+\section{\scshape History}
+\subsection{Overview}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{\scshape Background}
+\begin{frame}{Overview of Climate Modeling History}
+\begin{itemize}
+	\item First GCM developed in mid-1950s
+	\begin{itemize}
+		\item 5k of memory!
+	\end{itemize}	
+	\item First Modern GCM in 1960s along with first RC (Radio Convective) models
+	\item First EBM described in 1969
+	\item First SD (Statistical Dynamical) model in 1970
+	\begin{itemize}
+		\item Evolved into EMIC (Earth Models of Intermediate Complexity)
+	\end{itemize}
+	\item First GCMs evolved from smaller scale weather models used for forecasting
+\end{itemize}
+\end{frame}
 
+\subsection{Notables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Notables}
+\begin{itemize}
+	\item Syukuro Manabe 
+	\item Juli\`an Adem
+	\item Simpler than GCM and similar to EBM
+	\item Mikhail Budyko and William Sellers
+	\item John Green
+	\item The GCM
+	\item Ocean GCMs
+	\item Todays Challenges
+\end{itemize}
 \end{frame}
 
 
+\section{\scshape Sensitivity of Climate Models}
+\subsection{Sensitivity of Climate Models}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{\scshape Chaotic Systems}
+\begin{frame}{\scshape Sensitivity of Climate Models}
+\begin{itemize}
+	\item Refers to models reaction when ``poked''
+	\item Albedo example
+	\item Sensitivity analysis is important for `external' and `internal stability'
+	\begin{itemize}
+		\item `External Stability': sensitivity to external forcing
+		\begin{itemize}
+			\item 2 solutions, bifurcation
+			\item {\itshape Unstable, Stable} 
+		\end{itemize}
+		\item `Internal Stability': Will a transient model tend toward an equilibrium solution
+		\begin{itemize}
+			\item {\itshape Transitive}: Different IC lead to same ending (normal) state
+			\item {\itshape Intransitive}: Different IC leads to different ending state
+			\item {\itshape Almost Intransitive}: Model acts transitively but eventually flips to alternate state. Extremely difficult to successfully. 
+		\end{itemize}
+	\end{itemize}
+	\item Sensitivity analysis can take many forms, some can be misleading
+\end{itemize}
+\end{frame}
+
+
+\section{\scshape Chaotic Systems}
+\subsection{Background}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Background}
+\begin{itemize}
+	\item Scientific Climate
+	\begin{itemize}
+		\item Skeptical of Computers
+		\item Universe is well behaved, ``Belief in approximation and convergence''
+	\end{itemize}
+	\item First discovered by Edward Lorenz
+	\item Contradiction of ideas and optimism of Von Neuman
+	\begin{itemize}
+		\item ``Prediction nothing, this is weather control''
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{The Butterfly Effect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape The Butterfly Effect}
+
+Two Similar Initial Conditions:\\
+{\color{DeepSkyBlue4} $IC = [20,0,30]$}\\
+{\color{Sienna4} $IC = [20,0,30] + 0.1$}
+\pause
+<<sensitive,cache=T,external=T,fig=T,width=4,height=3>>=
+	plot(lorenz.ts[1:2000,1],col="deepskyblue4",type='l',xlab='t',ylab='x',lwd=2)
+	lines(lorenz.ts2[1:2000,1],col="sienna4",lwd=2)
+@
+
+\end{frame}
+
+\subsection{Lorenz Equations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape Lorenz Equations}
+\begin{itemize}
+	\item Equations of convection ``stripped to the bone''
+	\item Unrealistically simple
+	\item Terminal state of system is drastically different under different driving conditions (i.e. parameter values and bifurcation)
+	\item Under certain parameter values, the system never settles down to a fixed point, or a stable limit cycle
+\end{itemize}
+\end{frame}
+
+\subsection{Lorenz Equations cont.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{\scshape Lorenz Equations}
 
 {\it\bf Chaos} is: \begin{quote}``(1) \alert<5>{Aperiodic long-term behavior} in a (2) \alert<2-3>{deterministic system} that exhibits (3) \alert<4>{sensitive dependence on initial conditions}.'' {\rm[Strogatz, 1994]}\end{quote}
 
@@ -178,6 +283,7 @@ Lorenz System:
 \only<6>{\alert{Statistically, high dimensional chaos = randomness.}}
 \end{frame}
 
+\subsection{Aperiodic Longterm Behavior}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -190,20 +296,9 @@ Lorenz System:
 
 \end{frame}
 
+\subsection{Sensitive Dependence on Initial Conditions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{\scshape Sensitive Dependence on Initial Conditions}
-
-Two Similar Initial Conditions:\\
-{\color{DeepSkyBlue4} $IC = [20,0,30]$}\\
-{\color{Sienna4} $IC = [20,0,30] + 0.1$}
-<<sensitive,cache=T,external=T,fig=T,width=4,height=3>>=
-	plot(lorenz.ts[1:2000,1],col="deepskyblue4",type='l',xlab='t',ylab='x',lwd=2)
-	lines(lorenz.ts2[1:2000,1],col="sienna4",lwd=2)
-@
-
-\end{frame}
-
 \begin{frame}{\scshape Sensitive Dependence on Initial Conditions}
 
 What does this mean for predictability?\\
@@ -212,9 +307,10 @@ What does this mean for predictability?\\
 Say we ``somehow manage to measure the initial state [of the system] a {\it million} times better ...''\\
 
 \pause
-`` we can predict only 2.5 times longer! [Strogatz, 1995]''
+``we can predict only 2.5 times longer! [Strogatz, 1995]''
 \end{frame}
 
+\subsection{The Chaotic (Malkus) Water Wheel}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{The Chaotic (Malkus) Water Wheel}
