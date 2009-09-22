@@ -12,6 +12,8 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{decorations.fractals,positioning,arrows}
+\usepackage{hyperref}
+\pgfrealjobname{chaos}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Sweave
@@ -19,6 +21,7 @@
 if(!file.exists('Sweave.sty'))
 	file.copy(file.path(R.home(),'share','texmf','Sweave.sty'),'.')
 @
+\usepackage[noae,nogin]{Sweave}
 
 %% Beamer Layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \useoutertheme[subsection=false,shadow]{miniframes}
@@ -76,7 +79,7 @@ lorenz.ts2 <- sim.cont.full(lorenz.syst, 0, 100, 0.01,
 
 
 \begin{document}
-\SweaveOpts{prefix.string=figs/fig,external=T,echo=F}
+\SweaveOpts{prefix.string=figs/fig,external=T,pdf=F,eps=F,pgf=F,echo=F}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -130,7 +133,6 @@ lorenz.ts2 <- sim.cont.full(lorenz.syst, 0, 100, 0.01,
 \begin{itemize}
 	\item Syukuro Manabe 
 	\item Juli\`an Adem
-	\item Simpler than GCM and similar to EBM
 	\item Mikhail Budyko and William Sellers
 	\item John Green
 	\item The GCM
@@ -196,9 +198,10 @@ Two Similar Initial Conditions:\\
 {\color{Sienna4} $IC = [20,0,30] + 0.1$}
 \pause
 <<sensitive,cache=T,external=T,fig=T,width=4,height=2>>=
-	 par(mar=c(4.1,4,.4,1))
+	par(mar=c(4.1,4,.4,1))
 	plot(lorenz.ts[1:2000,1],col="deepskyblue4",type='l',xlab='t',ylab='x',lwd=2)
 	lines(lorenz.ts2[1:2000,1],col="sienna4",lwd=2)
+	
 @
 
 \end{frame}
@@ -222,8 +225,8 @@ Two Similar Initial Conditions:\\
 
 {\it\bf Chaos} is: \begin{quote}``(1) \alert<5>{Aperiodic long-term behavior} in a (2) \alert<2-3>{deterministic system} that exhibits (3) \alert<4>{sensitive dependence on initial conditions}.'' {\rm[Strogatz, 1994]}\end{quote}
 
-\(
-\<{.5\textwidth}
+\begin{columns}
+\begin{column}{.5\textwidth}
 \only<2->{
 Lorenz System:
 
@@ -237,8 +240,8 @@ Lorenz System:
 \vspace{.8cm}
 
 
-\>
-\<{.5\textwidth}
+\end{column}
+\begin{column}{.5\textwidth}
 \only<1-3>{\vspace{5.4cm}}
 \only<4>{
 \scalebox{.97}{
@@ -279,8 +282,8 @@ Lorenz System:
 @
 }
 }
-\>
-\)
+\end{column}
+\end{columns}
 \only<6>{\alert{Statistically, high dimensional chaos = randomness.}}
 \end{frame}
 
