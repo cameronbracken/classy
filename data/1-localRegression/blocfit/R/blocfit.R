@@ -92,7 +92,6 @@ function(obj, get.data = TRUE, abline = TRUE, get.ci = TRUE, legend = TRUE, perc
 	
 		# plot the fit 
 	plot(obj$x,obj$y,type='n', xlab = "X", ylab = "Y")
-	lines(xnew,pred$fittedValues)
 	
 		#upper and lower confidence intervals
 	if(get.ci) lines(xnew,ci[1,],lty='dashed')
@@ -103,6 +102,8 @@ function(obj, get.data = TRUE, abline = TRUE, get.ci = TRUE, legend = TRUE, perc
 	
 		#plot the linear regression line
 	if(abline) abline(lm(obj$y~obj$x),col='red')
+	
+	lines(xnew,pred$fittedValues)
 	
 		#plot a legend
 	if(legend){
