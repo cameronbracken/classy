@@ -11,7 +11,7 @@
 \linespread{1.05}         % Palatino needs more leading (space between lines)
 
 %Sweave
-<<sweave,echo=F,results=hide,fig=F>>=
+<<sweave,echo=F,results=hide,fig=F,cache=F>>=
 if(!file.exists('Sweave.sty'))
 	file.copy(file.path(R.home(),'share','texmf','Sweave.sty'),'.')
 @
@@ -245,6 +245,12 @@ x <- oneD$x; y <- oneD$y
 
 blfit <- blocfit(x, y, a=.5, p=1, kern='bisq')
 plot(blfit, percent = "\\%")
+
+lfit <- locfit(y ~ x, alpha=.5, deg=1, kern='bisq', ev=dat())
+	knots <- lfknots(lfit)
+	#lfknots
+	# - sum infl matrix 
+	# - compute gcv 
 	
 @
 \caption{Sample data with local polynomial fit, $p=\Sexpr{blfit$p}$, $\alpha=\Sexpr{blfit$a}$}\label{deg1}

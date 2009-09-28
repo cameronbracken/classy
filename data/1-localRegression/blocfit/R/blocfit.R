@@ -27,7 +27,8 @@ function(x, y, a = 0.7, p = 1, kern = 'bisq'){
 
 }
 
-predict.point <- function(obj, at, dist = 'global'){
+predict.point <- 
+function(obj, at, dist = 'global'){
 
 		# create the "design" matrix, from taylor expansion
 	x <- obj$x - at
@@ -61,7 +62,8 @@ predict.point <- function(obj, at, dist = 'global'){
 	
 }
 
-predict.blocfit <- function(fit, at = fit$x, Lmat = FALSE){
+predict.blocfit <- 
+function(fit, at = fit$x, Lmat = FALSE){
 	
 	np <- length(at)
 	fittedValues <- numeric(np)
@@ -88,7 +90,7 @@ function(obj, get.data = TRUE, abline = TRUE, get.ci = TRUE, legend = TRUE, perc
 	
 	xnew <- seq(range(obj$x)[1],range(obj$x)[2],length.out=100)
 	pred <- predict.blocfit( obj, at = xnew )
-	ci <- ci.blocfit( obj, xnew )
+	if(get.ci) ci <- ci.blocfit( obj, xnew )
 	
 		# plot the fit 
 	plot(obj$x,obj$y,type='n', xlab = "X", ylab = "Y")
