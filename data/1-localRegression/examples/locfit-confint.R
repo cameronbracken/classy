@@ -1,0 +1,83 @@
+{
+
+#Open all the relevent libraries..
+library(locfit)
+
+# The commands below 
+# 1. Fits a best 'local polynomial' model 
+# 2. Computes the confidence intervals..
+
+# The commands also plots the linear model and the local model. 
+#  If you have more than one independent variable in X - then comment the plotting
+#  commands..
+
+# Test data
+data(trees)
+
+
+#search for best alpha over a range of alpha values between 0,1
+
+X=trees$Girth
+
+Y=trees$Volume
+
+nvar=1
+
+N=length(Y)	#number ofdata points
+porder=1
+minalpha=2*(nvar*porder+1)/N
+alpha1=seq(minalpha,1.0,by=0.05)
+n=length(alpha1)
+
+
+porder=2
+minalpha=2*(nvar*porder+1)/N
+alpha2=seq(minalpha,1.0,by=0.05)
+alpha=c(alpha1,alpha2)
+
+#get the GCV values for all the alpha values in alpha for order of
+# polynomial = 1. kern="bisq" argument is to use the bisquare kernel
+# in computing the weights of the neighbors, which are then used in
+# the weighted least squares..
+
+zz=gcvplot(Y ~ X, alpha=alpha1,deg=1,kern="bisq",ev=dat(),scale=TRUE)
+z1=gcvplot(Y ~ X, alpha=alpha2,deg=2,kern="bisq",ev=dat(),scale=TRUE)
+
+# pick the best alpha and the degree of the polynomial that
+# gives the least GCV
+z2=order(c(zz$values,z1$values))
+deg1=1
+if(z2[1] > n)deg1=2
+bestalpha=alpha[z2[1]]
+bestdeg=deg1
+
+zz=locfit(Y ~ X, alpha=bestalpha,deg=bestdeg,kern="bisq",scale=TRUE)
+plot(zz, get.data=T, xlab="Tree Diameter", ylab="Volume of Timber")
+
+
+
+## If you have computed the L matrix then
+## 
+zz=locfit(Y ~ X, alpha=bestalpha,deg=bestdeg,kern="bisq",scale=TRUE, ev=dat())
+RSS1 = sum(residuals(zz)^2)
+nu1 = sum(fitted.locfit(zz,what="infl"))     # trace(L)
+nu2 = sum(fitted.locfit(zz,what="vari"))     # trace(L^T L)
+
+sigmae = RSS1 / (N - 2*nu1 + nu2)	#error variance
+stderror = sqrt((diag(L %*% t(L)))) * sqrt(sigmae)
+
+zp = predict.locfit(zz,se.fit=T)
+### stderror will be same as zp$se
+
+## confidence intervals are
+cl = qnorm(0.975)		#95% confidence level
+lowerc = zp$fit - cl*stderror
+upperc = zp$fit + clstderror
+
+#This should be same as..
+lowerc = zp$fit - cl*zp$se
+upperc = zp$fit + cl*zp$se
+
+
+
+}
