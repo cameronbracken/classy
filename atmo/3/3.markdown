@@ -1,0 +1,10 @@
+1. A strange attractor is a region of state space to which all solutions converge. A system of nonlinear differential equations of dimension >3 is required to produce a strange attractor. 
+
+2. 
+	a) Both trajectories rotate about the strange attractor but in vastly different ways, jumping between the 'wings' of the butterfly erratically. 
+	
+	b) The number of times a solution rotates in an attractor basin is not predictable, sometimes the solution stays in a basin for many rotations, sometimes only one. 
+	
+	c)  It indicates that if the weather system is indeed chaotic then
+
+3. sdgfsd
