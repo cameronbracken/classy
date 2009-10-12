@@ -1,11 +1,14 @@
 #!/usr/bin/env Rscript
 
-require(locfit)
+rm(list=ls())
+
+suppressPackageStartupMessages(require(locfit))
 source('libblocfit.R')
+if(!file.exists('output')) dir.create('output')
 
 	#Read simple test data
 oneD <- read.table('data/oneD.tab',header=T)
 
 x <- oneD$x; y <- oneD$y
 
-blfit <- blocfit(x, y, a=.5, p=1, kern='bisq')	
+save(list=ls(),file='output/1.Rdata')
