@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-rm(list=ls())
-
 suppressPackageStartupMessages(require(locfit))
 suppressPackageStartupMessages(require(fields))
 
@@ -9,7 +7,6 @@ data <- read.table('data/colo_precip.dat',header=TRUE)
 y <- data$precip
 xdata <- as.data.frame(data[c('lat','lon','elev')])
 x <- as.matrix(xdata)
-n <- nrow(xdata)
 
 dem <- as.matrix(read.table('data/colo_dem.dat',header=T))
 dem.x <- dem[,1]
@@ -30,24 +27,20 @@ best <- order(gcvs)[1]
 bestd <- c(rep(1,n),rep(2,n))[best]
 bestalpha <- c(a,a)[best]
 
+datfit <- locfit(y~x, deg=bestd, alpha = bestalpha, kern='bisq', 
+		scale=T, ev=dat())
 fit <- locfit(y~x, deg=bestd, alpha = bestalpha, kern='bisq', scale=T)
+	# the cross validated estimates
+fitcv <- locfit(y ~ x, alpha=bestalpha, deg=bestd, kern="bisq", 
+		ev = dat(cv=TRUE), scale=TRUE)
 
-pred <- list()
-pred$fit <- pred$se.fit <- numeric(n)
-for(i in 1:n){
-	lw <- locfit(y ~ x, ev=x[i], alpha=bestalpha, 
-		deg=bestd, kern='bisq',geth=1,scale=T)
-	pred$fit[i] <- sum(y*lw)
-	pred$se.fit <- y - pred$fit[i]
-}
+pred <- predict( fit, newdata = dem, se.fit=T )
 
-# y must be a vector, xdata a data.frame
+	# y must be a vector, xdata a data.frame
 lmfit <- lm(y~., data = xdata)
 lmpred <- predict.lm( lmfit, as.data.frame(dem), se.fit=T)
 
-#print(lmfit)
-#print(lmpred)
-
+	# prepare the data for plotting
 nbcol <- 20
 nx <- length(unique(dem.x))
 ny <- length(unique(dem.y))
@@ -66,7 +59,7 @@ colf <- function(z){
 		facetcol <- cut(zfacet, nbcol)
 		facetcol
 	}
-	color <- topo.colors(nbcol)
+color <- topo.colors(nbcol)
 
 
 save(list=ls(),file='output/2.Rdata')

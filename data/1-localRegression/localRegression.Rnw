@@ -202,9 +202,9 @@ print(round(lhat,3))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 
-The code which
+The code which fits the local and linear surface is shown below:
 
-\VerbatimInput[frame=single]{src/blocfit.R}
+\VerbatimInput[frame=single]{src/2.R}
 
 \begin{figure}[!ht]
 \centering
@@ -265,6 +265,34 @@ persp(dem.y, dem.x, lmgrid,
 		
 @
 \caption{Linear Fit}\label{lfimage}
+\end{minipage}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\begin{minipage}{.5\textwidth}
+\centering
+<<fullpred, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
+
+par(mar = c(4, 4, 2, 2) + 0.1)
+plot(y, predict(datfit), 
+	xlab="Observed", 
+	ylab="Estimates using full data")
+abline(0,1)
+@
+\caption{}\label{fullpred}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+\centering
+<<dropone, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
+
+par(mar = c(4, 4, 2, 2) + 0.1)
+plot(y, predict(fitcv), 
+	xlab="Observed", 
+	ylab="Drop-One Estimates")
+abline(0,1)
+@
+\caption{}\label{dropone}
 \end{minipage}
 \end{figure}
 
