@@ -3,52 +3,101 @@
 suppressPackageStartupMessages(require(locfit))
 suppressPackageStartupMessages(require(fields))
 
-data <- read.table('data/colo_precip.dat',header=TRUE)
-y <- data$precip
-xdata <- as.data.frame(data[c('lat','lon','elev')])
-x <- as.matrix(xdata)
+	#January data
+data.jan <- read.table('data/colo_monthly_precip_01.dat',header=TRUE)
+data.jan[data.jan == -999.999] <- NA
+y.jan <- data.jan$precip
+xdata.jan <- as.data.frame(data.jan[c('lat','lon')])
+x.jan <- as.matrix(xdata.jan)
 
+	#July Data
+data.jul <- read.table('data/colo_monthly_precip_07.dat',header=TRUE)
+data.jan[data.jan == -999.999] <- NA
+y.jul <- data.jul$precip
+xdata.jul <- as.data.frame(data.jul[c('lat','lon')])
+x.jul <- as.matrix(xdata.jul)
+
+	#DEM data
 dem <- as.matrix(read.table('data/colo_dem.dat',header=T))
 dem.x <- dem[,1]
 dem.y <- dem[,2]
 dem.z <- dem[,3]
 
-
-n <- length(y)
-a <- seq(0.2,1.0,by=0.05)
-
-	# get the gcv values for all combinations of deg and alpha
-d1 <- gcvplot(y~x, deg=1, alpha=a, kern='bisq', scale=T, ev=dat())
-d2 <- gcvplot(y~x, deg=2, alpha=a, kern='bisq', scale=T, ev=dat())
+	#returns the best alpha and degree
+best.par <- 
+function(x,y, a = seq(0.2,1.0,by=0.05), n = length(y)){
 	
-gcvs <- c(d1$values,d2$values)
-best <- order(gcvs)[1]
-	#get the best alpha and degree
-bestd <- c(rep(1,n),rep(2,n))[best]
-bestalpha <- c(a,a)[best]
+		# get the gcv values for all combinations of deg and alpha
+	d1 <- gcvplot(y~x, deg=1, alpha=a, kern='bisq', scale=T)
+	d2 <- gcvplot(y~x, deg=2, alpha=a, kern='bisq', scale=T)
+	
+	gcvs <- c(d1$values,d2$values)
+	best <- order(gcvs)[1]
+		#get the best alpha and degree
+	bestd <- c(rep(1,n),rep(2,n))[best]
+	bestalpha <- c(a,a)[best]
+	
+	return(list(p=bestd,a=bestalpha))
+}
 
-datfit <- locfit(y~x, deg=bestd, alpha = bestalpha, kern='bisq', 
-		scale=T, ev=dat())
-fit <- locfit(y~x, deg=bestd, alpha = bestalpha, kern='bisq', scale=T)
-	# the cross validated estimates
-fitcv <- locfit(y ~ x, alpha=bestalpha, deg=bestd, kern="bisq", 
-		ev = dat(cv=TRUE), scale=TRUE)
+	#get the best degree and alpha for each month
+best.jan <- best.par(x.jan,y.jan)
+best.jul <- best.par(x.jul,y.jul)
 
-pred <- predict( fit, newdata = dem, se.fit=T )
+	#Fit models for january
+	# At the grid points
+datfit.jan <- locfit(y.jan~x.jan, deg=best.jan$p, alpha = best.jan$a, 
+		kern='bisq', scale=T, ev=dat())
+	# At the data density based locations
+fit.jan <- locfit(y.jan~x.jan, deg=best.jan$p, alpha = best.jan$a, 	
+		kern='bisq', scale=T)
+	# And the cross validated estimates
+fitcv.jan <- locfit(y.jan~x.jan, deg=best.jan$p, alpha=best.jan$a, 
+		kern="bisq", ev = dat(cv=TRUE), scale=TRUE)
 
+	#Fit models for July
+datfit.jul <- locfit(y.jul~x.jul, deg=best.jul$p, alpha = best.jul$a, 
+		kern='bisq', scale=T, ev=dat())
+fit.jul <- locfit(y.jul~x.jul, deg=best.jul$p, alpha = best.jul$a, 
+		kern='bisq', scale=T)
+fitcv.jul <- locfit(y.jul~x.jul, deg=best.jul$p, alpha=best.jul$a, 
+		kern="bisq", ev = dat(cv=TRUE), scale=TRUE)
+
+	#get estimates at dem points
+pred.jan <- predict( fit.jan, newdata = dem, se.fit=T )
+pred.jul <- predict( fit.jul, newdata = dem, se.fit=T )
+
+	#fit linear models
 	# y must be a vector, xdata a data.frame
-lmfit <- lm(y~., data = xdata)
-lmpred <- predict.lm( lmfit, as.data.frame(dem), se.fit=T)
+	# January
+lmfit.jan <- lm(y.jan~., data = xdata.jan)
+lmpred.jan <- predict.lm( lmfit.jan, as.data.frame(dem), se.fit=T)
+	# July 
+lmfit.jul <- lm(y.jul~., data = xdata.jul)
+lmpred.jul <- predict.lm( lmfit.jul, as.data.frame(dem), se.fit=T)
 
 	# prepare the data for plotting
 nbcol <- 20
 nx <- length(unique(dem.x))
 ny <- length(unique(dem.y))
-locfitgrid <- matrix(pred$fit, nrow = ny, byrow=T)
-lmgrid <- matrix(lmpred$fit, nrow = ny, byrow=T)
 dem.x <- sort(unique(dem.x))
 dem.y <- sort(unique(dem.y))
 
+	#January grid
+locfitgrid.jan <- matrix(pred.jan$fit, nrow = ny, byrow=T)
+lmgrid.jan <- matrix(lmpred.jan$fit, nrow = ny, byrow=T)
+	#july grid
+locfitgrid.jul <- matrix(pred.jul$fit, nrow = ny, byrow=T)
+lmgrid.jul <- matrix(lmpred.jul$fit, nrow = ny, byrow=T)
+
+	#January error grid
+locfitgrid.se.jan <- matrix(sqrt(pred.jan$se.fit), nrow = ny, byrow=T)
+lmgrid.se.jan <- matrix(lmpred.jan$se.fit, nrow = ny, byrow=T)
+	#july error grid
+locfitgrid.se.jul <- matrix(sqrt(pred.jul$se.fit), nrow = ny, byrow=T)
+lmgrid.se.jul <- matrix(lmpred.jul$se.fit, nrow = ny, byrow=T)
+
+	#Compute a nice set of face colors for the persp plot
 colf <- function(z){
 		nrz <- nrow(z)
 		ncz <- ncol(z)

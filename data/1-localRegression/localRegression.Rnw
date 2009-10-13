@@ -206,96 +206,126 @@ The code which fits the local and linear surface is shown below:
 
 \VerbatimInput[frame=single]{src/2.R}
 
+i, ii) The surfaces from linear regression and from locfit are shown in figure \autoref{image}
 \begin{figure}[!ht]
 \centering
-<<image-locfit, fig=T, tikz=T, external=T, echo=T,cache=T,height=3.9>>=
+<<image, fig=T, tikz=T, external=T, echo=T, keep.source=T, cache=T, width=7.5>>=
 
-par(mar = c(5, 4, 2, 2) + 0.1)
-image.plot(dem.y,dem.x,locfitgrid,col=topo.colors(nbcol),xlab='Longitude',ylab='Latitude')
-contour(dem.y,dem.x,locfitgrid,add=T)
+layout(matrix(c(1,3,2,4),nrow=2))
+
+my.image <- function(grid, main, x = dem.x, y = dem.y, n = nbcol, ...){
+	par(mar = c(4, 4, 2, 4) + 0.1)
+	image.plot(y, x, grid, col=topo.colors(n), xlab='Longitude',ylab='Latitude',...)
+	contour(y, x, grid, nlevels=4, add=T)
+	title(main = main, line=.2)
+}
+
+r1 <- range(c(locfitgrid.jan,lmgrid.jan))
+r2 <- range(c(locfitgrid.jul,lmgrid.jul))
+
+my.image(locfitgrid.jan,'locfit January', zlim=r1)
+my.image(lmgrid.jan,'lm January', zlim=r1)
+my.image(locfitgrid.jul,'locfit July', zlim=r2)
+my.image(lmgrid.jul,'lm July', zlim=r2)
 
 @
-\caption{}\label{lfimage}
+\caption{Precipitation map from locfit and from linear regression for each month}\label{image}
+\end{figure}
+
+iii) 
+
+<<anova, fig=F, echo=T, keep.source=T>>=
+
+
+anova.locfit <- function(fit,y){
+	SST = sum((y - mean(y))^2) 
+	yhat = y - residuals(fit)
+	SSR = sum((yhat - mean(y))^2) 
+	SSE = sum(residuals(fit)^2) 
+	MSR = SSR / length(fit$vnames)            
+	MSE = SSE/(length(y) - fit$dp["df2"])    
+}
+
+print(anova(lmfit.jan))
+print(anova(lmfit.jul))
+print(anova(datfit.jan))
+print(anova(datfit.jul))
+
+@
+
+\begin{figure}[!ht]
+\centering
+<<image-error, fig=T, tikz=T, external=T, echo=T, keep.source=T, cache=T, width=7.5>>=
+
+layout(matrix(c(1,3,2,4),nrow=2))
+
+r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
+r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
+
+my.image(locfitgrid.se.jan,'locfit January', zlim=r1)
+my.image(lmgrid.se.jan,'lm January', zlim=r1)
+my.image(locfitgrid.se.jul,'locfit July', zlim=r2)
+my.image(lmgrid.se.jul,'lm July', zlim=r2)
+
+@
+\caption{Precipitation error map}\label{image-error}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-<<image-lm, fig=T, tikz=T, external=T, echo=T,cache=T,height=3.9>>=
+<<persp, fig=T, tikz=T, external=T, echo=T, cache=T>>=
 
-par(mar = c(5, 4, 2, 2) + 0.1)
-image.plot(dem.y,dem.x,lmgrid,col=topo.colors(nbcol),xlab='Longitude',ylab='Latitude')
-contour(dem.y,dem.x,lmgrid,add=T)
+layout(matrix(c(1,3,2,4),nrow=2))
+
+my.persp <- function(grid, main, x = dem.x, y = dem.y, cf = colf){
+	par(mar=c(0,1,0,0))
+	persp(y, x, grid,
+		col=color[cf(grid)],
+		xlab='Longitude',
+		ylab='Latitude', 
+		zlab = 'Rainfall',
+		theta=30, phi=30, expand=0.5,
+		shade=0.5, ltheta=-30)
+	title(main=main,line=-2)
+}
+
+my.persp(locfitgrid.jan,'locfit January')
+my.persp(lmgrid.jan,'lm January')
+my.persp(locfitgrid.jul,'locfit July')
+my.persp(lmgrid.jul,'lm July')
+	
 @
-\caption{}\label{lfimage}
+\caption{Local fit}\label{persp}
 \end{figure}
 
 
 
 
 \begin{figure}[!ht]
-\begin{minipage}{.5\textwidth}
 \centering
-<<persp-locfit, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
+<<validation, fig=T, tikz=T, external=T, echo=T, cache=T>>=
 
-par(mar=c(0,1,0,0))
+layout(matrix(c(1,3,2,4),nrow=2))
 
-persp(dem.y, dem.x, locfitgrid,
-	col=color[colf(locfitgrid)],
-	xlab='Longitude',
-	ylab='Latitude', 
-	zlab = 'Rainfall',
-	theta=30, phi=30, expand=0.5,
-	shade=0.5, ltheta=-30)
-		
+my.plot <- function(y,fit,main,mode=c('full','dropone')){
+	par(mar = c(4, 4, 2, 2) + 0.1)
+	miss <- !is.na(y.jan)
+	plot(y.jan[miss], predict(datfit.jan)[miss], 
+		xlab="Observed", 
+		ylab=ifelse(mode == "full", 
+			"Estimates using full data", "Drop-One Estimates"))
+	abline(0,1)
+	title(main = main,line=.2)
+}
+
+my.plot(y.jan, datfit.jan, 'January', mode = 'full')
+my.plot(y.jan, fitcv.jan, 'January', mode = 'dropone')
+my.plot(y.jul, datfit.jul, 'July', mode = 'full')
+my.plot(y.jul, fitcv.jan, 'July', mode = 'dropone')
+
 @
-\caption{Local fit}\label{lfimage}
-\end{minipage}
-\begin{minipage}{.5\textwidth}
-\centering
-<<persp-lm, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
-
-par(mar=c(0,1,0,0))
-persp(dem.y, dem.x, lmgrid,
-	col=color[colf(lmgrid)],
-	xlab='Longitude',
-	ylab='Latitude', 
-	zlab = 'Rainfall',
-	theta=30, phi=30, expand=0.5,
-	shade=0.5, ltheta=-30)
-		
-@
-\caption{Linear Fit}\label{lfimage}
-\end{minipage}
+\caption{validation}\label{validation}
 \end{figure}
-
-
-\begin{figure}[!ht]
-\begin{minipage}{.5\textwidth}
-\centering
-<<fullpred, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
-
-par(mar = c(4, 4, 2, 2) + 0.1)
-plot(y, predict(datfit), 
-	xlab="Observed", 
-	ylab="Estimates using full data")
-abline(0,1)
-@
-\caption{}\label{fullpred}
-\end{minipage}
-\begin{minipage}{.5\textwidth}
-\centering
-<<dropone, fig=T, tikz=T, external=T, echo=T, cache=T, keep.source=T, width=3.5, height=3.5>>=
-
-par(mar = c(4, 4, 2, 2) + 0.1)
-plot(y, predict(fitcv), 
-	xlab="Observed", 
-	ylab="Drop-One Estimates")
-abline(0,1)
-@
-\caption{}\label{dropone}
-\end{minipage}
-\end{figure}
-
 
 \clearpage
 \nocite{Loader1999}
