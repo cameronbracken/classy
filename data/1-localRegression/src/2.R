@@ -5,16 +5,16 @@ suppressPackageStartupMessages(require(fields))
 
 	#January data
 data.jan <- read.table('data/colo_monthly_precip_01.dat',header=TRUE)
-data.jan[data.jan == -999.999] <- NA
+data.jan <- data.jan[!(data.jan$precip == -999.999),]
 y.jan <- data.jan$precip
-xdata.jan <- as.data.frame(data.jan[c('lat','lon')])
+xdata.jan <- as.data.frame(data.jan[c('lat','lon','elev')])
 x.jan <- as.matrix(xdata.jan)
 
 	#July Data
 data.jul <- read.table('data/colo_monthly_precip_07.dat',header=TRUE)
-data.jan[data.jan == -999.999] <- NA
+data.jul <- data.jul[!(data.jul$precip == -999.999),]
 y.jul <- data.jul$precip
-xdata.jul <- as.data.frame(data.jul[c('lat','lon')])
+xdata.jul <- as.data.frame(data.jul[c('lat','lon','elev')])
 x.jul <- as.matrix(xdata.jul)
 
 	#DEM data
@@ -22,6 +22,13 @@ dem <- as.matrix(read.table('data/colo_dem.dat',header=T))
 dem.x <- dem[,1]
 dem.y <- dem[,2]
 dem.z <- dem[,3]
+
+	# prepare the data for plotting
+nbcol <- 50
+nx <- length(unique(dem.x))
+ny <- length(unique(dem.y))
+dem.x <- sort(unique(dem.x))
+dem.y <- sort(unique(dem.y))
 
 	#returns the best alpha and degree
 best.par <- 
@@ -76,13 +83,6 @@ lmpred.jan <- predict.lm( lmfit.jan, as.data.frame(dem), se.fit=T)
 lmfit.jul <- lm(y.jul~., data = xdata.jul)
 lmpred.jul <- predict.lm( lmfit.jul, as.data.frame(dem), se.fit=T)
 
-	# prepare the data for plotting
-nbcol <- 20
-nx <- length(unique(dem.x))
-ny <- length(unique(dem.y))
-dem.x <- sort(unique(dem.x))
-dem.y <- sort(unique(dem.y))
-
 	#January grid
 locfitgrid.jan <- matrix(pred.jan$fit, nrow = ny, byrow=T)
 lmgrid.jan <- matrix(lmpred.jan$fit, nrow = ny, byrow=T)
@@ -91,11 +91,25 @@ locfitgrid.jul <- matrix(pred.jul$fit, nrow = ny, byrow=T)
 lmgrid.jul <- matrix(lmpred.jul$fit, nrow = ny, byrow=T)
 
 	#January error grid
-locfitgrid.se.jan <- matrix(sqrt(pred.jan$se.fit), nrow = ny, byrow=T)
+locfitgrid.se.jan <- matrix(pred.jan$se.fit, nrow = ny, byrow=T)
 lmgrid.se.jan <- matrix(lmpred.jan$se.fit, nrow = ny, byrow=T)
 	#july error grid
-locfitgrid.se.jul <- matrix(sqrt(pred.jul$se.fit), nrow = ny, byrow=T)
+locfitgrid.se.jul <- matrix(pred.jul$se.fit, nrow = ny, byrow=T)
 lmgrid.se.jul <- matrix(lmpred.jul$se.fit, nrow = ny, byrow=T)
+
+	# lm cv predictions
+lmpred.cv.jan <- numeric(length(y.jan))
+lmpred.cv.jul <- numeric(length(y.jul))
+	#January
+for(i in 1:length(y.jan)){
+	tmp <- lm(y.jan[-i]~., data = xdata.jan[-i,])
+	lmpred.cv.jan[i] <- predict.lm(tmp, as.data.frame(xdata.jan[i,]))
+}
+		# July 
+for(i in 1:length(y.jul)){
+	tmp <- lm(y.jul[-i]~., data = xdata.jul[-i,])
+	lmpred.cv.jul[i] <- predict.lm(tmp, as.data.frame(xdata.jul[i,]))
+}
 
 	#Compute a nice set of face colors for the persp plot
 colf <- function(z){
@@ -109,6 +123,5 @@ colf <- function(z){
 		facetcol
 	}
 color <- topo.colors(nbcol)
-
 
 save(list=ls(),file='output/2.Rdata')

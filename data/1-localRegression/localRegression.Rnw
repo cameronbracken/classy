@@ -83,6 +83,7 @@ if(!file.exists('Sweave.sty'))
 	suppressMessages(require(xtable))
 	suppressMessages(require(locfit))
 	suppressMessages(require(fields))
+	suppressMessages(require(xtable))
 	
 	cashdir = "./cache"
 	setCacheDir(cashdir)
@@ -206,6 +207,8 @@ The code which fits the local and linear surface is shown below:
 
 \VerbatimInput[frame=single]{src/2.R}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 i, ii) The surfaces from linear regression and from locfit are shown in figure \autoref{image}
 \begin{figure}[!ht]
 \centering
@@ -232,45 +235,67 @@ my.image(lmgrid.jul,'lm July', zlim=r2)
 \caption{Precipitation map from locfit and from linear regression for each month}\label{image}
 \end{figure}
 
-iii) 
 
-<<anova, fig=F, echo=T, keep.source=T>>=
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+iii) The Anova results from both models are shown below. 
 
+<<anova, fig=F, echo=T, keep.source=T,results=tex>>=
 
-anova.locfit <- function(fit,y){
-	SST = sum((y - mean(y))^2) 
-	yhat = y - residuals(fit)
-	SSR = sum((yhat - mean(y))^2) 
-	SSE = sum(residuals(fit)^2) 
-	MSR = SSR / length(fit$vnames)            
-	MSE = SSE/(length(y) - fit$dp["df2"])    
-}
-
-print(anova(lmfit.jan))
-print(anova(lmfit.jul))
-print(anova(datfit.jan))
-print(anova(datfit.jul))
+print(xtable(round(anova(lmfit.jan),2)))
+print(xtable(round(anova(lmfit.jul),2)))
+anova.locfit(datfit.jan, y.jan, sep='\\\\')
+anova.locfit(datfit.jul, y.jul, sep='\\\\')
 
 @
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+iv) 
 \begin{figure}[!ht]
 \centering
-<<image-error, fig=T, tikz=T, external=T, echo=T, keep.source=T, cache=T, width=7.5>>=
+<<validation, fig=T, tikz=T, external=T, echo=T, cache=T>>=
 
 layout(matrix(c(1,3,2,4),nrow=2))
 
-r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
-r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
+my.plot <- function(y,fit,main,mode=c('full','dropone')){
+	par(mar = c(4, 4, 2, 2) + 0.1)
+	plot(y, fit, 
+		xlab="Observed", 
+		ylab=ifelse(mode == "full", 
+			"Estimates using full data", "Drop-One Estimates"))
+	abline(0,1)
+	title(main = main,line=.2)
+}
 
-my.image(locfitgrid.se.jan,'locfit January', zlim=r1)
-my.image(lmgrid.se.jan,'lm January', zlim=r1)
-my.image(locfitgrid.se.jul,'locfit July', zlim=r2)
-my.image(lmgrid.se.jul,'lm July', zlim=r2)
+my.plot(y.jan, predict(datfit.jan), 'January', mode = 'full')
+my.plot(y.jan, predict(fitcv.jan), 'January', mode = 'dropone')
+my.plot(y.jul, predict(datfit.jul), 'July', mode = 'full')
+my.plot(y.jul, predict(fitcv.jul), 'July', mode = 'dropone')
 
 @
-\caption{Precipitation error map}\label{image-error}
+\caption{Observed versus predicted for Locfit model using full data and drop-one cross validation.}\label{validation}
 \end{figure}
 
+\begin{figure}[!ht]
+\centering
+<<validation-lm, fig=T, tikz=T, external=T, echo=T, cache=T>>=
+
+layout(matrix(c(1,3,2,4),nrow=2))
+
+my.plot(y.jan, predict(lmfit.jan), 'January', mode = 'full')
+my.plot(y.jan, lmpred.cv.jan, 'January', mode = 'dropone')
+my.plot(y.jul, predict(lmfit.jul), 'July', mode = 'full')
+my.plot(y.jul, lmpred.cv.jul, 'July', mode = 'dropone')
+
+@
+\caption{Observed versus predicted for linear model using full data and drop-one cross validation.}\label{validation-lm}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+v) Surface plots of predicitons from both models are shown below.
 \begin{figure}[!ht]
 \centering
 <<persp, fig=T, tikz=T, external=T, echo=T, cache=T>>=
@@ -298,34 +323,27 @@ my.persp(lmgrid.jul,'lm July')
 \caption{Local fit}\label{persp}
 \end{figure}
 
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+vi) Plots of the error are shown below. 
 \begin{figure}[!ht]
 \centering
-<<validation, fig=T, tikz=T, external=T, echo=T, cache=T>>=
+<<image-error, fig=T, tikz=T, external=T, echo=T, keep.source=T, cache=T, width=7.5>>=
 
 layout(matrix(c(1,3,2,4),nrow=2))
 
-my.plot <- function(y,fit,main,mode=c('full','dropone')){
-	par(mar = c(4, 4, 2, 2) + 0.1)
-	miss <- !is.na(y.jan)
-	plot(y.jan[miss], predict(datfit.jan)[miss], 
-		xlab="Observed", 
-		ylab=ifelse(mode == "full", 
-			"Estimates using full data", "Drop-One Estimates"))
-	abline(0,1)
-	title(main = main,line=.2)
-}
+r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
+r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
 
-my.plot(y.jan, datfit.jan, 'January', mode = 'full')
-my.plot(y.jan, fitcv.jan, 'January', mode = 'dropone')
-my.plot(y.jul, datfit.jul, 'July', mode = 'full')
-my.plot(y.jul, fitcv.jan, 'July', mode = 'dropone')
+my.image(locfitgrid.se.jan,'locfit January', zlim=r1)
+my.image(lmgrid.se.jan,'lm January', zlim=r1)
+my.image(locfitgrid.se.jul,'locfit July', zlim=r2)
+my.image(lmgrid.se.jul,'lm July', zlim=r2)
 
 @
-\caption{validation}\label{validation}
+\caption{Precipitation error map.  Interestingly, the magnitude of the error in the linear model is much less than with locfit.}\label{image-error}
 \end{figure}
+
 
 \clearpage
 \nocite{Loader1999}

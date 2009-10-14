@@ -43,3 +43,15 @@ function(kern){
 		return( function(x) rep(1,length(x)) )
 	
 }
+
+anova.locfit <- function(fit,y, sep='\n'){
+	rem <- !is.na(y)
+	cat('SST =',sum((y[rem] - mean(y[rem]))^2),sep)
+	yhat <- predict(fit)
+	SSR <- sum((yhat - mean(y[rem]))^2)
+	cat('SSR =', SSR, sep)
+	SSE <- sum(residuals(fit)^2) 
+	cat('SSE =', SSE,sep)
+	cat('MSR =', SSR / length(fit$vnames),sep)
+	cat('MSE =', SSE/(length(y) - fit$dp["df2"]))
+}
