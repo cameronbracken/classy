@@ -55,3 +55,15 @@ anova.locfit <- function(fit,y, sep='\n'){
 	cat('MSR =', SSR / length(fit$vnames),sep)
 	cat('MSE =', SSE/(length(y) - fit$dp["df2"]))
 }
+
+	#Compute a nice set of face colors for the persp plot
+colf <- function(z){
+		nrz <- nrow(z)
+		ncz <- ncol(z)
+		# Generate the desired number of colors from this palette
+		# Compute the z-value at the facet centres
+		zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
+		# Recode facet z-values into color indices
+		facetcol <- cut(zfacet, nbcol)
+		facetcol
+	}

@@ -2,6 +2,7 @@
 
 suppressPackageStartupMessages(require(locfit))
 suppressPackageStartupMessages(require(fields))
+suppressPackageStartupMessages(require(leaps))
 
 	#January data
 data.jan <- read.table('data/colo_monthly_precip_01.dat',header=TRUE)
@@ -24,7 +25,6 @@ dem.y <- dem[,2]
 dem.z <- dem[,3]
 
 	# prepare the data for plotting
-nbcol <- 50
 nx <- length(unique(dem.x))
 ny <- length(unique(dem.y))
 dem.x <- sort(unique(dem.x))
@@ -32,11 +32,11 @@ dem.y <- sort(unique(dem.y))
 
 	#returns the best alpha and degree
 best.par <- 
-function(x,y, a = seq(0.2,1.0,by=0.05), n = length(y)){
+function(x,y, a = seq(0.2,1.0,by=0.05), n = length(a), f=c(gcvplot,aicplot)){
 	
 		# get the gcv values for all combinations of deg and alpha
-	d1 <- gcvplot(y~x, deg=1, alpha=a, kern='bisq', scale=T)
-	d2 <- gcvplot(y~x, deg=2, alpha=a, kern='bisq', scale=T)
+	d1 <- f(y~x, deg=1, alpha=a, kern='bisq', scale=T)
+	d2 <- f(y~x, deg=2, alpha=a, kern='bisq', scale=T)
 	
 	gcvs <- c(d1$values,d2$values)
 	best <- order(gcvs)[1]
@@ -44,12 +44,31 @@ function(x,y, a = seq(0.2,1.0,by=0.05), n = length(y)){
 	bestd <- c(rep(1,n),rep(2,n))[best]
 	bestalpha <- c(a,a)[best]
 	
-	return(list(p=bestd,a=bestalpha))
+	return(list(p=bestd,a=bestalpha,gcv=gcvs[best]))
+}
+
+best.pred <- function(x,y,f){
+	
+	combo <- leaps(x,y)$which
+	nc <- nrow(combo)
+	best <- data.frame(a=numeric(nc),p=numeric(nc),gcv=numeric(nc))
+	for(i in 1:nc){
+		
+		this.best <- best.par(x[,combo[i,]],y,f=f)
+		best$a[i] <- this.best$a
+		best$p[i] <- this.best$p
+		best$gcv[i] <- this.best$gcv
+		
+	}
+	return(list(par=best,which=combo))
 }
 
 	#get the best degree and alpha for each month
-best.jan <- best.par(x.jan,y.jan)
-best.jul <- best.par(x.jul,y.jul)
+best.jan <- best.par(x.jan,y.jan,f=gcvplot)
+best.jul <- best.par(x.jul,y.jul,f=gcvplot)
+best.jul.aic <- best.par(x.jul,y.jul,f=aicplot)
+best.models.jul <- best.pred(x.jul,y.jul,f=gcvplot)
+best.models.jul.aic <- best.pred(x.jul,y.jul,f=aicplot)
 
 	#Fit models for january
 	# At the grid points
@@ -110,18 +129,5 @@ for(i in 1:length(y.jul)){
 	tmp <- lm(y.jul[-i]~., data = xdata.jul[-i,])
 	lmpred.cv.jul[i] <- predict.lm(tmp, as.data.frame(xdata.jul[i,]))
 }
-
-	#Compute a nice set of face colors for the persp plot
-colf <- function(z){
-		nrz <- nrow(z)
-		ncz <- ncol(z)
-		# Generate the desired number of colors from this palette
-		# Compute the z-value at the facet centres
-		zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
-		# Recode facet z-values into color indices
-		facetcol <- cut(zfacet, nbcol)
-		facetcol
-	}
-color <- topo.colors(nbcol)
 
 save(list=ls(),file='output/2.Rdata')

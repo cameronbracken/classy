@@ -91,6 +91,8 @@ if(!file.exists('Sweave.sty'))
 	if(!file.exists('figs')) dir.create('figs')
 	
 	options('tikzDocumentDeclaration' = '\\documentclass[11pt]{article}')
+	nbcol <- 50
+	color <- topo.colors(nbcol)
 
 @
 
@@ -113,7 +115,11 @@ if(!file.exists('Sweave.sty'))
 			source('2.R')
 		}
 		
-		#source('3.R')
+		if(file.exists('output/3.Rdata')){
+			load('output/3.Rdata')
+		}else{
+			source('3.R')
+		}
 	setwd('..')
 
 @
@@ -159,7 +165,7 @@ print(blfit1$gcv)
 
 @
 
-iii) \autoref{deg1} shows the resuting fit and confidence intervals when $\alpha=.5$ and $p=1$. The locfit results are not shown because they fall exactly on the line shown. 
+iii) \autoref{deg1} shows the resulting fit and confidence intervals when $\alpha=.5$ and $p=1$. The locfit results are not shown because they fall exactly on the line shown. 
 
 \begin{figure}[!ht]
 \begin{minipage}{.5\textwidth}
@@ -188,7 +194,7 @@ plot(blfit2, percent = "\\%" )
 \end{minipage}
 \end{figure}
 
-iv) \autoref{linear} graphicaly shows that the results of the algorithm are identical to linear regression.  The hat matricies (which are identical) are shown below.  Points everywhere contribute to the weight, furthermore the point nearest to the estimation point does not always contribute the highest weight.
+iv) \autoref{linear} graphically shows that the results of the algorithm are identical to linear regression.  The hat matrices (which are identical) are shown below.  Points everywhere contribute to the weight, furthermore the point nearest to the estimation point does not always contribute the highest weight.
 <<hat, echo=T, fig=F, cache=F>>=
 
 print(round(blfit2$hat,3))
@@ -201,6 +207,9 @@ print(round(lhat,3))
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 \section*{Problem 2}
 
 The code which fits the local and linear surface is shown below:
@@ -218,7 +227,7 @@ layout(matrix(c(1,3,2,4),nrow=2))
 
 my.image <- function(grid, main, x = dem.x, y = dem.y, n = nbcol, ...){
 	par(mar = c(4, 4, 2, 4) + 0.1)
-	image.plot(y, x, grid, col=topo.colors(n), xlab='Longitude',ylab='Latitude',...)
+	image.plot(y, x, grid, col=topo.colors(nbcol), xlab='Longitude',ylab='Latitude',...)
 	contour(y, x, grid, nlevels=4, add=T)
 	title(main = main, line=.2)
 }
@@ -251,7 +260,9 @@ anova.locfit(datfit.jul, y.jul, sep='\\\\')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-iv) 
+\clearpage
+iv) Observed versus predicted for both model for each month using no validation and drop one cross validation are shown below. 
+
 \begin{figure}[!ht]
 \centering
 <<validation, fig=T, tikz=T, external=T, echo=T, cache=T>>=
@@ -289,13 +300,13 @@ my.plot(y.jul, predict(lmfit.jul), 'July', mode = 'full')
 my.plot(y.jul, lmpred.cv.jul, 'July', mode = 'dropone')
 
 @
-\caption{Observed versus predicted for linear model using full data and drop-one cross validation.}\label{validation-lm}
+\caption{Observed versus predicted for linear model using full data and drop-one cross validation. The January model was poor at capturing low and high values.}\label{validation-lm}
 \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-v) Surface plots of predicitons from both models are shown below.
+v) Surface plots of predictions from both models are shown below.
 \begin{figure}[!ht]
 \centering
 <<persp, fig=T, tikz=T, external=T, echo=T, cache=T>>=
@@ -320,11 +331,12 @@ my.persp(locfitgrid.jul,'locfit July')
 my.persp(lmgrid.jul,'lm July')
 	
 @
-\caption{Local fit}\label{persp}
+\caption{Surface plots of rainfall from locfit and from the linear model.}\label{persp}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 vi) Plots of the error are shown below. 
 \begin{figure}[!ht]
 \centering
@@ -332,18 +344,102 @@ vi) Plots of the error are shown below.
 
 layout(matrix(c(1,3,2,4),nrow=2))
 
-r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
-r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
-
-my.image(locfitgrid.se.jan,'locfit January', zlim=r1)
-my.image(lmgrid.se.jan,'lm January', zlim=r1)
-my.image(locfitgrid.se.jul,'locfit July', zlim=r2)
-my.image(lmgrid.se.jul,'lm July', zlim=r2)
+my.image(locfitgrid.se.jan,'locfit January')
+my.image(lmgrid.se.jan,'lm January')
+my.image(locfitgrid.se.jul,'locfit July')
+my.image(lmgrid.se.jul,'lm July')
 
 @
-\caption{Precipitation error map.  Interestingly, the magnitude of the error in the linear model is much less than with locfit.}\label{image-error}
+%r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
+%r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
+
+\caption{Precipitation error map.  Interestingly, the magnitude of the error in the linear model is much less than with locfit. Error increases around the edges with both methods.  }\label{image-error}
 \end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+viii) The best parameters for january are shown below using both GCV and AIC. For this set of predictors the parameters are the same for both criteria.  This may be a consequence of the data being very noisy and the smallest smoothing parameter always giving the best fit. The best model turns out to be the one with all three predictors, which gives the most information. 
+
+<<best, echo=T, fig=F, cache=F>>=
+
+print(best.jul)
+print(best.jul.aic)
+
+@
+
+Table below show the different combinations of predictor variables, in both cases (using aic and gcv), the best model was that which used all three predictors and so it us identical to the one used previously. 
+
+<<best-models, echo=T, fig=F,results=tex, cache=F>>=
+
+print(xtable(matrix(as.integer(best.models.jul$which),ncol=3)))
+print(xtable(best.models.jul$par))
+print(xtable(best.models.jul.aic$par))
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Problem 3}
+
+i) ii)  The code to fit the local and global glm is shown below
+
+\VerbatimInput[frame=single]{src/3.R}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+iii) Some model diagnostics are shown below.
+<<glm-tab, fig=F, echo=T, keep.source=T,results=tex>>=
+
+print(xtable(summary(gfit.11)))
+print(xtable(summary(gfit.12)))
+print(xtable(summary(gfit.13)))
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+iv) The precipitation probability maps are shown below for the global and local glm for each day. 
+\begin{figure}[!ht]
+\centering
+<<image-glm, fig=T, tikz=T, external=T, echo=T, cache=T, width=7,height=8>>=
+
+layout(matrix(1:6,nrow=3,byrow=T))
+
+my.image(ggrid.11, 'global glm 11th',zlim=c(0,1))
+my.image(lggrid.11,'local glm 11th',zlim=c(0,1))
+my.image(ggrid.12, 'global glm 12th',zlim=c(0,1))
+my.image(lggrid.12,'local glm 12th',zlim=c(0,1))
+my.image(ggrid.13, 'global glm 13th',zlim=c(0,1))
+my.image(lggrid.13,'local glm 13th',zlim=c(0,1))
+
+@
+%r1 <- range(c(locfitgrid.se.jan,lmgrid.se.jan))
+%r2 <- range(c(locfitgrid.se.jul,lmgrid.se.jul))
+
+\caption{Precipitation probability map for the three days using both global and local glm models. }\label{image-error}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+v)  Similar patterns of precipitation probability can be seen as in Slater and Clark (2006) though an exact comparison is difficult without the data set. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+vi) The best models using both the AIC criteria and the GCV criteria are shown below for the 11th. The first table gives the predictor sets and the second two tables give the optimal parameters for each predictor set.  In both cases the model which includes all three predictors is the best fit. The `best model' here is identical to the one used in ii. because all the predictors were used there as well.  With the glm, using both local and global did not change the precipitation probability estimates much. 
+
+<<best-models-glm, echo=T, fig=F,results=tex, cache=F>>=
+
+print(xtable(matrix(as.integer(best.models.11$which),ncol=3)))
+print(xtable(best.models.11$par))
+print(xtable(best.models.11.aic$par))
+
+@
 
 \clearpage
 \nocite{Loader1999}
