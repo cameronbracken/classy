@@ -1,3 +1,5 @@
+% !TEX TS-program = pgfSweave
+
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices
