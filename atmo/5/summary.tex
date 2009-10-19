@@ -1,0 +1,35 @@
+\documentclass[11pt,oneside]{article}
+\usepackage[margin=1in]{geometry}			% See geometry.pdf to learn the layout options.						
+\geometry{letterpaper}			% ... or a4paper or a5paper or ... 
+%\usepackage[parfill]{parskip}	% Activate to begin paragraphs with an empty  line rather than an indent
+\usepackage{mathpazo}
+\usepackage{amsmath}		
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\usepackage[font={bf,footnotesize},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+\begin{document}
+
+
+\begin{center}
+	\textbf{Reading Summary - GEOG 5100}\\
+	{\itshape Cameron Bracken} - October 19, 2009
+\end{center}
+
+This reading deals with the interaction of the land surface with the climate system and the myriad assumptions and simplifications that go into modeling the land surface. In terms of being a source or sink for energy, the land surface is much plays a smaller role than the ocean. The role of the land surface is much more dynamic and small scale in nature than the oceans.  Temperatures can change rapidly and parameters such as albedo, soil properties and vegetation tend to vary spatially, temporally, with wavelength and with temperature.  Vegetation and snow on the land surface also play a major role in the climate system.  As a general rule, the complexity of the land surface has to do with the small scale nature of the response to precipitation, solar radiation, etc. 
+
+Observational data is very important for verifying GCMs.  Variables like precipitation are compared to time averaged smoothed fields of observational data.  Over the land, observational precipitation is much more certain than over the ocean and at high altitudes where measurements are sparse.  Measurements of solar radiation are problematic, both that long records are not common and the effect of clouds is difficult to quantify.  
+
+GCMs typically assume that the land surface is flat but.  This is a poor assumption with regard to solar radiation because incident radiation depends on the slope of the surface. For example a model that assumes a flat surface would claim much higher incident radiation than in reality was available to absorb by a very sloped surfaces.  
+
+The most widely available temperature data are surface temperature and ``skin'' temperature which is the temperature above the canopy and the soil.  Verifying with surface temperature typically involves extrapolating model data from the lowest grid point or extrapolating surface measurements with typical relationships that depend on wind.  In vegetated areas, skin temperature is a more useful quantity.
+
+With surface albedo, not only are model values uncertain but so is measurement data.  This is due to the narrow field of view of these devices which does not capture radiation traveling from all directions.  Albedo varies greatly over soil (0.05 -- 0.3), vegetated surfaces (0.1 -- 0.3) and snow (as high as 0.8). This is further complicated by the fact that soil and vegetation do not absorb uniformly at all wavelengths.  If this complexity is included, it can improve the accuracy of the reflected solar energy calculation.  Representing the albedo of vegetation in models is represented in various ways, most of which involves some ``parameter adjustment.''  Vegetation can be assumed to be single scattering (radiation has one reflection to be absorbed). Vegetation can also be represented as piles of randomly distributed sticks with a single scattering assumption.   Soil albedo depends on the soil type and the moisture content. Previously, land surface has been assumed to be a black body in models (no reflectivity).  This introduces error in terms of reflected and absorbed energy. 
+
+Canopies are represented in terms of their resistance to the movement of water and heat energy from the surface to the atmosphere.  This resistance involves many things including, root penetration, stomatal opening, temperature and incoming radiation.  Canopies also affect the movement of air in the boundary layer, called aerodynamic resistance.  The related theory is Monin-Obukhov similarity theory which is used by PlaSim.  I believe canopy resistance is ignored in PlaSim.  Canopy resistance becomes the most important in forests where aerodynamic resistance is small. 
+ 
+Soil is mostly quantified in terms of its capacity to hold water. In the past this has been treated as a bucket with a uniform capacity, when it fills up, runoff occurs.  When this approximation is used on a large scale, large errors can be introduced. 
+
+\end{document}
