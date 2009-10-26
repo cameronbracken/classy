@@ -1,0 +1,29 @@
+\documentclass[11pt,oneside]{article}
+\usepackage{geometry}			% See geometry.pdf to learn the layout options.						
+\geometry{letterpaper}			% ... or a4paper or a5paper or ... 
+\usepackage[parfill]{parskip}	% Activate to begin paragraphs with an empty  line rather than an indent
+\usepackage{mathpazo}
+\usepackage{amsmath}		
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\usepackage[font={bf,footnotesize},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+\begin{document}
+
+
+\begin{center}
+	\textbf{Reading Summary - GEOG 5100}\\
+	{\itshape Cameron Bracken} - October 26, 2009
+\end{center}
+
+This reading describes as set of sensitivity experiments using the Planet Simulator.  The experiment investigates the extreme effects of vegetation by completely covering the earth with vegetation (the green planet) and removing all vegetation (the desert world).  Changes in vegetation cover is represented by changing the surface albedo, roughness and soil hydrology.  Soil hydrology changes are composed of changes to the maximum water storage (bucket size) and the fraction parameter which affects evapotranspiration.
+
+The parameters for the green planet and the desert world respectively are (1) background albedo: 0.12 and 0.28, (2) roughness length: 2 m and 0.01 m, (3) the fraction parameter: 0.01 and 0.4 and (4) the bucket size: 0.5 m and 0.1 m.  
+
+There were several goals to these experiments (1) change all parameters simultaneously, (2) change the parameters independently to see if the effects will add linearly or will some nonlinear interaction occur, (3) repeat set-1 with ocean feedbacks and (4) repeat set-3 with increased CO$_2$. 
+
+The reading from the book describes some of the practical aspects of climate modeling.  One commonly used data format is the NetCDF format. Formats such as these were developed to address data interchange problems between models and modelers alike. Another tool for model communication and inter-comparison are earth system modeling frameworks. ESMFs are composed of layers of superstructure and infrastructure which insulate models. 
+ 
+\end{document}

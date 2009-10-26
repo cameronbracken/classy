@@ -19,52 +19,12 @@
 
 
 \begin{enumerate}
-\item 
-\begin{enumerate}
-	\item[a)] Equation 4.5 is an energy balance for the ground surface. Incoming radiation $S$ which reaches the ground is reduced by the fraction $(1-\alpha_g)(1-a_c)(1-\alpha_c)$ which accounts for the abount of radiation which is reflected by the gound, absorbed by the cloud layer, and reflected by the cloud layer, respectively.  The term, $\varepsilon\sigma T_c^4$ accounts for emmited radiation from the cloud layer downward. The final term, $\sigma T_g^4$ accounts for the ratiation emitted by the ground. 
-	\item[b)] Implicit are the assumptions shorwave radiation is not reflected back downwards from the cloud layer, the surface emmits all energy it absorbs, and the cloud uniformly emmits infared radiation.   
-	\item[c)] Ground surface temperature is a function of cloud albedo, emmisivity, and absorptivity and the solar constant. 
-	\item[d)] Absortivity may change in atmosphereic layers due to different chemical constituents. 
-	\item[e)] Taking $S=343$ results in a surface temperature very near the global average temperature. 
-\end{enumerate}
 
-\item  Clouds are introduced by changing values of the cloud parmeters, $\alpha_c$, $\varepsilon$, and $a_c$.  Changing of these parmeters can lead to both a decrease and increase in global average surface temperature. 
+\item Land surface parameterizations accounts for momentum, and energy fluxes. 
 
-\item The main compication is that the scattering and absorbtion of incoming shortwave radiation is dependent on wavelength.  Incoming radiation is not uniformly reflected or absorbed. 
+\item A climate model must conserve mass, energy and momentum. 
 
-\item A sigma coordiante is a measure of depth from the top of the atmosphere. The value varies from 0 (at the top of the atmosphere) to 1 at the surface.  This type of coordinate is useful because it follows the shape of the land, whereas constant pressure surfaces may intersect the land. 
-
-\item Figure 4.9 shows how convective adjustment (changing of the critical lapse rate) changes the temperature profile of the atmosphere.  This figure doesn't really make sense since one would expec that after convective adjustment, the temperature would shift lower at the surface.  This is the opposite of what line (c) shows. 
-
-
-\item
-\begin{enumerate}
-	\item[a)] Convection distributes heat energy upwards in the atmosphere, lowering the temperature gradient in the atmosphere.  Air is warmed at the surface and expands, becoming less dense. The air rises, cooling in the process.  As the air ccool, it saturates and condenses, forming clouds and rain. 
-	\item[b)] Most energy in the convective process is in the form of heat. 
-	\item[c)] I would expect convection to be the most important near the equator where there is the most incoming solar radiation. 
-\end{enumerate}
-
-\item
-\begin{enumerate}
-	\item[a)] Convective adjustment simulates the effect of convection by changing the critical lapse rate, distributing heat upwards in the atmosphere. 
-	\item[b)] It might be resonable to change the lapse rate to the dry adiabatic lapse rate of 6.5 K/Km.  
-\end{enumerate}
-
-\item Table 4.3 describes results of one-dimensional model sensitivity experiments to doubling of CO$_2$.  
-
-\item
-\begin{equation}
-N_{x+\Delta x} = N_x + \Delta x\frac{\partial N_x}{\partial x} + \frac{1}{2}\Delta x^2\frac{\partial^ N_x}{\partial x^2} + higher\,\,order\,\,terms
-\end{equation}
-\begin{equation}
-N_{x-\Delta x} = N_x - \Delta x\frac{\partial N_x}{\partial x} + \frac{1}{2}\Delta x^2\frac{\partial^ N_x}{\partial x^2} + higher\,\,order\,\,terms
-\end{equation}
-Truncate the higher order terms and subtract equation 2 from 1 
-\begin{align}
-N_{x+\Delta x} - N_{x-\Delta x} &= N_x - N_x + \Delta x\frac{\partial N_x}{\partial x} + \Delta x\frac{\partial N_x}{\partial x} + \frac{1}{2}\Delta x^2\frac{\partial^ N_x}{\partial x^2} - \frac{1}{2}\Delta x^2\frac{\partial^ N_x}{\partial x^2}\nonumber\\
-N_{x+\Delta x} - N_{x-\Delta x} &= 2\Delta x\frac{\partial N_x}{\partial x}\nonumber\\
-\nonumber\frac{\partial N_x}{\partial x} &= \frac{N_{x+\Delta x} - N_{x-\Delta x}}{2\Delta x}
-\end{align}
+\item In a spectral model values over the surface of the earth are represented as an infinite series of wave functions. Spectral truncation occurs when any number of waves less than infinity are used to represent a value.  A T21 model uses 21 waves to represent each variable in each latitude zone at each vertical level.   The `T' stands for a particular type of truncation (triangular).
 
 
 \end{enumerate}

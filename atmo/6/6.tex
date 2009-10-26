@@ -1,0 +1,47 @@
+\documentclass[11pt,oneside]{article}
+\usepackage{geometry}			% See geometry.pdf to learn the layout options.								
+\geometry{letterpaper}			% ... or a4paper or a5paper or ... 
+\usepackage[parfill]{parskip}	% Activate to begin paragraphs with an empty  line rather than an indent
+\usepackage{mathpazo}
+\usepackage{amsmath}		
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\usepackage[font={bf,footnotesize},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+\begin{document}
+
+
+\begin{center}
+	\textbf{Assignment 5: GCMs and Land Surface - GEOG 5100}\\
+	{\itshape Cameron Bracken} - October 25, 2009
+\end{center}
+
+
+\begin{enumerate}
+
+\item Land surface parameterizations accounts for momentum, and energy fluxes. 
+
+\item A climate model must conserve mass, energy and momentum. 
+
+\item Enstrophy is the root mean square of vorticity.  Not conserving enstrophy means that energy is not transferred correctly from large to small grid scales (say from a cyclone).  Models will become unstable if enstrophy is not conserved. 
+
+\item In a spectral model values over the surface of the earth are represented as an infinite series of wave functions. Spectral truncation occurs when any number of waves less than infinity are used to represent a value.  A T21 model uses 21 waves to represent each variable in each latitude zone at each vertical level.   The `T' stands for a particular type of truncation (triangular).
+
+\item No, the land surface in PlaSim is written as a difference grid. 
+
+\item A GCM is composed of grid scale calculations of energy heat and mass transfer, as well as sub-grid scale parameterizations.  Grid scale ``dynamics'' include conservation equations (of momentum and mass), laws of thermodynamics and equations of state. The ``physics'' phenomenon which are to small to model explicitly (such as individual clouds) but are nonetheless represented through parameterizations. 
+
+\item One way of simply representing clouds is as a semi-transparent layer in the vertical direction that has its own albedo and transmissivity. 
+
+\item Equations 2.1 (the bulk aerodynamic equations) are intended to represent sub-grid scale heat and momentum fluxes.  The large scale variables which go into these calculations are wind velocity and temperature gradients. 
+
+\item $C_m$ is the drag coefficient, $C_h$ is the transfer coefficient for heat, and $C_w$ is the evaporative efficiency. These values seem like the values of cloud albedo that are used EBMs in the way they controled the proportion of radiation which reached the surface. 
+
+\item The leaf area index is the proportion of a unit of area that is covered vegetation. Stomatal resistance of a leaf controls how water moves from inside a leaf to outside (or visa versa).  Individual stomatal resistances of leafs act in parallel to form a canopy resistance. 
+
+\item Stomatal resistance increases in low light conditions. 
+
+
+\end{enumerate}
+\end{document}
