@@ -1,3 +1,7 @@
+source('my.acf.R')
+source('my.pacf.R')
+source('solve.yw.R')
+
 skew <- 
 function(x){
 	n <- length(x)
@@ -10,7 +14,7 @@ function(x){
 }
 
 mylag <- 
-function(x,lag,docor=F){
+function(x,lag,docor=FALSE){
 
     if(lag>length(x)) warning("Lag is larger than input vector length, returning NA's") 
 
@@ -22,45 +26,6 @@ function(x,lag,docor=F){
     if(docor) return(cor(x[remove],lagn[remove])) 
     else return(lagn)
 
-}
-
-my.acf <- 
-function(x, lag.max=2*frequency(x), plot=T){
-	
-	acf <- numeric(lag.max)
-	for(i in 1:lag.max){
-		acf[i] <- mylag(x,i,docor=T)
-	}
-	ci <- 2/sqrt(length(x))
-	plot(acf,type='h',xlab='Lag',ylab='ACF')
-	abline(h=c(ci,-ci),col='blue',lty=2)
-	abline(h=0)
-}
-
-my.pacf <- 
-function(x, lag.max=2*frequency(x), plot=T){
-	
-	pacf <- numeric(lag.max)
-	for(i in 1:lag.max){
-		
-		my.pacf.i 
-		pacf[i] <- 
-	}
-	ci <- 2/sqrt(length(x))
-	plot(acf,type='h',xlab='Lag',ylab='ACF')
-	abline(h=c(ci,-ci),col='blue',lty=2)
-	abline(h=0)
-}
-
-my.pacf.i <- function(x,i){
-	
-	top <- bot <- matrix(NA,i,i)
-		#lag k auto correlations
-	acf <- as.vector(acf(x,plot=F,lag.max=i)$acf)[-1]
-	
-	top[,i] <- acf
-	top[1,] <- 0
-	
 }
 
 ts.annual.mean <- 
