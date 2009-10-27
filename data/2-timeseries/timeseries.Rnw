@@ -75,17 +75,18 @@ if(!file.exists('Sweave.sty'))
 \begin{center}
 	\textbf{\Large Local Polynomial Regression}
  	{\bf\\ Cameron Bracken \\}
-  	CVEN6xxx September, 2009
+  	CVEN6833 September, 2009
 \end{center}
 
 <<setup,fig=F,echo=F,results=hide,cache=F>>=
 	
-	suppressMessages(require(tikzDevice))
-	suppressMessages(require(pgfSweave))
-	suppressMessages(require(xtable))
-	suppressMessages(require(locfit))
-	suppressMessages(require(fields))
-	suppressMessages(require(xtable))
+	suppressPackageStartupMessages(require(tikzDevice))
+	suppressPackageStartupMessages(require(pgfSweave))
+	suppressPackageStartupMessages(require(xtable))
+	suppressPackageStartupMessages(require(locfit))
+	suppressPackageStartupMessages(require(fields))
+	suppressPackageStartupMessages(require(xtable))
+	suppressPackageStartupMessages(require(sm))
 	
 	cashdir = "./cache"
 	setCacheDir(cashdir)
@@ -130,7 +131,7 @@ code
 \centering
 <<acf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
 
-acf <- my.acf(x)
+acf <- my.acf(x.ts)
 
 @
 \caption{acf}\label{deg1}
@@ -139,7 +140,7 @@ acf <- my.acf(x)
 \centering
 <<pacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
 
-acf <- my.pacf(x)
+acf <- my.pacf(x.ts)
 
 @
 \caption{pacf}\label{linear}
@@ -156,16 +157,16 @@ code
 
 <<yule-walker, echo=T, fig=F>>=
 
-ar1 <- solve.yw(x,1)
-ar2 <- solve.yw(x,2)
-ar3 <- solve.yw(x,3)
+ar1 <- solve.yw(x.ts,1)
+ar2 <- solve.yw(x.ts,2)
+ar3 <- solve.yw(x.ts,3)
 
 print(ar1)
 print(ar2)
 print(ar3)
 
-ar_ols <- cbind(mylag(x,1),mylag(x,2),mylag(x,3))
-fit <- lm(x~ar_ols)
+ar_ols <- cbind(mylag(x.ts,1),mylag(x.ts,2),mylag(x.ts,3))
+fit <- lm(x.ts~ar_ols)
 print(fit$coefficients[2:4])
 print(var(residuals(fit)))
 
@@ -176,8 +177,8 @@ print(var(residuals(fit)))
 \subsection*{(vi)}
 <<ols, echo=T, fig=F>>=
 
-ar_ols <- cbind(mylag(x,1),mylag(x,2),mylag(x,3))
-fit <- lm(x~ar_ols)
+ar_ols <- cbind(mylag(x.ts,1),mylag(x.ts,2),mylag(x.ts,3))
+fit <- lm(x.ts~ar_ols)
 print(fit$coefficients[2:4])
 print(var(residuals(fit)))
 
@@ -196,9 +197,9 @@ Of the three models, the AIC value for the order 3 model is the lowest so that m
 <<arma, echo=T, fig=F, cache=T,keep.source=T>>=
 
 arma.mod <- list()
-for(i in 1:5)
-	for(j in 1:5)
-		arma.mod[[paste('arma',i,j,sep='')]] <- arima(x,c(i,0,j))
+for(i in 1:4)
+	for(j in 1:4)
+		arma.mod[[paste('arma',i,j,sep='')]] <- arima(x.ts,c(i,0,j))
 
 aics <- sapply(arma.mod,AIC)
 
@@ -217,22 +218,29 @@ aics <- sapply(arma.mod,AIC)
 \section*{Problem 2}
 <<arma-sim, echo=T, fig=F, cache=T, keep.source=T>>=
 
-	n.sim <- 100
-	n.years <- 95
-	sim <- array(NA,c(n.years,12,n.sim))
-	b <- arma.mod[[best.arma]]
-	bp <- b$arma[1]
-	bq <- b$arma[2]
-	for(i in 1:n.sim)
-		sim[,,i] <- matrix(arima.sim(n=n.years*12, 
-			list(ar=b$coef[1:bp],
-				ma=b$coef[(bp+1):(bp+bq)]), 
+n.sim <- 100
+n.years <- 95
+sim <- array(NA,c(n.years,12,n.sim))
+b <- arma.mod[[best.arma]]
+p <- b$arma[1]
+q <- b$arma[2]
+for(i in 1:n.sim)
+	sim[,,i] <- matrix(arima.sim(n=n.years*12, 
+		list(ar=b$coef[1:p],
+			ma=b$coef[(p+1):(p+q)]), 
 			sd=sqrt(b$sigma2)),ncol=12,byrow=T)	
 @
 
 <<arma-box, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
 
-	applt	
+	n.pt <- 100
+	sm.density(x.may)
+	pt <- seq(min(sim[,5,]),max(sim[,5,]),length.out=n.pt)
+	boxpt <- matrix(NA,n.pt,n.sim)
+	for(i in 1:n.sim)
+		boxpt[i,] <- sm.density(sim[,5,i],add=T,
+			col='gray',lwd=.5,eval.points=pt)$estimate
+	sm.density(x.may,add=T,col='red',lwd=2)
 @
 
 
