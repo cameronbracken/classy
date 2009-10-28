@@ -15,4 +15,4 @@ x <- t((t(x) - x.mean) / x.sd)
 x.may <- x[,5]
 x.ts <- ts(array(t(x)),start=c(1906,1),frequency=12)
 
-save(x,x.ts,x.may,file='output/1.Rdata')
+save(x,x.ts,x.may,x.mean,x.sd,file='output/1.Rdata')

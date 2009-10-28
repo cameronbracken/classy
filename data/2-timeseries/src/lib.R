@@ -23,9 +23,11 @@ function(x,lag,docor=FALSE){
     if(lag>0)  lagn = c(x[-(1:lag)],rep(NA,lag))
 
     remove = !is.na(lagn) & !is.na(x)
-    if(docor) return(cor(x[remove],lagn[remove])) 
-    else return(lagn)
-
+    if(docor){
+		return(cor(x[remove],lagn[remove]))
+    }else{
+		return(lagn)
+	}
 }
 
 ts.annual.mean <- 

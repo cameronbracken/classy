@@ -129,18 +129,18 @@ code
 \begin{figure}[!ht]
 \begin{minipage}{.5\textwidth}
 \centering
-<<acf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
+<<myacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
 
-acf <- my.acf(x.ts)
+my.acf(x.ts)
 
 @
 \caption{acf}\label{deg1}
 \end{minipage}
 \begin{minipage}{.5\textwidth}
 \centering
-<<pacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
+<<mypacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
 
-acf <- my.pacf(x.ts)
+my.pacf(x.ts)
 
 @
 \caption{pacf}\label{linear}
@@ -180,7 +180,7 @@ print(var(residuals(fit)))
 ar_ols <- cbind(mylag(x.ts,1),mylag(x.ts,2),mylag(x.ts,3))
 fit <- lm(x.ts~ar_ols)
 print(fit$coefficients[2:4])
-print(var(residuals(fit)))
+print(sd(residuals(fit)))
 
 @
 
@@ -197,8 +197,8 @@ Of the three models, the AIC value for the order 3 model is the lowest so that m
 <<arma, echo=T, fig=F, cache=T,keep.source=T>>=
 
 arma.mod <- list()
-for(i in 1:4)
-	for(j in 1:4)
+for(i in 0:4)
+	for(j in 0:4)
 		arma.mod[[paste('arma',i,j,sep='')]] <- arima(x.ts,c(i,0,j))
 
 aics <- sapply(arma.mod,AIC)
@@ -212,10 +212,10 @@ aics <- sapply(arma.mod,AIC)
 
 @
 
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Problem 2}
+\section*{Problem 3}
 <<arma-sim, echo=T, fig=F, cache=T, keep.source=T>>=
 
 n.sim <- 100
@@ -228,8 +228,53 @@ for(i in 1:n.sim)
 	sim[,,i] <- matrix(arima.sim(n=n.years*12, 
 		list(ar=b$coef[1:p],
 			ma=b$coef[(p+1):(p+q)]), 
-			sd=sqrt(b$sigma2)),ncol=12,byrow=T)	
+			sd=sqrt(b$sigma2)),ncol=12,byrow=T)
+		
+			
+#Get the statistics
+stats <- list()
+stats$mean <- stats$var <- stats$skew <- stats$lag1 <- matrix(NA,n.sim,13)
+ann <- matrix(NA,n.years,n.sim)
+for(i in 1:12){
+	this.mon <- sim[,i,] * x.sd[i] + x.mean[i]
+	stats$mean[,i] <- apply(this.mon,2,mean)
+	stats$var[,i] <- apply(this.mon,2,var)
+	stats$skew[,i] <- apply(this.mon,2,skew)
+	stats$lag1[,i] <- apply(this.mon,2,function(x) mylag(x,1,docor=TRUE))
+}
+for(i in 1:n.years)
+	ann[i,] <- apply(sim[i,,],2,mean)
+
+stats$mean[,13] <- apply(ann,2,mean)
+stats$var[,13] <- apply(ann,2,var)
+stats$skew[,13] <- apply(ann,2,skew)
+stats$lag1[,13] <- apply(ann,2,function(x) mylag(x,1,docor=TRUE))
+
 @
+
+<<box-stats, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
+
+layout(rbind(c(1,2),c(3,4)))
+x.ts.ann <- ts.annual.mean(x.ts)
+
+boxplot(stats$mean)
+lines(x.mean,col='red')
+points(13,mean(x.ts.ann),col='red')
+
+boxplot(sqrt(stats$var))
+lines(x.sd,col='red')
+points(13,sd(x.ts.ann),col='red')
+
+boxplot(stats$mean)
+lines(x.mean,col='red')
+points(13,mean(x.ts.ann),col='red')
+
+boxplot(stats$mean)
+lines(x.mean,col='red')
+points(13,mean(x.ts.ann),col='red')
+#
+@
+
 
 <<arma-box, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
 
