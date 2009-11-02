@@ -10,7 +10,9 @@ x.skew <- apply(x,2,skew)
 x.lag1 <- apply(x,2,mylag,1,docor=TRUE)
 	#remove mean
 x <- t((t(x) - x.mean) / x.sd)
+x.raw <- x * x.sd + x.mean
 x.may <- x[,5]
 x.ts <- ts(array(t(x)),start=c(1906,1),frequency=12)
+x.ts.raw <- ts(array(t(x.raw)),start=c(1906,1),frequency=12)
 
-save(x,x.ts,x.may,x.mean,x.sd,x.skew,x.lag1,file='output/lf.Rdata')
+save(x,x.raw,x.ts,x.ts.raw,x.may,x.mean,x.sd,x.skew,x.lag1,file='output/lf.Rdata')

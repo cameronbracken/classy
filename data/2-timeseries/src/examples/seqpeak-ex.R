@@ -1,3 +1,4 @@
+pdf()
 # Reading in the data
 x=matrix(scan("boise.txt"),ncol=3,byrow=T)
 # Assigning variables
@@ -100,7 +101,7 @@ mtext("% Mean flow",side=3,line=2)
 title("Deterministic Storage Yield Plot")
 
 
-First stochastic model
+#First stochastic model
 # Standardizing the flows
 x= (as.vector(t(fmat))-fmave)/sqrt(fmvar)
 # truncating the result to remove missing data at the beginning
@@ -175,3 +176,4 @@ prel[j]=j/(m+1)
 sreq=sort(sreq)
 plot(prel,sreq)
 
+dev.off()

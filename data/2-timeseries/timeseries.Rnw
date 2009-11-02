@@ -299,10 +299,35 @@ boxplot(stats$skew,main='Skew',ylim=range(range(stats$skew),range(x.skew)))
 \caption{$ARMA$ statistics. The furthest box on the right is the annual statistic.}
 \end{figure}
 
+\begin{figure}[!h]
+\fbox{\parbox{\textwidth}{\small
+<<3-code-seqpeak,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/3-seqpeak.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to perform sequential peak analysis. }
+\end{figure}
 
 \begin{figure}[!h]
 \centering
-<<arma-box, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
+<<arma-seqpeak, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+
+#par("mar"=c(5.1,4.1,7.1,4.1))   # increase margin space for extra axes
+boxplot(sim.sy,cex=.3,ylab="Storage",xlab="Yield")
+lines(1:length(y),s,col='red',lwd=2)
+#labs <- c((0:50)/10)
+#axis(3,at=seq(1,10,length.out=length(labs)),labels=labs)
+#mtext("Yield \\%", side=3,line=2)
+#axis(4,at=labs*mean(x.ts.s)*12,labels=labs)
+#mtext("\\% Mean annual runoff",side=4,line=2)
+#title("Storage Yield Plot")
+@
+\caption{$ARMA$ best model sequential peak analysis.}
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+<<arma-box, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
 
 n.pt <- 100
 sm.density(x.may)
@@ -317,11 +342,6 @@ sm.density(x.may,add=T,col='red',lwd=2)
 \end{figure}
 
 \clearpage
-\fbox{\parbox{\textwidth}{\small
-<<lib,echo=F,fig=F,external=F,results=tex,cache=F>>=
-	highlight('src/lib.R',renderer=renderer_latex(document=F))
-@
-}}
 
 \fbox{\parbox{\textwidth}{\small
 <<skew,echo=F,fig=F,external=F,results=tex,cache=F>>=

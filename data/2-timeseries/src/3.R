@@ -39,21 +39,6 @@ stats$var[,13] <- apply(ann,2,var)
 stats$skew[,13] <- apply(ann,2,skew)
 stats$lag1[,13] <- apply(ann,2,function(x) mylag(x,1,docor=TRUE))
 
-
-r1 <- 0.7*mean(flowcfd)
-spres <- seqpeak.r(flowcfd,r=r1)
-plot(sp$k,type="l",xlab="Months",ylab="Storage Deficit")
-
-
-#  Determining storage for release 50% of mean flow
-r2=0.5*mean(flowcfd)
-spres2=seqpeak.r(flowcfd,r=r2) 
-lines(spres2$k,col=2)
-legend(0,280000,c("0.7","0.5"),col=c(1,2),lty=1)
-title("Storage deficit time series for different levels of demand")
-#Sequent peak analysis
-peak <- seqpeak.r(sim[])
-
 #setup for plotting
 stats <- lapply(stats,as.data.frame)
 mon <- c('Jan','Feb','Mar','Apr','May','Jun',
@@ -62,4 +47,6 @@ for(i in 1:length(stats)) names(stats[[i]]) <- mon
 
 x.ts.ann <- ts.annual.mean(x.ts)
 
-save(stats,x.ts.ann,sim,n.sim,n.years,file='output/3.Rdata')
+source('3-seqpeak.R')
+
+save(stats,x.ts.ann,sim,n.sim,n.years,y,s,x.ts.s,sim.sy,file='output/3.Rdata')
