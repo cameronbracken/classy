@@ -17,7 +17,7 @@ if(!file.exists('Sweave.sty'))
 \usepackage{tikz}
 
 %%------------page layout
-\usepackage[left=2cm,top=3cm,right=2cm,bottom=2cm]{geometry} %changes margins
+\usepackage[left=2cm,top=2cm,right=2cm,bottom=2cm]{geometry} %changes margins
 \usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
 \usepackage{multicol}
 
@@ -66,6 +66,12 @@ if(!file.exists('Sweave.sty'))
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
 \pgfrealjobname{timeseries} 
 
+<<hi,echo=F,results=tex,fig=F,external=F>>=
+	suppressPackageStartupMessages(require(highlight))
+	cat(styler('default', 'sty', styler_assistant_latex),sep='\n')
+	cat(boxes_latex(),sep='\n')
+@
+
 \begin{document}
 
 	%Sweave options
@@ -96,7 +102,6 @@ if(!file.exists('Sweave.sty'))
 	options('tikzDocumentDeclaration' = '\\documentclass[11pt]{article}')
 	nbcol <- 50
 	color <- topo.colors(nbcol)
-
 @
 
 <<source,fig=F,echo=F,results=hide,cache=F>>=
@@ -106,10 +111,20 @@ if(!file.exists('Sweave.sty'))
 		source('lib.R')
 		if(!file.exists('output')) 	dir.create('output')
 		
-		if(file.exists('output/1.Rdata')){
-			load('output/1.Rdata')
+		if(file.exists('output/lf.Rdata')){
+			load('output/lf.Rdata')
 		}else{
-			source('1.R')
+			source('readData.R')
+		}
+		if(file.exists('output/2.Rdata')){
+			load('output/2.Rdata')
+		}else{
+			source('2.R')
+		}
+		if(file.exists('output/3.Rdata')){
+			load('output/3.Rdata')
+		}else{
+			source('3.R')
 		}
 	setwd('../')
 @
@@ -118,75 +133,98 @@ if(!file.exists('Sweave.sty'))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 1}
 
-\subsection*{(i) and (ii)}
-code
+\subsection*{Problem 1 (i) and (ii)}
+The code to read in the Lees Ferry data is shown in \autoref{reads}. The function to calulate the $ACF$ and $PACF$ is shown in \autoref{acf} and \autoref{acf} respectively. \autoref{myacf} and \autoref{mypacf} show the $ACF$ and $PACF$ calulated from first principals. 
 
-\VerbatimInput[frame=single]{src/my.acf.R}
-\VerbatimInput[frame=single]{src/my.pacf.R}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/readData.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Reading the data and calculating the statistics.}\label{reads}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<myacf-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/my.acf.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Function to calculate the $ACF$}\label{acf}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<mypacf-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/my.pacf.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Function to calculate the $PACF$}\label{pacf}
+\end{figure}
 %,label={Fitting Function},labelposition=all
-
 
 \begin{figure}[!ht]
 \begin{minipage}{.5\textwidth}
 \centering
-<<myacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
-
-my.acf(x.ts)
-
+<<myacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5>>=
+	my.acf(x.ts)
 @
-\caption{acf}\label{deg1}
+\caption{acf}\label{myacf}
 \end{minipage}
 \begin{minipage}{.5\textwidth}
 \centering
-<<mypacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5,keep.source=T>>=
-
-my.pacf(x.ts)
-
+<<mypacf, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5>>=
+	my.pacf(x.ts)
 @
-\caption{pacf}\label{linear}
+\caption{pacf}\label{mypacf}
 \end{minipage}
 \end{figure}
 
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{(iii)}
+\subsection*{Problem 1 (iii) and (vi)}
 
-code
+The function \texttt{solve.yw()} was created to solve for the $AR$ parameters of any order. The results for the $AR$ fitting are shown in \autoref{ar-par}.
 
-\VerbatimInput[frame=single]{src/my.pacf.R}
+\fbox{\parbox{\textwidth}{\small
+<<myacf-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/solve.yw.R',renderer=renderer_latex(document=F))
+@
+}}
 
-<<yule-walker, echo=T, fig=F>>=
+<<yule-walker, echo=T, fig=F, keep.source=T>>=
 
-ar1 <- solve.yw(x.ts,1)
-ar2 <- solve.yw(x.ts,2)
-ar3 <- solve.yw(x.ts,3)
-
-print(ar1)
-print(ar2)
-print(ar3)
+ar1 <- lapply(solve.yw(x.ts,1),round,3)
+ar2 <- lapply(solve.yw(x.ts,2),round,3)
+ar3 <- lapply(solve.yw(x.ts,3),round,3)
 
 ar_ols <- cbind(mylag(x.ts,1),mylag(x.ts,2),mylag(x.ts,3))
-fit <- lm(x.ts~ar_ols)
-print(fit$coefficients[2:4])
-print(var(residuals(fit)))
+olsfit <- lm(x.ts~ar_ols)
+olsfit$coefficients <- round(olsfit$coefficients,3)
 
 @
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{(vi)}
-<<ols, echo=T, fig=F>>=
+\begin{table}[!htdp]
+\begin{center}
+\caption{AR parameters for model orders 1,2 and 3.}\label{ar-par}
+\begin{tabular}{ccccccc} 
+\toprule
+Model & Method & $\phi_1$ & $\phi_2$ & $\phi_3$ & $\sigma^2$ & $AIC$ \\\midrule
+AR(1) & Yule-Walker & \Sexpr{ar1$phi[1]} & -- & -- & \Sexpr{ar1$sigsq} & \Sexpr{ar1$aic} \\
+AR(2) & Yule-Walker & \Sexpr{ar2$phi[1]} & \Sexpr{ar2$phi[2]} & -- & \Sexpr{ar2$sigsq} & \Sexpr{ar2$aic} \\
+AR(3) & Yule-Walker & \Sexpr{ar3$phi[1]} & \Sexpr{ar3$phi[2]} & \Sexpr{ar3$phi[3]} & \Sexpr{ar3$sigsq} & \Sexpr{ar3$aic} \\
+AR(1) & Least Squares & \Sexpr{olsfit$coefficients[2]} & \Sexpr{olsfit$coefficients[3]} & \Sexpr{olsfit$coefficients[4]} & \Sexpr{round(sd(residuals(olsfit)),3)} & \Sexpr{round(AIC(olsfit),3)} \\
+\bottomrule
+\end{tabular} 
+\end{center}
+\end{table}
 
-ar_ols <- cbind(mylag(x.ts,1),mylag(x.ts,2),mylag(x.ts,3))
-fit <- lm(x.ts~ar_ols)
-print(fit$coefficients[2:4])
-print(sd(residuals(fit)))
-
-@
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{(v)}
+\subsection*{Problem 1 (v)}
 Of the three models, the AIC value for the order 3 model is the lowest so that model is the best. 
 
 
@@ -194,101 +232,132 @@ Of the three models, the AIC value for the order 3 model is the lowest so that m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 
-<<arma, echo=T, fig=F, cache=T,keep.source=T>>=
+\begin{figure}[!h]
+\fbox{\parbox{\textwidth}{\small
+<<2-code,fig=F,results=tex,cache=F>>=
+	highlight('src/2.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{}\label{2-code}
+\end{figure}
 
-arma.mod <- list()
-for(i in 0:4)
-	for(j in 0:4)
-		arma.mod[[paste('arma',i,j,sep='')]] <- arima(x.ts,c(i,0,j))
+It turned out that the same model ($ARMA(3,1)$) was selected as the best using both $AIC$ and $GCV$.  Looking at the plots though, all the models after $ARMA(1,1)$ are virtually the same. 
 
-aics <- sapply(arma.mod,AIC)
+\begin{figure}[!h]
+\centering
+<<arma-best, echo=T, fig=T,tikz=T,external=T,height=3.5>>=
+
+	layout(rbind(c(1,2)))
+	print(best.arma.aic)
+	print(best.arma.gcv)
+	
+	plot(gcvs,xlab='',pch=20)
+	text(1:length(gcvs),gcvs,names(gcvs),pos=3,offset=2,srt=90)
+ 	plot(aics,xlab='',pch=20)
+	text(1:length(aics),aics,names(aics),pos=3,offset=2,srt=90)
+	
 
 @
-
-<<arma-aics, echo=T, fig=F>>=
-
-	best.arma <- names(which(aics == min(aics)))
-	print(best.arma)
-
-@
+\caption{$AIC$ and $GCV$ as a function of $p$ and $q$. }
+\end{figure}
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 3}
-<<arma-sim, echo=T, fig=F, cache=T, keep.source=T>>=
-
-n.sim <- 100
-n.years <- 95
-sim <- array(NA,c(n.years,12,n.sim))
-b <- arma.mod[[best.arma]]
-p <- b$arma[1]
-q <- b$arma[2]
-for(i in 1:n.sim)
-	sim[,,i] <- matrix(arima.sim(n=n.years*12, 
-		list(ar=b$coef[1:p],
-			ma=b$coef[(p+1):(p+q)]), 
-			sd=sqrt(b$sigma2)),ncol=12,byrow=T)
-		
-			
-#Get the statistics
-stats <- list()
-stats$mean <- stats$var <- stats$skew <- stats$lag1 <- matrix(NA,n.sim,13)
-ann <- matrix(NA,n.years,n.sim)
-for(i in 1:12){
-	this.mon <- sim[,i,] * x.sd[i] + x.mean[i]
-	stats$mean[,i] <- apply(this.mon,2,mean)
-	stats$var[,i] <- apply(this.mon,2,var)
-	stats$skew[,i] <- apply(this.mon,2,skew)
-	stats$lag1[,i] <- apply(this.mon,2,function(x) mylag(x,1,docor=TRUE))
-}
-for(i in 1:n.years)
-	ann[i,] <- apply(sim[i,,],2,mean)
-
-stats$mean[,13] <- apply(ann,2,mean)
-stats$var[,13] <- apply(ann,2,var)
-stats$skew[,13] <- apply(ann,2,skew)
-stats$lag1[,13] <- apply(ann,2,function(x) mylag(x,1,docor=TRUE))
-
+\begin{figure}[!h]
+\fbox{\parbox{\textwidth}{\small
+<<3-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/3.R',renderer=renderer_latex(document=F))
 @
+}}
+\caption{Code to simulte from the best $ARMA$ model. }
+\end{figure}
 
-<<box-stats, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
+\begin{figure}[!h]
+\centering
+<<box-stats, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
 
 layout(rbind(c(1,2),c(3,4)))
-x.ts.ann <- ts.annual.mean(x.ts)
 
-boxplot(stats$mean)
-lines(x.mean,col='red')
-points(13,mean(x.ts.ann),col='red')
+boxplot(stats$mean,main='Mean')
+	lines(x.mean,col='red')
+	points(13,mean(x.ts.ann),col='red')
 
-boxplot(sqrt(stats$var))
-lines(x.sd,col='red')
-points(13,sd(x.ts.ann),col='red')
+boxplot(sqrt(stats$var),main='Standard Deviation')
+	lines(x.sd,col='red')
+	points(13,sd(x.ts.ann),col='red')
 
-boxplot(stats$mean)
-lines(x.mean,col='red')
-points(13,mean(x.ts.ann),col='red')
+boxplot(stats$lag1,main='Lag1 Correlation')
+	lines(x.lag1,col='red')
+	points(13,mylag(x.ts.ann,1,docor=TRUE),col='red')
 
-boxplot(stats$mean)
-lines(x.mean,col='red')
-points(13,mean(x.ts.ann),col='red')
-#
+boxplot(stats$skew,main='Skew',ylim=range(range(stats$skew),range(x.skew)))
+	lines(x.skew,col='red')
+	points(13,skew(x.ts.ann),col='red')
 @
+\caption{$ARMA$ statistics. The furthest box on the right is the annual statistic.}
+\end{figure}
 
 
+\begin{figure}[!h]
+\centering
 <<arma-box, echo=T, fig=T, tikz=T, cache=T, width=3.5, height=3.5, keep.source=T>>=
 
-	n.pt <- 100
-	sm.density(x.may)
-	pt <- seq(min(sim[,5,]),max(sim[,5,]),length.out=n.pt)
-	boxpt <- matrix(NA,n.pt,n.sim)
-	for(i in 1:n.sim)
-		boxpt[i,] <- sm.density(sim[,5,i],add=T,
-			col='gray',lwd=.5,eval.points=pt)$estimate
-	sm.density(x.may,add=T,col='red',lwd=2)
+n.pt <- 100
+sm.density(x.may)
+pt <- seq(min(sim[,5,]),max(sim[,5,]),length.out=n.pt)
+boxpt <- matrix(NA,n.pt,n.sim)
+for(i in 1:n.sim)
+	boxpt[i,] <- sm.density(sim[,5,i],add=T,
+		col='gray',lwd=.5,eval.points=pt)$estimate
+sm.density(x.may,add=T,col='red',lwd=2)
 @
+\caption{May pdf.}
+\end{figure}
 
+\clearpage
+\fbox{\parbox{\textwidth}{\small
+<<lib,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/lib.R',renderer=renderer_latex(document=F))
+@
+}}
 
+\fbox{\parbox{\textwidth}{\small
+<<skew,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/skew.R',renderer=renderer_latex(document=F))
+@
+}}
+
+\fbox{\parbox{\textwidth}{\small
+<<seqpeak-f,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/seqpeak.R',renderer=renderer_latex(document=F))
+@
+}}
+
+\fbox{\parbox{\textwidth}{\small
+<<mylag,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/mylag.R',renderer=renderer_latex(document=F))
+@
+}}
+
+\fbox{\parbox{\textwidth}{\small
+<<gcv-arma,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/gcv.arma.R',renderer=renderer_latex(document=F))
+@
+}}
+
+\fbox{\parbox{\textwidth}{\small
+<<ts-annual-mean,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/ts.annual.mean.R',renderer=renderer_latex(document=F))
+@
+}}
+
+\fbox{\parbox{\textwidth}{\small
+<<wapply,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/wapply.R',renderer=renderer_latex(document=F))
+@
+}}
 
 \end{document}
 

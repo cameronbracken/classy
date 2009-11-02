@@ -1,21 +1,20 @@
-solve.yw <- 
-function(x,p){
-	
+solve.yw <- function(x,p){
+		#autocorrelation 
 	r <- my.acf(x, lag.max = p, plot=FALSE)
 	M <- ac.mat(x,p)
-	
+		#get the AR parameters
 	phi <- solve(M) %*% cbind(r)
 	colnames(phi) <- ''
 	sigsq <- var(x)*(1-sum(r * phi))
-	aic <- length(x)*log(sigsq)+2*(p+1)
+	n <- length(x)
+		# Goodness of fit parameters
+	aic <- n*log(sigsq)+2*p
+	my.gcv <- n*sigsq/(n-(p+1))^2
 	
-	return(list(phi=phi,sigsq=sigsq,aic=aic))
-	
+	return(list(phi=phi,sigsq=sigsq,aic=aic,gcv=my.gcv))
 }
-
-ac.mat <- 
-function(x,p){
-	
+ac.mat <- function(x,p){
+		# Calculate the coefficient matrix for AR model
 	rho <- c(1,my.acf(x, lag.max = p - 1, plot=FALSE))
 	n <- p
 	M <- matrix(NA,n,n)
@@ -29,6 +28,5 @@ function(x,p){
 		}
 		M[i,] <- rho[v]
 	}
-	M
-	
+	return(M)
 }
