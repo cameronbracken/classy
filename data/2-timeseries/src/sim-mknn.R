@@ -1,5 +1,5 @@
-mknn <- function(x,nsims,nyears=nrow(x),plot=FALSE,
-					resample=c('resid','norm','none')){
+mknn <- function(x,nsims,nyears=nrow(x)){
+	
 		#fit locfit models for modified knn
 	models <- list()
 	for( i in 1:12 ){		
@@ -18,6 +18,14 @@ mknn <- function(x,nsims,nyears=nrow(x),plot=FALSE,
 		models[[i]]$res <- this.y - models[[i]]$pred
 	}
 
+	st <- mean(x[,1])
+	k <- round(sqrt(length(x[,1])))
+
+	w <- numeric(k)
+	for(i in 1:k)
+		w[i] <- (1/i)/(sum(1/(1:i)))
+	w <- cumsum(w/sum(w))
+
 	sim.mknn.v <- numeric(nsims*12*nyears)
 	for(i in 1:(nsims*12*nyears-1)){
 		
@@ -29,17 +37,11 @@ mknn <- function(x,nsims,nyears=nrow(x),plot=FALSE,
 		this.dist <- as.matrix(dist(c(val,x[,m])))[,1]
 		neighbors <- order(this.dist)[2:(k+1)] - 1
 		
-			#either resample the residuals or a normal random number
-		if(match.arg(resample) == 'resid'){
-			r <- runif(1)
-			this.neighbor <- which(order(c(r,w))==1)
-			this.res <- models[[m]]$res[neighbors][this.neighbor]
-		}else if(match.arg(resample) == 'norm'){
-			sd.res <- sd(models[[m]]$res[neighbors])
-			this.res <- rnorm(1,sd=sd.res)
-		}else{
-			this.res <- 0
-		}
+			#resample the residuals
+		r <- runif(1)
+		this.neighbor <- which(order(c(r,w))==1)
+		this.res <- models[[m]]$res[neighbors][this.neighbor]
+	
 		sim.mknn.v[i+1] <- this.pred + this.res
 	}
 	return(sim.mknn.v)

@@ -26,5 +26,4 @@ stats.mknn <- sim.stats(sim.mknn, sim.mknn.agg, nsims=nsims,nyears=nyears)
 sp.mknn <- seqpeak.multi(sim.mknn,x.ts.raw,nsims)
 
 	
-save(sim.mknn,sim.mknn.agg,nsims,stats.mknn,
-	nyears,sp.mknn,file='output/5.Rdata')
+save(sim.mknn,sim.mknn.agg,stats.mknn,sp.mknn,file='output/5.Rdata')

@@ -19,5 +19,4 @@ stats.seas <- sim.stats(sim.seas,sim.seas.agg,nsims=nsims)
 
 sp.seas <- seqpeak.multi(sim.seas,x.ts.raw,nsims)
 
-save(stats.seas,sim.seas,sim.seas.agg,nsims,
-	nyears,sp.seas,file='output/4.Rdata')
+save(stats.seas,sim.seas,sim.seas.agg,sp.seas,file='output/4.Rdata')

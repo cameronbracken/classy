@@ -33,4 +33,4 @@ x.ts.ann <- ts.annual.mean(x.ts.raw)
 
 sp <- seqpeak.multi(sim,x.ts.raw,nsims)
 
-save(stats,x.ts.ann,sim,nsims,nyears,sp,file='output/3.Rdata')
+save(stats,x.ts.ann,sim,sp,file='output/3.Rdata')
