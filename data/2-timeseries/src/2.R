@@ -1,5 +1,5 @@
 source('lib.R')
-if(file.exists('output/lf.Rdata')){load('output/lf.Rdata')}else{source('readData.R')}
+if(file.exists('output/1.Rdata')) load('output/1.Rdata') else source('1.R')
 
 arma.mod <- list()
 for(i in 0:3)

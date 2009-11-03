@@ -111,10 +111,10 @@ if(!file.exists('Sweave.sty'))
 		source('lib.R')
 		if(!file.exists('output')) 	dir.create('output')
 		
-		if(file.exists('output/lf.Rdata')){
-			load('output/lf.Rdata')
+		if(file.exists('output/1.Rdata')){
+			load('output/1.Rdata')
 		}else{
-			source('readData.R')
+			source('1.R')
 		}
 		if(file.exists('output/2.Rdata')){
 			load('output/2.Rdata')
@@ -125,6 +125,16 @@ if(!file.exists('Sweave.sty'))
 			load('output/3.Rdata')
 		}else{
 			source('3.R')
+		}
+		if(file.exists('output/4.Rdata')){
+			load('output/4.Rdata')
+		}else{
+			source('4.R')
+		}
+		if(file.exists('output/5.Rdata')){
+			load('output/5.Rdata')
+		}else{
+			source('5.R')
 		}
 	setwd('../')
 @
@@ -140,7 +150,7 @@ The code to read in the Lees Ferry data is shown in \autoref{reads}. The functio
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
-	highlight('src/readData.R',renderer=renderer_latex(document=F))
+	highlight('src/1.R',renderer=renderer_latex(document=F))
 @
 }}
 \caption{Reading the data and calculating the statistics.}\label{reads}
@@ -232,7 +242,7 @@ Of the three models, the AIC value for the order 3 model is the lowest so that m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<2-code,fig=F,results=tex,cache=F>>=
 	highlight('src/2.R',renderer=renderer_latex(document=F))
@@ -243,7 +253,7 @@ Of the three models, the AIC value for the order 3 model is the lowest so that m
 
 It turned out that the same model ($ARMA(3,1)$) was selected as the best using both $AIC$ and $GCV$.  Looking at the plots though, all the models after $ARMA(1,1)$ are virtually the same. 
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \centering
 <<arma-best, echo=T, fig=T,tikz=T,external=T,height=3.5>>=
 
@@ -265,7 +275,7 @@ It turned out that the same model ($ARMA(3,1)$) was selected as the best using b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 3}
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<3-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/3.R',renderer=renderer_latex(document=F))
@@ -274,7 +284,7 @@ It turned out that the same model ($ARMA(3,1)$) was selected as the best using b
 \caption{Code to simulte from the best $ARMA$ model. }
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \centering
 <<box-stats, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
 
@@ -284,7 +294,7 @@ boxplot(stats$mean,main='Mean')
 	lines(x.mean,col='red')
 	points(13,mean(x.ts.ann),col='red')
 
-boxplot(sqrt(stats$var),main='Standard Deviation')
+boxplot(stats$sd,main='Standard Deviation')
 	lines(x.sd,col='red')
 	points(13,sd(x.ts.ann),col='red')
 
@@ -292,29 +302,30 @@ boxplot(stats$lag1,main='Lag1 Correlation')
 	lines(x.lag1,col='red')
 	points(13,mylag(x.ts.ann,1,docor=TRUE),col='red')
 
-boxplot(stats$skew,main='Skew',ylim=range(range(stats$skew),range(x.skew)))
+boxplot(stats$skew,main='Skew',
+	ylim=range(range(stats$skew),range(x.skew)))
 	lines(x.skew,col='red')
 	points(13,skew(x.ts.ann),col='red')
 @
 \caption{$ARMA$ statistics. The furthest box on the right is the annual statistic.}
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
-<<3-code-seqpeak,echo=F,fig=F,external=F,results=tex,cache=F>>=
-	highlight('src/3-seqpeak.R',renderer=renderer_latex(document=F))
+<<code-seqpeak,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/seqpeak-multi.R',renderer=renderer_latex(document=F))
 @
 }}
-\caption{Code to perform sequential peak analysis. }
+\caption{Code to perform stochastic sequential peak analysis. Used in all subsequent problems. }
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \centering
-<<arma-seqpeak, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+<<seqpeak-arma, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
 
 #par("mar"=c(5.1,4.1,7.1,4.1))   # increase margin space for extra axes
-boxplot(sim.sy,cex=.3,ylab="Storage",xlab="Yield")
-lines(1:length(y),s,col='red',lwd=2)
+boxplot(sp$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
+lines(1:length(sp$y),sp$s,col='red',lwd=2)
 #labs <- c((0:50)/10)
 #axis(3,at=seq(1,10,length.out=length(labs)),labels=labs)
 #mtext("Yield \\%", side=3,line=2)
@@ -325,59 +336,257 @@ lines(1:length(y),s,col='red',lwd=2)
 \caption{$ARMA$ best model sequential peak analysis.}
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \centering
-<<arma-box, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
+<<may-pdf-arma, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
 
 n.pt <- 100
-sm.density(x.may)
-pt <- seq(min(sim[,5,]),max(sim[,5,]),length.out=n.pt)
-boxpt <- matrix(NA,n.pt,n.sim)
-for(i in 1:n.sim)
-	boxpt[i,] <- sm.density(sim[,5,i],add=T,
-		col='gray',lwd=.5,eval.points=pt)$estimate
+out <- sm.density(x.may)
+pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
+boxpt <- matrix(NA,nsims,n.pt)
+for(i in 1:nsims){
+	boxpt[i,] <- sm.density(sim[,5,i],
+		eval.points=pt,display='none')$estimate
+	lines(pt,boxpt[i,],col='gray',lwd=.5)
+}
 sm.density(x.may,add=T,col='red',lwd=2)
 @
 \caption{May pdf.}
 \end{figure}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 4}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<4-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/4.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to simulte from the best $ARMA$ model. }
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+<<box-stats-par, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
+
+layout(rbind(c(1,2),c(3,4)))
+
+boxplot(stats.seas$mean,main='Mean')
+	lines(x.mean,col='red')
+	points(13,mean(x.ts.ann),col='red')
+
+boxplot(stats.seas$sd,main='Standard Deviation')
+	lines(x.sd,col='red')
+	points(13,sd(x.ts.ann),col='red')
+
+boxplot(stats.seas$lag1,main='Lag1 Correlation')
+	lines(x.lag1,col='red')
+	points(13,mylag(x.ts.ann,1,docor=TRUE),col='red')
+
+boxplot(stats.seas$skew,main='Skew',
+	ylim=range(range(stats.seas$skew),range(x.skew)))
+	lines(x.skew,col='red')
+	points(13,skew(x.ts.ann),col='red')
+@
+\caption{$PAR$ statistics. The furthest box on the right is the annual statistic.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+<<seqpeak-par, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+
+boxplot(sp.seas$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
+lines(1:length(sp.seas$y),sp.seas$s,col='red',lwd=2)
+@
+\caption{$PAR$ best model sequential peak analysis.}
+\end{figure}
+
+%if(plot){
+%	plot(models[[m]]$lf,ylim=range(c(x[,mp1],sim.mknn.v[i+1])),xlim=range(c(x[,m],val)))
+%	points(x[,m],x[,mp1])
+%	points(x[,m][neighbors],models[[m]]$pred[neighbors],col=2)
+%	points(x[,m][neighbors],x[,mp1][neighbors],col=3,cex=2)
+%	points(val,sim.mknn.v[i+1],col=4,cex=2,lwd=2)
+%	abline(v=val)
+%	abline(v=min(x[,m][neighbors]),lty=2)
+%	abline(v=max(x[,m][neighbors]),lty=2)
+%	Sys.sleep(1)
+%}
+
+\begin{figure}[!ht]
+\centering
+<<may-pdf-par, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
+
+n.pt <- 100
+out <- sm.density(x.may)
+pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
+boxpt <- matrix(NA,nsims,n.pt)
+for(i in 1:nsims){
+	boxpt[i,] <- sm.density(sim.seas[,5,i],
+		eval.points=pt,display='none')$estimate
+	lines(pt,boxpt[i,],col='gray',lwd=.5)
+}
+sm.density(x.may,add=T,col='red',lwd=2)
+@
+\caption{May pdf.}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 5}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<5-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/5.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to simulte from the best $ARMA$ model. }
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<knn-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/sim-mknn.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to simulte from the Modified K-NN. The \texttt{best.par()} function to calculate the best alpha and degree is shown in the appendix.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+<<box-stats-mknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
+
+layout(rbind(c(1,2),c(3,4)))
+
+boxplot(stats.mknn$mean,main='Mean')
+	lines(x.mean,col='red')
+	points(13,mean(x.ts.ann),col='red')
+
+boxplot(stats.mknn$sd,main='Standard Deviation')
+	lines(x.sd,col='red')
+	points(13,sd(x.ts.ann),col='red')
+
+boxplot(stats.mknn$lag1,main='Lag1 Correlation')
+	lines(x.lag1,col='red')
+	points(13,mylag(x.ts.ann,1,docor=TRUE),col='red')
+
+boxplot(stats.mknn$skew,main='Skew',
+	ylim=range(range(stats.mknn$skew),range(x.skew)))
+	lines(x.skew,col='red')
+	points(13,skew(x.ts.ann),col='red')
+@
+\caption{Modified K-NN statistics. The furthest box on the right is the annual statistic.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+<<seqpeak-mknn, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+
+boxplot(sp.mknn$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
+lines(1:length(sp.mknn$y),sp.mknn$s,col='red',lwd=2)
+@
+\caption{Modified K-NN sequential peak analysis.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+<<may-pdf-mknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
+
+n.pt <- 100
+out <- sm.density(x.may)
+pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
+boxpt <- matrix(NA,nsims,n.pt)
+for(i in 1:nsims){
+	boxpt[i,] <- sm.density(sim.mknn[,5,i],
+		eval.points=pt,display='none')$estimate
+	lines(pt,boxpt[i,],col='gray',lwd=.5)
+}
+sm.density(x.may,add=T,col='red',lwd=2)
+@
+\caption{Modified K-NN May pdf.}
+\end{figure}
+
+
+
 \clearpage
 
+\section*{Appendix - Auxilary functions}
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<stats,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/stats.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Function to calulate simulation statistics.}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<best-par,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/best-par.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Function to calulate the best degree and $\alpha$ for a locfit model.}
+\end{figure}
+
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<skew,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/skew.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{Skew function.}
+\end{figure}
 
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<seqpeak-f,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/seqpeak.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{Single sequential peak calulation.}
+\end{figure}
 
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<mylag,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/mylag.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{Returns lagged version of timeseries or optionally the lag-n correlation.}
+\end{figure}
 
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<gcv-arma,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/gcv.arma.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{calculates the gcv of an $ARMA$ model.}
+\end{figure}
 
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<ts-annual-mean,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/ts.annual.mean.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{Returns the annual mean of a timeseries object.}
+\end{figure}
 
+\begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<wapply,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/wapply.R',renderer=renderer_latex(document=F))
 @
 }}
+\caption{Apply a funciton to successive windows of a time series.}
+\end{figure}
 
 \end{document}
 
