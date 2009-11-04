@@ -25,4 +25,4 @@ x.ts.raw <- ts(x.raw,start=c(1906,1),frequency=12)
 x.lag1 <- peacf(x.ts.raw,plot=FALSE,lag.max=1)$acf
 
 save(x,x.raw,x.ts,x.ts.raw,x.may,x.may.scale,
-	x.mean,x.sd,x.skew,x.lag1,file='output/1.Rdata')
+	x.mean,x.sd,x.skew,x.lag1,nyears,nsims,file='output/1.Rdata')

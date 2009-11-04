@@ -1,7 +1,6 @@
 ar.sim.seas <- function(model, peacf, n, n.start = NA){
 
     # simulate from a peariodic AR model 
-
     nobs <- length(model$residuals)
     p <- model$model.orders
      
@@ -30,7 +29,6 @@ ar.sim.seas <- function(model, peacf, n, n.start = NA){
     per <- ts(per, start = end, frequency = freq)
     len <- 10
     modvec <- rep(1:freq,len)
-
     
     for(t in 1:n){
         which.per <- modvec[((len-1)*freq + per[t] - p[per[t]]):((len-1)*freq - 1 + per[t])]
@@ -48,11 +46,8 @@ ar.sim.seas <- function(model, peacf, n, n.start = NA){
         pred[t] <- sum(these.phis * (lastp - m)) + x.means[per[t]] + e
                 
     }
-    
     pred <- pred[(n.start + 1):n]
     pred <- ts(pred, start = end, frequency = freq)
     
     return(pred)
-    
-    
 }

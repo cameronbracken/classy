@@ -66,6 +66,7 @@ if(!file.exists('Sweave.sty'))
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
 \pgfrealjobname{timeseries} 
 
+\usepackage{alltt}
 <<hi,echo=F,results=tex,fig=F,external=F>>=
 	suppressPackageStartupMessages(require(highlight))
 	cat(styler('default', 'sty', styler_assistant_latex),sep='\n')
@@ -258,16 +259,18 @@ It turned out that the same model ($ARMA(3,1)$) was selected as the best using b
 
 \begin{figure}[!ht]
 \centering
-<<arma-best, echo=T, fig=T,tikz=T,external=T,height=3.5>>=
+<<arma-best, echo=T, fig=T,tikz=T,external=T,height=3.5,width=7.5>>=
 
 	layout(rbind(c(1,2)))
 	#print(best.arma.aic)
 	#print(best.arma.gcv)
 	
-	plot(gcvs,xlab='',pch=20)
-	text(1:length(gcvs),gcvs,names(gcvs),pos=3,offset=2,srt=90)
- 	plot(aics,xlab='',pch=20)
-	text(1:length(aics),aics,names(aics),pos=3,offset=2,srt=90)
+	s <- seq(1,length(gcvs),length.out=length(gcvs))
+	smallnames <- function(v)paste('{\\small',names(v),'}')
+	plot(s,gcvs,xlab='',ylab='GCV',pch=20,xaxt='n')
+	text(s,gcvs,smallnames(gcvs),pos=3,offset=2,srt=90)
+ 	plot(s,aics,xlab='',ylab='AIC',pch=20,xaxt='n')
+	text(s,aics,smallnames(aics),pos=3,offset=2,srt=90)
 	
 
 @
@@ -278,6 +281,9 @@ It turned out that the same model ($ARMA(3,1)$) was selected as the best using b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 3}
+
+The code to simulate from the best arma model is shown below.   The monthly mean and standatd deviation were of course captured.  The monthly lag 1 correlation and the skew were not at all captured consistantly because this model is not designed to capture these statistics.  The lag 1 correlation is a particularly good example of the deficiency of an $ARMA$ model, as the simulated values are simply constant, not reflecting the variability in the historical data.  The sequential peak analysis for this model did not seem terribly bad. 
+
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<3-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
@@ -362,13 +368,25 @@ sm.density(x.may,add=T,col='red',lwd=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 4}
 
+I used the pear package in R to calculate the $PAR(1)$ coefficients.  The function to do simulations is also shown below.  This model was able to effectively capture the seasonal mean, standard deviation, and lag 1 correlation (though the annual lag 1 was not captured).  The skew was not captured (as seen in the may pdf) because I did not normalize each month. It is easy to see why seasonal parametric models quickly become cumbersome, as even a lag 1 seasonal model is unweildy. 
+
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<4-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/4.R',renderer=renderer_latex(document=F))
 @
 }}
-\caption{Code to simulte from the best $ARMA$ model. }
+\caption{Code to fit and simulate from the $PAR(1)$ model. }
+\end{figure}
+
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<par-sim-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/ar-sim-seas.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to simulate from a $PAR$ model.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -399,7 +417,7 @@ boxplot(stats.seas$skew,main='Skew',
 
 \begin{figure}[!ht]
 \centering
-<<seqpeak-par, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+<<seqpeak-par, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5, keep.source=F>>=
 
 boxplot(sp.seas$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
 lines(1:length(sp.seas$y),sp.seas$s,col='red',lwd=2)
@@ -421,12 +439,7 @@ lines(1:length(sp.seas$y),sp.seas$s,col='red',lwd=2)
 
 \begin{figure}[!ht]
 \centering
-<<may-pdf-par, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
-
-n.pt <- 100
-out <- sm.density(x.may)
-pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
-boxpt <- matrix(NA,nsims,n.pt)
+<<may-pdf-par, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.seas[,5,i],
 		eval.points=pt,display='none')$estimate
@@ -441,6 +454,8 @@ sm.density(x.may,add=T,col='red',lwd=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 5}
+
+For this problem I implemented the modifed K-NN method.  The code is show below to as well as the function to generate simulaitons.  This method was able to effectivel capture monthly lag 1 correlation, skew, and the bimodality of the PDF.  Only annual lag 1 correlation and skew were not captured well. Surprisingly, the modified K-NN preformed worse than the $PAR$ at the high end of the sequent peak analysis, though the difference may not be significant. 
 
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
@@ -488,8 +503,7 @@ boxplot(stats.mknn$skew,main='Skew',
 
 \begin{figure}[!ht]
 \centering
-<<seqpeak-mknn, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
-
+<<seqpeak-mknn, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5, keep.source=F>>=
 boxplot(sp.mknn$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
 lines(1:length(sp.mknn$y),sp.mknn$s,col='red',lwd=2)
 @
@@ -498,12 +512,7 @@ lines(1:length(sp.mknn$y),sp.mknn$s,col='red',lwd=2)
 
 \begin{figure}[!ht]
 \centering
-<<may-pdf-mknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
-
-n.pt <- 100
-out <- sm.density(x.may)
-pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
-boxpt <- matrix(NA,nsims,n.pt)
+<<may-pdf-mknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.mknn[,5,i],
 		eval.points=pt,display='none')$estimate
@@ -518,6 +527,8 @@ sm.density(x.may,add=T,col='red',lwd=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 6}
+
+The code which performas the interannual Modified K-NN is shown below as well as the function that returns the simulations. I believe there may be an error in the implemenation because I saw a degraded ability to capture monthly statistics. Especially skew and lag 1 correlation ware captured less well than the Modified K-NN.  The May pdf was also not captured as well.  On the other hand, the sequent peak analysis did show an improvement over the regular modified K-NN. This indicates that possibly the simulations are having the desired effect but simply at the cost of other stastics. 
 
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
@@ -565,7 +576,7 @@ boxplot(stats.imknn$skew,main='Skew',
 
 \begin{figure}[!ht]
 \centering
-<<seqpeak-imknn, echo=T, fig=T, tikz=T, cache=T,width=4,height=4, keep.source=F>>=
+<<seqpeak-imknn, echo=T, fig=T, tikz=T, cache=T,width=3.5,height=3.5, keep.source=F>>=
 
 boxplot(sp.imknn$sim.sy,cex=.3,ylab="Storage",xlab="Yield")
 lines(1:length(sp.imknn$y),sp.imknn$s,col='red',lwd=2)
@@ -575,12 +586,7 @@ lines(1:length(sp.imknn$y),sp.imknn$s,col='red',lwd=2)
 
 \begin{figure}[!ht]
 \centering
-<<may-pdf-imknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T>>=
-
-n.pt <- 100
-out <- sm.density(x.may)
-pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
-boxpt <- matrix(NA,nsims,n.pt)
+<<may-pdf-imknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.imknn[,5,i],
 		eval.points=pt,display='none')$estimate
@@ -588,9 +594,41 @@ for(i in 1:nsims){
 }
 sm.density(x.may,add=T,col='red',lwd=2)
 @
-\caption{Interannual Modified K-NN May pdf.}
+\caption{Interannual Modified K-NN May pdf. I believe there may be an error in my implementation since adding the interannual information should not have degraded the models ability to represent the monthly pdf.}
 \end{figure}
 
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 7}
+
+The code to calculate the best lag based on GCV and MI are shown below. Based on the calcualtions, the best lag is 1 after all, with a best K of 38.
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<7-code,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/7.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code to calculate best lag and K.}
+\end{figure}
+
+% latex table generated in R 2.9.2 by xtable 1.5-5 package
+% Tue Nov  3 23:01:44 2009
+\begin{table}[ht]
+\begin{center}
+\caption{GCV, K and MI for each lag up to 4. Lag 1 appears to be the best with both GCV and MI criteria, corresponding to a K of 38.}
+\begin{tabular}{rrrrr}
+  \toprule
+Lag & 1 & 2 & 3 & 4 \\ 
+  \midrule
+GCV & 172051.29 & 178349.56 & 175870.69 & 198287.50 \\  
+MI & 0.15 & 0.30 & 0.22 & 0.13 \\ 
+K & 38.00 & 85.50 & 71.25 & 95.00 \\
+   \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \clearpage
 
