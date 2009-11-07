@@ -1,0 +1,73 @@
+swe=matrix(scan("March1SWE-1949-99.txt"),ncol=31, byrow=T)
+swe=scale(swe)
+
+flows=matrix(scan("AMJJFLOW-49-99.txt"),ncol=6,byrow=T)
+flows=scale(flows)
+
+zswe=prcomp(swe)
+(zswe$sd^2) / sum(zswe$sd^2)
+
+zflows=prcomp(flows)
+(zflows$sd^2) / sum(zflows$sd^2)
+flowpcs = zflows$x    #this is a 6 column matrix - first col. is first PC etc.
+floweofs = zflows$u   #6 X 6 matrix - first column is first EOF etc.
+
+------------ PCA from eigen decomposition -------
+sigmaxx=var(flows)
+zz=svd(sigmaxx)
+floweofs = zz$u
+flowpcs = t(t(zz$u) %*% t(flows))
+#flowpcs from here will be exactly the same as those from above
+#using the command prcomp
+
+-----  SVD ----
+C=var(swe,flows)
+zz=svd(C)
+
+#f1 and g1 are the matrix of time coefficients just like the
+#PCS
+f1=swe %*% zz$u
+g1=flows %*% zz$v
+
+#homogeneous correlation pattern. First time
+#coefficient of swe is correlated with the flows data and viceversa
+
+corrpatf1=cor(f1[,1],flows)  
+
+corrpats1=cor(g1[,1],swe)
+
+
+---------- Rotation ------------------
+#Let us say we keep the first 'K' modes for rotation..
+
+P1=zflows$rotation[,1:K]
+flowsred=P1 %*% t(zflows$x[,1:K])
+flowsred=t(flowsred)
+
+
+zrot=varimax(P1, normalize=FALSE)
+qs=P1 %*% zrot$rotmat
+betas=solve(zrot$rotmat) %*% t(zflows$x[,1:K])
+flowsred1=qs %*% betas
+flowsred1=t(flowsred1)
+
+z1=prcomp(flowsred)
+flowsred2=z1$rotation[,1:K] %*% t(z1$x[,1:K])
+flowsred2=t(flowsred2)
+
+#flowsred1 obtained from varimax rotation command and
+#flowsred2 obtained from doing a PCA on the reduced matrix
+#will be the same..
+
+
+--------------------------------------------
+CCA
+zz=cancor(x,y)
+x1=t(zz$xcoef) %*% t(x)
+cor(x1) = I
+
+x2=t(zz$ycoef) %*% t(y)
+cor(x2)=I
+
+
+

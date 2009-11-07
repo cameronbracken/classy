@@ -80,9 +80,9 @@ if(!file.exists('Sweave.sty'))
 \thispagestyle{empty} 
 
 \begin{center}
-	\textbf{\Large Local Polynomial Regression}
+	\textbf{\Large Homework \#2: Time Series Analysis}
  	{\bf\\ Cameron Bracken \\}
-  	CVEN6833 September, 2009
+  	CVEN6833 Fall, 2009
 \end{center}
 
 <<setup,fig=F,echo=F,results=hide,cache=F>>=
