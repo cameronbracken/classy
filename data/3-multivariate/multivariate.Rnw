@@ -116,7 +116,7 @@ if(!file.exists('Sweave.sty'))
 		source('lib.R')
 		if(!file.exists('output')) 	dir.create('output')
 		
-		for(i in 1:1)
+		for(i in 1:2)
 			if(file.exists(paste('output/',i,'.Rdata',sep=''))){
 				load(paste('output/',i,'.Rdata',sep=''))
 			}else{
@@ -151,7 +151,7 @@ plot(pac$eigf[1:12], type="b", xlab="Modes",
 
 for(i in 1:3){
 	image.plot(interp(lon.pac-360,lat.pac,pac$eigv[,i]),
-		main=sprintf("Eigen %d",i),legend.mar=6.5)
+		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
 	map('world',add=TRUE)
 }
 
@@ -166,13 +166,14 @@ layout(cbind(c(1,2,3)))
 
 for(i in 1:3){
 	plot(ts(pac$pc[,i],start=1925,frequency=1),
-		main=sprintf("Eig %d",i),ylab='')
+		main=sprintf("PC %d",i),ylab='')
 }
 
 @
 \caption{Pacific}\label{pac}
 \end{figure}
 
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Problem 1 (ii)}
@@ -185,7 +186,7 @@ plot(atl$eigf[1:12], type="b", xlab="Modes",
 
 for(i in 1:3){
 	image.plot(interp(lon.atl-360,lat.atl,atl$eigv[,i]),
-		main=sprintf("PC%d",i),legend.mar=6.5)
+		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
 	map('world',add=TRUE)
 }
 
@@ -200,14 +201,14 @@ layout(cbind(c(1,2,3)))
 
 for(i in 1:3){
 	plot(ts(atl$pc[,i],start=1925,frequency=1),
-		main=sprintf("Eig %d",i),ylab='')
+		main=sprintf("PC %d",i),ylab='')
 }
 
 @
 \caption{Pacific}\label{pac}
 \end{figure}
 
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Problem 1 (iii)}
@@ -220,7 +221,7 @@ plot(usa$eigf[1:12], type="b", xlab="Modes",
 
 for(i in 1:3){
 	image.plot(interp(lon.usa-360,lat.usa,usa$eigv[,i]),
-		main=sprintf("PC%d",i),legend.mar=6.5)
+		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
 	map('world',add=TRUE)
 }
 
@@ -242,8 +243,21 @@ for(i in 1:3){
 \end{figure}
 
 \clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 
+\begin{figure}[!ht]
+<<pc-cor, echo=T, fig=T, tikz=T, cache=T,width=7,height=3.5,keep.source=T>>=
+layout(rbind(c(1,2)))
+plot(pac$pc[,1],usa$pc[,1],xlab='sst',ylab='pdsi')
+lines(lfpc1,xlab='sst',ylab='pdsi')
+plot(pac$pc[,2],usa$pc[,2],xlab='sst',ylab='pdsi')
+lines(lfpc2,xlab='sst',ylab='pdsi')
+
+@
+\caption{States PC}\label{pdsi-pc}
+\end{figure}
 
 
 \end{document}
