@@ -62,7 +62,7 @@ if(!file.exists('Sweave.sty'))
 \fancyhead[LE,RO]{\thepage}   %page numbers
 
 \fancyhead[CE]{\small CVEN6833 FALL 2009}
-\fancyhead[CO]{\small MULTIVARIATE ANALYSIS}
+\fancyhead[CO]{\small HOMEWORK \#3}
 
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
 \pgfrealjobname{multivariate} 
@@ -81,7 +81,7 @@ if(!file.exists('Sweave.sty'))
 \thispagestyle{empty} 
 
 \begin{center}
-	\textbf{\Large Homework \#3: Mulivariate Analysis}
+	\textbf{\Large Homework \#3}
  	{\bf\\ Cameron Bracken \\}
   	CVEN6833 Fall, 2009
 \end{center}
@@ -141,7 +141,7 @@ if(!file.exists('Sweave.sty'))
 
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
-<<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
+<<my-pca,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/my-pca.R',renderer=renderer_latex(document=F))
 @
 }}
@@ -503,7 +503,7 @@ for(i in 1:6){
 Below is the code that does the Markov KNN simulation. 
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
-<<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
+<<6,echo=F,fig=F,external=F,results=tex,cache=F>>=
 	highlight('src/6.R',renderer=renderer_latex(document=F))
 @
 }}
