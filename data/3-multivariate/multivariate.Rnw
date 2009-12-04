@@ -14,6 +14,7 @@ if(!file.exists('Sweave.sty'))
 \usepackage[noae,nogin]{Sweave}
 
 %%------------PGF/TIKZ
+\usepackage{atbegshi}
 \usepackage{tikz}
 
 %%------------page layout
@@ -116,7 +117,7 @@ if(!file.exists('Sweave.sty'))
 		source('lib.R')
 		if(!file.exists('output')) 	dir.create('output')
 		
-		for(i in 1:2)
+		for(i in 1:6)
 			if(file.exists(paste('output/',i,'.Rdata',sep=''))){
 				load(paste('output/',i,'.Rdata',sep=''))
 			}else{
@@ -135,7 +136,16 @@ if(!file.exists('Sweave.sty'))
 	highlight('src/1.R',renderer=renderer_latex(document=F))
 @
 }}
-\caption{Reading the data and calculating the statistics.}\label{reads}
+\caption{Reading the data and calculating the statistics.}\label{1}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/my-pca.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{PCA function.}\label{1}
 \end{figure}
 
 \clearpage
@@ -150,13 +160,13 @@ plot(pac$eigf[1:12], type="b", xlab="Modes",
 	ylab="Frac. Var. explained",main="Eigen Variance Spectrum")
 
 for(i in 1:3){
-	image.plot(interp(lon.pac-360,lat.pac,pac$eigv[,i]),
-		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
-	map('world',add=TRUE)
+	surf <- Tps(cbind(lon.pac-360,lat.pac),pac$eigv[,i])
+	surface(surf,xlab="Longitude", ylab="Latitude",main=sprintf("Eigen Vector %d",i))
+	map('world',add=TRUE,fill=TRUE)
 }
 
 @
-\caption{Pacific}\label{pac}
+\caption{Pacific SST}\label{pac}
 \end{figure}
 
 
@@ -170,7 +180,7 @@ for(i in 1:3){
 }
 
 @
-\caption{Pacific}\label{pac}
+\caption{PC's of Pacific SST}\label{pac-pc}
 \end{figure}
 
 \clearpage
@@ -185,13 +195,13 @@ plot(atl$eigf[1:12], type="b", xlab="Modes",
 	ylab="Frac. Var. explained",main="Eigen Variance Spectrum")
 
 for(i in 1:3){
-	image.plot(interp(lon.atl-360,lat.atl,atl$eigv[,i]),
-		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
-	map('world',add=TRUE)
+	surf <- Tps(cbind(lon.atl-360,lat.atl),atl$eigv[,i])
+	surface(surf,xlab="Longitude", ylab="Latitude",main=sprintf("Eigen Vector %d",i))
+	map('world',add=TRUE,fill=T)
 }
 
 @
-\caption{Atlantic}\label{atl}
+\caption{Atlantic SST}\label{atl}
 \end{figure}
 
 
@@ -205,7 +215,7 @@ for(i in 1:3){
 }
 
 @
-\caption{Pacific}\label{pac}
+\caption{PC's of Atlantic SST}\label{atl-pc}
 \end{figure}
 
 \clearpage
@@ -220,13 +230,13 @@ plot(usa$eigf[1:12], type="b", xlab="Modes",
 	ylab="Frac. Var. explained",main="Eigen Variance Spectrum")
 
 for(i in 1:3){
-	image.plot(interp(lon.usa-360,lat.usa,usa$eigv[,i]),
-		main=sprintf("Eigen Vector %d",i),legend.mar=6.5)
+	surf <- Tps(cbind(lon.usa-360,lat.usa),usa$eigv[,i])
+	surface(surf,xlab="Longitude", ylab="Latitude",main=sprintf("Eigen Vector %d",i))
 	map('world',add=TRUE)
 }
 
 @
-\caption{States}\label{usa}
+\caption{PDSI over the United States}\label{usa}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -239,7 +249,7 @@ for(i in 1:3){
 }
 
 @
-\caption{States PC}\label{pdsi-pc}
+\caption{PC's of US PDSI}\label{pdsi-pc}
 \end{figure}
 
 \clearpage
@@ -247,18 +257,298 @@ for(i in 1:3){
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 
-\begin{figure}[!ht]
-<<pc-cor, echo=T, fig=T, tikz=T, cache=T,width=7,height=3.5,keep.source=T>>=
-layout(rbind(c(1,2)))
-plot(pac$pc[,1],usa$pc[,1],xlab='sst',ylab='pdsi')
-lines(lfpc1,xlab='sst',ylab='pdsi')
-plot(pac$pc[,2],usa$pc[,2],xlab='sst',ylab='pdsi')
-lines(lfpc2,xlab='sst',ylab='pdsi')
+Below is the code to calculate the correlation maps and local poynomial fits for SST and PDSI. 
 
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<2,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/2.R',renderer=renderer_latex(document=F))
 @
-\caption{States PC}\label{pdsi-pc}
+}}
+\caption{Code for problem 2.}\label{2}
 \end{figure}
 
+
+\begin{figure}[!ht]
+<<pc-cor, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+for(i in 1:2)
+	for(j in 1:2){
+		plot(pac$pc[,i],usa$pc[,j],
+			xlab=sprintf('sst pc %d',i),
+			ylab=sprintf('pdsi pc %d',j))
+		lines(lfpc[[paste(i,j,sep='')]])
+
+	}
+
+@
+\caption{States PC}\label{pc-cor}
+\end{figure}
+
+\begin{figure}[!ht]
+<<pc-cor-map, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+for(i in 1:4){
+	surface(cor.map[[i]], xlab="Longitude", ylab="Latitude", 
+		main=paste("PDSI correlated with ",
+			ifelse(i>2,"Atlantic","Pacific")," SST PC",
+			ifelse(i%%2==0,2,1)))
+	map('world',add=TRUE)
+}
+@
+\caption{SST principal components correlated with PDSI}\label{pc-cor-map}
+\end{figure}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 3}
+
+Below is the code which performs SVD and calcualtes the heterogeneous correlation maps. 
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<3,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/3.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Code for problem 3.}\label{2}
+\end{figure}
+
+\begin{figure}[!ht]
+<<h-cor-map-1, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+plot(ts(sst.tc[,1],start=1925,frequency=1),ylab="SST TC 1")
+plot(ts(pdsi.tc[,1],start=1925,frequency=1),ylab="PDSI TC 1")
+surface(cor.map.sst[[1]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of SST (mode 1)')
+map('world',add=TRUE,fill=TRUE)
+surface(cor.map.pdsi[[1]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of PDSI (mode 1)')
+map('world',add=TRUE)
+
+@
+\caption{Heterogeneous correlation maps and time coefficients for mode 1}\label{h-cor-map-1}
+\end{figure}
+
+\begin{figure}[!ht]
+<<h-cor-map-2, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+plot(ts(sst.tc[,2],start=1925,frequency=1),ylab="SST TC 2")
+plot(ts(pdsi.tc[,2],start=1925,frequency=1),ylab="PDSI TC 2")
+surface(cor.map.sst[[2]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of SST (mode 2)')
+map('world',add=TRUE,fill=TRUE)
+surface(cor.map.pdsi[[2]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of PDSI (mode 2)')
+map('world',add=TRUE)
+
+@
+\caption{Heterogeneous correlation maps and time coefficients for mode 2}\label{h-cor-map-2}
+\end{figure}
+
+\begin{figure}[!ht]
+<<h-cor-map-3, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+plot(ts(sst.tc[,3],start=1925,frequency=1),ylab="SST TC 3")
+plot(ts(pdsi.tc[,3],start=1925,frequency=1),ylab="PDSI TC 3")
+surface(cor.map.sst[[3]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of SST (mode 3)')
+map('world',add=TRUE,fill=TRUE)
+surface(cor.map.pdsi[[3]], xlab="Longitude", ylab="Latitude", 
+		main='Het. Correlation map of PDSI (mode 3)')
+map('world',add=TRUE)
+
+@
+\caption{Heterogeneous correlation maps and time coefficients for mode 3}\label{h-cor-map-3}
+\end{figure}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 4}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<4,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/4.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{SVD code.}\label{markov}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<fc-svd,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/fc-svd.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{SVD forecast code.}\label{markov}
+\end{figure}
+
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<fc-stats,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/fc-stats.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{SVD forecast stats code.}\label{markov}
+\end{figure}
+
+\begin{figure}[!ht]
+<<h-cor-map-2-1, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+plot(ts(swe.tc[,1],start=1925,frequency=1),ylab="SWE TC 1")
+plot(ts(flow.tc[,1],start=1925,frequency=1),ylab="Flow TC 1")
+plot(cor.map.swe[[1]], xlab="Site", ylab="Correlation", 
+		main='Het. Correlation map of SWE (mode 1)',type='l')
+plot(cor.map.flow[[1]], xlab="Site", ylab="Correlation", 
+		main='Het. Correlation map of Flow (mode 1)',type='l')
+
+@
+\caption{Heterogeneous correlation maps and time coefficients for mode 1}\label{h-cor-map-2-1}
+\end{figure}
+
+\begin{figure}[!ht]
+<<h-cor-map-2-2, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+plot(ts(swe.tc[,2],start=1925,frequency=1),ylab="SWE TC 2")
+plot(ts(flow.tc[,2],start=1925,frequency=1),ylab="Flow TC 2")
+plot(cor.map.swe[[2]], xlab="Site", ylab="Correlation", 
+		main='Het. Correlation map of SWE (mode 2)',type='l')
+plot(cor.map.flow[[2]], xlab="Site", ylab="Correlation", 
+		main='Het. Correlation map of Flow (mode 2)',type='l')
+
+@
+\caption{Heterogeneous correlation maps and time coefficients for mode 2}\label{h-cor-map-2-2}
+\end{figure}
+
+\begin{figure}[!ht]
+<<tc-cor, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(rbind(c(1,2),c(3,4)))
+for(i in 1:2)
+	for(j in 1:2){
+		plot(swe.tc[,i],flow.tc[,j],
+			xlab=sprintf('SWE TC %d',i),
+			ylab=sprintf('Flow TC %d',j))
+		lines(lftc[[paste(i,j,sep='')]])
+
+	}
+
+@
+\caption{States PC}\label{tc-cor}
+\end{figure}
+
+\begin{figure}[!ht]
+<<svd-pred-1, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(cbind(c(1:3)))
+for(i in 1:3){
+	this.site <- ypred.svd[i,,]
+	this.site <- as.data.frame(this.site)
+	names(this.site) <- 1949:1999
+	boxplot(this.site,xlab=paste('Site',i))
+	lines(flow[,i],col='blue')
+	mtext(paste('RPSS = ',round(stats.svd$rpss[i],3),
+	'MC = ',round(stats.svd$rpss[i],3)),line=1)
+}
+
+@
+\caption{Svd predictions for first three sites}\label{svd-pred-1}
+\end{figure}
+
+\begin{figure}[!ht]
+<<svd-pred-2, echo=T, fig=T, tikz=T, cache=T,width=7,height=7,keep.source=T>>=
+layout(cbind(c(1:3)))
+for(i in 4:6){
+	this.site <- ypred.svd[i,,]
+	this.site <- as.data.frame(this.site)
+	names(this.site) <- 1949:1999
+	boxplot(this.site,xlab=paste('Site',i))
+	lines(flow[,i],col='blue')
+	mtext(paste('RPSS = ',round(stats.svd$rpss[i],3),
+		'MC = ',round(stats.svd$rpss[i],3)),line=1)
+}
+
+@
+\caption{Svd predictions for second three sites}\label{svd-pred-2}
+\end{figure}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 5}
+
+I did not significantly modeify the CCA code from the class page so it is not shown here, but it was used to generate forecasts. 
+
+\begin{figure}[!ht]
+<<cca-pred, echo=T, fig=T, tikz=T, cache=T,width=7,height=6.5,keep.source=T>>=
+layout(cbind(c(1:6)))
+for(i in 1:6){
+	par(mar=c(.9,2,1.5,1))
+	plot(1949:1999, ypred.cca[,i], xlab=paste('Site',i),
+		ylim=range(c(ypred.cca[,i],flow[,i])),main=paste('Site',i),
+		type='l')
+	lines(1949:1999,flow[,i],col='blue')
+}
+
+@
+\caption{CCA predictions for all sites, historical flow is in blue. Units are thousand cubic meters}\label{cca-pred-1}
+\end{figure}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 6}
+Below is the code that does the Markov KNN simulation. 
+\begin{figure}[!ht]
+\fbox{\parbox{\textwidth}{\small
+<<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
+	highlight('src/6.R',renderer=renderer_latex(document=F))
+@
+}}
+\caption{Markov KNN resampling code.}\label{markov}
+\end{figure}
+
+\begin{figure}[!ht]
+<<markov-stats, echo=T, fig=T, tikz=T, cache=T,width=7,height=6.5,keep.source=T>>=
+layout(rbind(1:4))
+boxplot(x.sim.stats[,1],ylim=range(c(x.sim.stats[,1],x.mean)),xlab='Mean')
+points(x.mean,col='red')
+
+boxplot(x.sim.stats[,2],ylim=range(c(x.sim.stats[,2],x.sd)),xlab='SD')
+points(x.sd,col='red')
+
+boxplot(x.sim.stats[,3],ylim=range(c(x.sim.stats[,3],x.skew)),xlab='Skew')
+points(x.skew,col='red')
+
+boxplot(x.sim.stats[,4],ylim=range(c(x.sim.stats[,4],x.lag1)),xlab='Lag1 Cor')
+points(x.lag1,col='red')
+
+@
+\caption{Annual simulates statistics.  All statistics are well captured except for Lag 1 autocorrelation.  I believe this is to to the way values re sampled from each `bin.' The only way yo get enough sampling variation is to select from all of the vaues in a bin.}\label{tc-cor}
+\end{figure}
+
+\clearpage
+One interesting result I noticed was that the historical pdf was only reroduced when I used a uniform weight function and selected from all the neighbors in a bin.  If I used a 1/k weight function and set k to $\sqrt{n}$, the simulated values did not have very much variability at all.
+
+\begin{figure}[!ht]
+\centering
+<<markov-pdf, echo=T, fig=T, tikz=T, cache=T,width=5,height=5,keep.source=T>>=
+
+n.pt <- 100
+out <- sm.density(x.ann)
+pt <- seq(min(out$eval.points),max(out$eval.points),length.out=n.pt)
+boxpt <- matrix(NA,nyears,n.pt)
+for(i in 1:nyears){
+	boxpt[i,] <- sm.density(x.sim[i,],
+		eval.points=pt,display='none')$estimate
+	lines(pt,boxpt[i,],col='gray',lwd=.5)
+}
+sm.density(x.ann,add=T,col='red',lwd=2)
+@
+\caption{Annual Historical pdf and simulated pdf}\label{markov-pdf}
+\end{figure} 
 
 \end{document}
 

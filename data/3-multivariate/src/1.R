@@ -24,11 +24,13 @@ lat.atl <- sst.lat[atlantic]
 sst.atl <- sst[,atlantic]
 lon.usa <- pdsi.lon[states]
 lat.usa <- pdsi.lat[states]
-sst.usa <- pdsi[,states]
+pdsi.usa <- pdsi[,states]
 
+glo <- my.pca(sst)
 pac <- my.pca(sst.pac)
 atl <- my.pca(sst.atl)
-usa <- my.pca(sst.usa)
+usa <- my.pca(pdsi.usa)
 
 save(lat, lon, lat.pac, lon.pac, lat.atl, lon.atl, lat.usa, lon.usa, pac, atl,
-	usa, file='output/1.Rdata')
+	glo, usa, sst, sst.lat, sst.lon, sst.pac, sst.atl, pdsi.usa, 
+	file='output/1.Rdata')
