@@ -1,0 +1,146 @@
+1
+ 
+          
+         ==============================
+         M I N O S    5.3    (Oct 1990)
+         ==============================
+
+ OPTIONS file
+ ------------
+      BEGIN
+          MAXAMIZE                                                            
+ XXX  Keyword not recognized:         MAXAMIZE        
+          NONLINEAR VARIABLES 10                                              
+          DERIVATIVE LEVEL 0                                                  
+      *    UPPER BOUND 100                                                    
+      END                                                                     
+
+ Reasonable WORKSPACE limits are         0 ...    8059
+ Actual     WORKSPACE limits are         0 ...   60000 ...   60000  words of  Z.
+1
+ MPS file
+ --------
+      1    NAME          LSO     
+      2    ROWS                  
+      4    COLUMNS               
+ XXXX  Warning - no linear objective selected
+     15    RHS                   
+     17    BOUNDS                
+     30    ENDATA                
+
+
+
+ Names selected
+ --------------
+ OBJECTIVE               (MIN)       0
+ RHS            RHS1                 1
+ RANGES                              0
+ BOUNDS         BND1                10
+
+ No. of INITIAL  BOUNDS  specified         2
+ No. of superbasics specified              2
+
+ Nonzeros allowed for in LU factors    39784
+
+
+
+ Matrix statistics
+ -----------------
+               Total      Normal        Free       Fixed     Bounded
+ Rows              1           1           0           0           0
+ Columns          10           0           0           0          10
+
+ No. of matrix elements                   10     Density     100.000
+ Biggest                          1.0000E+00  (excluding fixed columns,
+ Smallest                         1.0000E+00   free rows, and RHS)
+
+ No. of objective coefficients             0
+ Biggest                          0.0000E+00  (excluding fixed columns)
+ Smallest                         0.0000E+00
+1
+ 
+ Initial basis
+ -------------
+
+ No basis file supplied
+
+ ***  FUNOBJ  sets       0   out of      10   objective  gradients.
+
+
+ Scaling
+ -------
+             Min elem    Max elem       Max col ratio
+
+
+ CRASH option   1
+ Free rows        0    Free cols      0    Unit cols        1
+ Double cols      0    LG slacks      0    Triang cols      0    Pad         0
+
+
+
+ Iterations
+ ----------
+
+    Itn       RG  Ninf      Sinf       Objective     LU  Nobj  NSB  Cond(H)
+      1  0.0E+00     1 5.000E-02  0.00000000E+00      1     1    1 0.0E+00
+ 
+ Itn      1 -- Feasible solution.  Objective =  -4.445454330E+02
+ 
+ Linesearch exit  4.   Itn =      3   Norm RG =  9.091E+02   Norm PI =  4.545E+02   Last SB =      6   -9.091E+02
+1
+ 
+ EXIT -- OPTIMAL SOLUTION FOUND
+
+ No. of iterations                  13     Objective value     -9.9899995250E+03
+
+ No. of major iterations             1     Linear objective     0.0000000000E+00
+
+ Penalty parameter          100.000000     Nonlinear objective -9.9899995250E+03
+
+ No. of calls to FUNOBJ            167     No. of calls to FUNCON              0
+ Calls with MODE=2 (F, known G)     47     Calls with MODE=2 (F, known G)      0
+ Calls for forward differencing    120     Calls for forward differencing      0
+ Calls for central differencing      0     Calls for central differencing      0
+
+ No. of superbasics                  0     Norm of reduced gradient    0.000E+00
+
+ No. of basic nonlinears             0     Norm RG / Norm PI           0.000E+00
+
+ No. of degenerate steps             2     Percentage                      15.38
+
+ Norm of X                   6.030E+00     Norm of PI                  1.000E+00
+
+ Norm of X  (unscaled)       6.030E+00     Norm of PI (unscaled)       1.000E+00
+1
+ NAME           LSO                   Objective value      -9.9899995250E+03
+
+ Status         OPTIMAL SOLN          Iteration     13    Superbasics      0
+
+ OBJECTIVE               (MIN)
+ RHS            RHS1    
+ RANGES                 
+ BOUNDS         BND1    
+ 
+ SECTION 1 - ROWS
+
+  NUMBER  ...ROW.. STATE  ...ACTIVITY...  SLACK ACTIVITY  ..LOWER LIMIT.  ..UPPER LIMIT.  .DUAL ACTIVITY    ..I
+
+      11  DEM         BS        10.00000        -9.00000         1.00000           NONE          0.00000      1
+1
+ SECTION 2 - COLUMNS
+
+  NUMBER  .COLUMN. STATE  ...ACTIVITY...  .OBJ GRADIENT.  ..LOWER LIMIT.  ..UPPER LIMIT.  REDUCED GRADNT    M+J
+
+       1  Q1          UL         1.00000      -454.54543         0.00000         1.00000      -454.54543      2
+       2  Q2          UL         1.00000      -818.18178         0.00000         1.00000      -818.18178      3
+       3  Q3          UL         1.00000     -1090.90904         0.00000         1.00000     -1090.90904      4
+       4  Q4          UL         1.00000     -1272.72721         0.00000         1.00000     -1272.72721      5
+       5  Q5          UL         1.00000     -1363.63630         0.00000         1.00000     -1363.63630      6
+       6  Q6          UL         1.00000     -1363.63630         0.00000         1.00000     -1363.63630      7
+       7  Q7          UL         1.00000     -1272.72721         0.00000         1.00000     -1272.72721      8
+       8  Q8          UL         1.00000     -1090.90904         0.00000         1.00000     -1090.90904      9
+       9  Q9          UL         1.00000      -818.18178         0.00000         1.00000      -818.18178     10
+      10  Q10         UL         1.00000      -454.54543         0.00000         1.00000      -454.54543     11
+
+ FUNOBJ called with NSTATE =   2
+ ENDRUN

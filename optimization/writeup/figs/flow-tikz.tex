@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+\usepackage[active,tightpage,psfixbb]{preview}
+\PreviewEnvironment{pgfpicture}
+\setlength\PreviewBorder{1pt}
+
+\begin{document}
+
+\begin{figure}[ht]
+\begin{tikzpicture}[
+    block/.style ={
+        rectangle, 
+        draw=gray!80, 
+        thick, 
+        top color=gray!20, 
+        bottom color=white,
+        text badly centered, 
+        text width=9em
+    },
+    decision/.style={
+        diamond, 
+        draw=gray!80, 
+        thick, 
+        top color=gray!20, 
+        bottom color=white,
+	    text width=5em, 
+	    text centered, 
+	    inner sep=0pt
+	},
+	a/.style={
+		-stealth,
+		draw=gray
+	}]
+	
+	\node[block] (fmincon) at (0,2) {fmincon};
+	\node[block] (objfun) at (-3,0) {Objective Function};
+	\node[block] (sim) at (0,-2) {Simulation Model};
+	\node[block] (con) at (3,0) {Constraints};
+	
+	\draw[a] (fmincon) -- (objfun);
+	\draw[a] (fmincon) -- (con);
+	\draw[a] (objfun) |- (fmincon.west);
+	\draw[a] (objfun) -- (sim);
+	\draw[a] (con) |- (fmincon.east);
+	\draw[a] (con) -- (sim);
+	\draw[a] (sim) -| (objfun.south);
+	\draw[a] (sim) -| (con.south);
+	
+\end{tikzpicture}
+\caption{Flow Chart}\label{flow}
+\end{figure}
+
+\end{document}
