@@ -19,6 +19,8 @@ dem(4,:),fval(4,:),...
 dem(5,:),fval(5,:),...
 dem(6,:),fval(6,:))
 legend('1(a)','1(b)','1(c)','2(a)','2(b)','3(b)')
+xlabel('Demand')
+ylabel('Optimal objective function value')
 
 name = 'figs/allzvd.eps';
 fprintf('Printed %s\n',name)

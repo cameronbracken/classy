@@ -193,49 +193,43 @@ For each case the sub case was considered in which (a) the maximum pumping rate 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 
-The results are composed of the head field and pumping rates at what I will call the {\it Maximum Satisfiable Demand}.  This is the greatest demand that can be satisfied while still meeting the constraints.  Maximum Satisfiable Demand, $D^*$, is a function of the minimum head ($h^*$) and the maximum pumping rate ($Q^*$)
-
-$$D^*= f(h^*,Q^*)$$
-
-where $f$ is an unknown function. For a given $h^*$ and $Q^*$, there is a unique $D^*$. 
+The results are composed of the head field and pumping rates at what I will call the {\it Maximum Satisfiable Demand} (MSD).  This is the greatest demand that can be satisfied while still meeting the constraints.  This is discussed in the next section. 
 
 \subsection{Case 1(a)}
-First consider case 1(a) when boundary conditions are constant and equal and the pumping rate is not limiting.  In this case since the boundary conditions are the same for each array, the results for each array are the same (both heads and pumping rates) (\autoref{fig:results1a}). Most of the pumping occurs at the outermost node on either site and all of the pumping occurs at the outer most two nodes. The pumping at the outer two most nodes is constrained by the maximum pumping rate (2.5) and so the remaining pumping (0.4) is delegated one node inward on either side. In fact we can verify that the demand is met adding up the pumping rates $\sum Q_i = 2.5 * (2 edges)*(4 rows) + 0.4 (2 edges)*(4 rows) = 23.2$
+First consider case 1(a) when boundary conditions are constant and equal and the pumping rate is limiting.  In this case since the boundary conditions are the same for each array, the results for each array are the same (both heads and pumping rates) (\autoref{fig:results1a}). Most of the pumping occurs at the outermost node on either site and all of the pumping occurs at the outer most two nodes. The pumping at the outer two most nodes is constrained by the maximum pumping rate (2.5) and so the remaining pumping (0.4) is delegated one node inward on either side.
 
 
-\begin{figure*}[!ht]
-\setcounter{subfigure}{0}
+\begin{figure}[!ht]
 \centering
 \subfigure[Head (units of length)]{%
 	\includegraphics[width=4in]{../optimize/figs/head-constant-bounds-minq.eps}}
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-constant-bounds-minq.eps}}
 \caption{Results for case 1(a) at maximum satisfiable demand.}\label{fig:results1a}
-\end{figure*}
+\end{figure}
 
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case 2(a)}
-In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is not limiting.
+In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is limiting.  In this case the maximum pumping occurs in the array with the highest boundary conditions, and successively less pumping occurs at we move down stream (\autoref{fig:results2a}). Only at the most upstream location (with the highest boundary condition) does pumping occur on any other node but the outer most.  No pumping occurs on the farthest downstream array because the head is already at the minimum head level. 
 
-\begin{figure*}[!ht]
-\setcounter{subfigure}{0}
+\begin{figure}[!ht]
 \centering
 \subfigure[Head (units of length)]{%
 	\includegraphics[width=4in]{../optimize/figs/head-linear-bounds-minq.eps}}
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-linear-bounds-minq.eps}}
 \caption{Results for case 2(a) at maximum satisfiable demand.}\label{fig:results2a}
-\end{figure*}
+\end{figure}
 
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case 3(a)}
-In this case boundary conditions increase logarithmically on the west side and decrease linearly downstream on the east side. The pumping rate is not limiting.
+In this case boundary conditions increase logarithmically on the west side and decrease linearly downstream on the east side. The pumping rate is limiting.  In this case more pumping occurs on the west side because there is more available head to draw down (\autoref{fig:results3a})  The outer two nodes on the west side all have some pumping.  On the east side, maximum pumping occurs on the outermost-upstream node and decreases as we move downstream. 
 
-\begin{figure*}[!ht]
+\begin{figure}[!ht]
 \setcounter{subfigure}{0}
 \centering
 \subfigure[Head (units of length)]{%
@@ -243,12 +237,12 @@ In this case boundary conditions increase logarithmically on the west side and d
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-log-bounds-minq.eps}}
 \caption{Results for case 3(a) at maximum satisfiable demand.}\label{fig:results3a}
-\end{figure*}
+\end{figure}
 
 \subsection{Case 1(b)}
 First consider case 1(a) when boundary conditions are constant and equal and the pumping rate is not limiting. 
 
-\begin{figure*}[!ht]
+\begin{figure}[!ht]
 \setcounter{subfigure}{0}
 \centering
 \subfigure[Head (units of length)]{%
@@ -256,15 +250,15 @@ First consider case 1(a) when boundary conditions are constant and equal and the
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-constant-bounds.eps}}
 \caption{Results for case 1(b) at maximum satisfiable demand.}\label{fig:results1b}
-\end{figure*}
+\end{figure}
 
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Case 2(b)}
-In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is not limiting.
+In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is not limiting.  
 
-\begin{figure*}[!ht]
+\begin{figure}[!ht]
 \setcounter{subfigure}{0}
 \centering
 \subfigure[Head (units of length)]{%
@@ -272,7 +266,7 @@ In this case boundary conditions are equal on each side but decrease linearly do
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-linear-bounds.eps}}
 \caption{Results for case 2(b) at maximum satisfiable demand.}\label{fig:results2b}
-\end{figure*}
+\end{figure}
 
 
 \clearpage
@@ -280,7 +274,7 @@ In this case boundary conditions are equal on each side but decrease linearly do
 \subsection{Case 3(b)}
 In this case boundary conditions increase logarithmically on the west side and decrease linearly downstream on the east side. The pumping rate is not limiting.
 
-\begin{figure*}[!ht]
+\begin{figure}[!ht]
 \setcounter{subfigure}{0}
 \centering
 \subfigure[Head (units of length)]{%
@@ -288,22 +282,25 @@ In this case boundary conditions increase logarithmically on the west side and d
 \subfigure[Pumping Rates]{%
 	\includegraphics[width=4in]{../optimize/figs/pumping-log-bounds.eps}}
 \caption{Results for case 3(b) at maximum satisfiable demand.}\label{fig:results3b}
-\end{figure*}
+\end{figure}
 
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Sensitivity}
+\subsection{Maximum Satisfiable Demand}
 
-\begin{figure*}[!ht]
-\setcounter{subfigure}{0}
-\centering
-\includegraphics[width=5in]{../optimize/figs/allzvd.eps}
-\caption{Optimal solution as a function of demand.}\label{fig:zvd}
-\end{figure*}
+The results are composed of the head field and pumping rates at what I will call the {\it Maximum Satisfiable Demand} (MSD).  This is the greatest demand that can be satisfied while still meeting the constraints.  MSD, $D^*$, is a function of the minimum head ($h^*$) and the maximum pumping rate ($Q^*$)
+
+$$D^*= f(h^*,Q^*)$$
+
+where $f$ is an unknown function. For a given $h^*$ and $Q^*$, there is a unique $D^*$.  The MSD is given by the unconstrained optimization problem
+
+$$\mbox{max}\,\,D=\sum_{i=1}^nQ_i(z(D))$$
+
+Solving for $D^*$ is an iterative process requiring multiple runs of the original optimization model. The MSD for each case is shown in table \ref{msd}.  We can verify that the MSD is met by adding up the pumping rates.  Take case 1(a) for example, $\sum Q_i = 2.5 * (2 edges)*(4 rows) + 0.4 (2 edges)*(4 rows) = 23.2$.  \autoref{fig:zvd} shows the relationship between demand and optimal objective function.  The relationship is nearly linear except close to $D*$ in the pumping limited cases. 
 
 \begin{table}[!htdp]
-\caption{default}\label{Maximum satisfiable demand for each case.}\begin{center}\begin{tabular}{cc}
+\caption{Maximum satisfiable demand for each case.}\label{msd}\begin{center}\begin{tabular}{cc}
 \toprule
 Case & Max Demand \\
 \midrule
@@ -316,12 +313,32 @@ Case & Max Demand \\
 \bottomrule
 \end{tabular} \end{center}\end{table}
 
+\begin{figure}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\includegraphics[width=5in]{../optimize/figs/allzvd.eps}
+\caption{Optimal solution as a function of demand.}\label{fig:zvd}
+\end{figure}
 
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+A case study has been carried out for a hypothetical aquifer.  The methodology uses the linked simulation optimization methodology to optimally place pumps while meeting a variety of constraints.  The sensitivity of the model was not thoroughly investigated though the model was sensitive to the changes in parameter values.  Using the model, it was possible to determine the maximum satisfiable demand given the system constraints. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliography{../../references}
+
+%#!/bin/bash
+%
+%export PATH=$PATH:/usr/texbin:/usr/local/bin
+%export TSBIN=$HOME/Library/TeXShop/bin
+%export LTMKBIN=$HOME/Library/TeXShop/bin
+%
+%R CMD Sweave "$1"
+%${LTMKBIN}/latexmk -pdf -r "${TSBIN}/pdflatexmkrc" "${1%.*}"
 
 
 
