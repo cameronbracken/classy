@@ -9,6 +9,7 @@ function [c, ceq] = constraints(x)
   
   %the first part is the nonlinear min head constraint
   %the second part is the nonnegativity pumping constraint
+  %the third part is the max pumping constraint
   c = [ (minh-h), -q, (q-maxq) ] ; 
   
   % The demand constraint rearranged to make leq

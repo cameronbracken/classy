@@ -24,6 +24,8 @@
 %%------------graphics
 \usepackage{graphicx} 
 \usepackage{subfigure}
+%\graphicspath{{../optimize/figs:}{./figs/}}
+\usepackage{epstopdf}
 
 %%------------mathematics
 %\usepackage{amsmath,amssymb,amsthm}
@@ -77,45 +79,51 @@ cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
 	Fall, 2009.
 \end{flushleft}
 
-\section*{Introduction}
+\section{Introduction}
 
-A town of Happyville is considering the use of groundwater from a local aquifur to augment their water supply \autoref{fig:site}.  The aquifur is approxamately rectangular.  It is bounded on the east and west by river and on the north and south by impermiable boundaries.  The city is willing to place pumps only at the locations shown with x's in the diagram.  
+A town of Thirstyville is considering the use of groundwater from a local aquifur to augment their water supply \autoref{fig:site}.  The aquifur is approximately rectangular.  It is bounded on the east and west by river and on the north and south by impermeable boundaries. 
 
 \begin{figure}[!ht] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=.7\textwidth]{figs/site.pdf} 
-   \caption{Study area, x's represent pumping locations.  Impermiable boundaries exist on the north and south sides and rivers on the east and west sides.}
+   \caption{Study area, x's represent possible pumping locations.  Impermeable boundaries exist on the north and south sides and rivers on the east and west sides.}
    \label{fig:site}
 \end{figure}
 
-The following conditions are true of the system and the cities water demand
+Environmental regulations require a minimum head in the aquifer.  Additionally these regulations dictate specific locations in the aquifer where pumping is allowed (shown as x's in \autoref{fig:site}).  Given these regulations, the City is interested in the optimal placement of pumps such that the demand is met and the regulations are not violated.  The City has sufficient funds to purchase as many pumps as necessary but all of the pumps must have the same maximum capacity. 
 
+The Thirstyville City Engineer has provided the following information about the system and the city's water demand:
 \begin{itemize}
-\item Each row (array) of pumping locations is independent of one another, that is, pumping within any one will only affect the head in array will not affect the head in any other arr
+\item Each row (array) of pumping locations is independent of one another, that is, pumping within any one array will not affect the head in any other array. 
+\item The city's water demand does not change frequently in time.
+\item The aquifer achieves steady state quickly relative the time scale of the water usage, i.e., transient changes in the system are not of concern. 
+\item Drawdown in the aquifer does not significantly affect the river level.  Additionally, the river level does not change significantly seasonally.
+\item Environmental regulations require a minimum head in the aquifer. 
 \end{itemize}
 
- Aditionally since the town's demand does not change very frequently the system is effectively always in steady state and so a steady state model can be used. 
+\section{Simulation Model}
+These conditions described in the previous section allow for the system to be modeled as follows:
+\begin{itemize}
+\item Each array is modeled with a separate 1D groundwater model. 
+\item The groundwater models are steady state (not time dependent).  
+\item East and West boundary conditions are constant, North and South Boundaries have no effect. 
+\item Water demand is constant.
+\end{itemize}
 
-The City is interested in several alternatives for putting in pumps.  
-
-A Linked Simulation Optimization (LSO) was carried out for a well-aquifer system. The simulation, originally implemented in \verb"Fortran 77", was rewritten in \verb"Matlab".  The optimization was also carried out in \verb"Matlab" using the \verb"fmincon" function. 
-
-
-\section*{Simulation Model}
-The steady state simulation model has the form 
+The steady state simulation model for each row has the form 
 $$
 T\frac{\partial^2h}{\partial x^2}+\sum_iQ_i\delta(x-x_i)=0
 $$
 $$0\leq x\leq L$$
 $$h(0)=1,\,\,\,\,\,h(L)=1$$
-where $T$ is the transmissivity, $h$ is the head, the $Q_i$'s are pumping rates and $\delta(\cdot)$ is the Dirac delta function. The given boundary conditions are implicitly constant in time. The parameter values are
+where $T$ is the transmissivity, $h$ is the head, the $Q_i$'s are pumping rates and $\delta(\cdot)$ is the Dirac delta function \citep{Wang1982}. The given boundary conditions are implicitly constant in time. The parameter values are
 \begin{center}
 \begin{tabular}{cc}
 \toprule
 Parameter & Value\\
 \midrule
 T & 1 m$^2$/day\\
-L & 1 m\\
+L & 1\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -129,37 +137,38 @@ where A is a tridiagonal matrix, $\mathbf{h}$ is the nodal values of head, and $
 $$
 \mathbf{h}=-A^{\mbox{-}1}\mathbf{f}.
 $$
-The nodal values of head are computed in the function \verb"zack", given in the source code section.  The function \verb"zack" takes in the pumping rates at each of the internal nodes and passes back head values.  The call statement is
-\begin{center}
-\texttt{h=zack(Q)}.
-\end{center}
+The nodal values of head are computed in the function \verb"zack_wrapper", given in the source code section.  The function \verb"zack_wrapper" takes in the pumping rates at each of the internal nodes for each of the arrays and passes back head values.
 
 
-
-\section*{Optimization Model}
-As per the LSO approach the simulation model was used to determine optimal pumping rates and well placement given certain constraints.  The optimization problem is 
+\section{Optimization Model}
+As the simulation model was used to determine optimal pumping rates and well placement given certain constraints.  The optimization problem is 
 $$\mbox{max}\,\,z=\sum_{i=1}^nh_i$$
 %?? 
 subject to: 
 $$\sum_iQ_i\geq D $$
 $$h_i \geq h^* \,\,\,\forall i $$
 $$Q_i\geq 0 \,\,\, \forall i.$$
+$$Q_i\leq Q^* \,\,\, \forall i.$$
 
-Where D is the demand which is to be determined.  The parameters values here are 
+The parameters values here are 
 \begin{center}
 \begin{tabular}{cc}
 \toprule
 Parameter & Value\\
 \midrule
-$h^*$ & .7 m\\
-$n$ & 10 \\
+$h^*$ & .7 (Length)\\
+$Q^*$ & 2.5 (Volume per Time)\\
+$n$ & 10 (dimensionless)\\
 \bottomrule
 \end{tabular}
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
+The optimization was carried out in \verb"Matlab" with the function \verb"fmincon" which is a general purpose function for constrained nonlinear minimization.  The above maximization was made into the minimization of the negative head values.  The algorithm used in Matlab is called Active Set Algorithm, which is a general algorithm for constrained nonlinear minimization problems.
 
-\section*{Implementation}
-As alluded to in the introduction the optimization was carried out in \verb"Matlab" with the function \verb"fmincon" which is a general purpose function for constrained nonlinear minimization.  The above maximization was made into the minimization of the negative head values.  The calling procedure is very similar to \texttt{Minos} in that two auxiliary functions are needed to evaluate the constraints and the objective function.  Each auxiliary function calls the simulation model when necessary.  A schematic representation of the calling structure is shown in in Figure 1.  Source code is given in the source code section.
+Two auxiliary functions are needed to evaluate the constraints and the objective function.  Each auxiliary function calls the simulation model when necessary.  This procedure is called the Linked Simulation-Optimization (LSO) \citep{Willis2004}.   A schematic representation of the calling structure is shown in in \autoref{fig:flow}.  Source code is given in the source code section.
 
 \begin{figure}[!h] %  figure placement: here, top, bottom, or page
    \centering
@@ -168,58 +177,192 @@ As alluded to in the introduction the optimization was carried out in \verb"Matl
    \label{fig:flow}
 \end{figure}
 
+Three hypothetical cases were considered with two sub-cases, 
+\begin{enumerate}
+\item Constant and equal boundary conditions on side for all the arrays,
+\item Linearly decreasing boundary conditions moving downstream for each side, and 
+\item Linearly decreasing boundary conditions on the east side but logarithmically increasing conditions on the west side.
+\end{enumerate}
+
+For each case the sub case was considered in which (a) the maximum pumping rate ($Q^*$) is limiting and (b) the maximum pumping rate is not limiting. 
+
+
+
 \newpage
-\section*{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
 
-The maximum demand that was able to be fulfilled without violating the head constraint was $D^*$=6.6 m$^3$/day. As long as the demand was less than $D^*$ then the optimization split the demand in half and placing $D^*/2$ at both node 1 and node 10.  The head profile when $D^*$=6.6 is shown in figure 2.  
+The results are composed of the head field and pumping rates at what I will call the {\it Maximum Satisfiable Demand}.  This is the greatest demand that can be satisfied while still meeting the constraints.  Maximum Satisfiable Demand, $D^*$, is a function of the minimum head ($h^*$) and the maximum pumping rate ($Q^*$)
 
-A plot of the objective function $z$ versus the demand is shown in Figure 3.  Sample output from \verb"fmincon" is provided in the sample output section.
+$$D^*= f(h^*,Q^*)$$
+
+where $f$ is an unknown function. For a given $h^*$ and $Q^*$, there is a unique $D^*$. 
+
+\subsection{Case 1(a)}
+First consider case 1(a) when boundary conditions are constant and equal and the pumping rate is not limiting.  In this case since the boundary conditions are the same for each array, the results for each array are the same (both heads and pumping rates) (\autoref{fig:results1a}). Most of the pumping occurs at the outermost node on either site and all of the pumping occurs at the outer most two nodes. The pumping at the outer two most nodes is constrained by the maximum pumping rate (2.5) and so the remaining pumping (0.4) is delegated one node inward on either side. In fact we can verify that the demand is met adding up the pumping rates $\sum Q_i = 2.5 * (2 edges)*(4 rows) + 0.4 (2 edges)*(4 rows) = 23.2$
 
 
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-constant-bounds-minq.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-constant-bounds-minq.eps}}
+\caption{Results for case 1(a) at maximum satisfiable demand.}\label{fig:results1a}
+\end{figure*}
 
-\begin{figure}[!h] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[width=\textwidth]{figs/head.pdf} 
-   \caption{head profile when $D^*$=6.6 m$^3$/day.}
-   \label{fig:head}
-\end{figure}
-
-\begin{figure}[!h] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[width=6in]{figs/zvd} 
-   \caption{The objective function ($\sum h$) versus the Demand.}
-   \label{fig:zvd}
-\end{figure}
 
 \clearpage
-\section{Source Code and Sample output}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Case 2(a)}
+In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is not limiting.
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-linear-bounds-minq.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-linear-bounds-minq.eps}}
+\caption{Results for case 2(a) at maximum satisfiable demand.}\label{fig:results2a}
+\end{figure*}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Case 3(a)}
+In this case boundary conditions increase logarithmically on the west side and decrease linearly downstream on the east side. The pumping rate is not limiting.
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-log-bounds-minq.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-log-bounds-minq.eps}}
+\caption{Results for case 3(a) at maximum satisfiable demand.}\label{fig:results3a}
+\end{figure*}
+
+\subsection{Case 1(b)}
+First consider case 1(a) when boundary conditions are constant and equal and the pumping rate is not limiting. 
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-constant-bounds.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-constant-bounds.eps}}
+\caption{Results for case 1(b) at maximum satisfiable demand.}\label{fig:results1b}
+\end{figure*}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Case 2(b)}
+In this case boundary conditions are equal on each side but decrease linearly downstream. The pumping rate is not limiting.
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-linear-bounds.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-linear-bounds.eps}}
+\caption{Results for case 2(b) at maximum satisfiable demand.}\label{fig:results2b}
+\end{figure*}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Case 3(b)}
+In this case boundary conditions increase logarithmically on the west side and decrease linearly downstream on the east side. The pumping rate is not limiting.
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\subfigure[Head (units of length)]{%
+	\includegraphics[width=4in]{../optimize/figs/head-log-bounds.eps}}
+\subfigure[Pumping Rates]{%
+	\includegraphics[width=4in]{../optimize/figs/pumping-log-bounds.eps}}
+\caption{Results for case 3(b) at maximum satisfiable demand.}\label{fig:results3b}
+\end{figure*}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sensitivity}
+
+\begin{figure*}[!ht]
+\setcounter{subfigure}{0}
+\centering
+\includegraphics[width=5in]{../optimize/figs/allzvd.eps}
+\caption{Optimal solution as a function of demand.}\label{fig:zvd}
+\end{figure*}
+
+\begin{table}[!htdp]
+\caption{default}\label{Maximum satisfiable demand for each case.}\begin{center}\begin{tabular}{cc}
+\toprule
+Case & Max Demand \\
+\midrule
+1(a) & 23.2 \\
+2(a) & 12.4 \\
+3(a) & 21.5 \\
+1(b) & 26.4 \\
+2(b) & 13.2 \\
+3(b) & 27.3 \\
+\bottomrule
+\end{tabular} \end{center}\end{table}
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{../../references}
+
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Appendix A - Source Code and Sample output}
 \small
-\subsection{Main Program}
-<<optimize, echo=F,results=tex>>=
+\subsection*{A1 - Main Program}
+<<>>=
 code <- system('pygmentize -f latex optimize.m',intern=T)
 cat(code,sep='\n')
 @
 
-\clearpage
-\subsection{Objective Function}
-<<objfun>>=
+<<>>=
+code <- system('pygmentize -f latex getPars.m',intern=T)
+cat(code,sep='\n')
+@
+
+<<>>=
+code <- system('pygmentize -f latex setPars.m',intern=T)
+cat(code,sep='\n')
+@
+
+\subsection*{A2 - Objective Function}
+<<>>=
 code <- system('pygmentize -f latex objfun.m',intern=T)
 cat(code,sep='\n')
 @
 
-\subsection{Constraints}
-<<constraints>>=
+\subsection*{A3 - Constraints}
+<<>>=
 code <- system('pygmentize -f latex constraints.m',intern=T)
 cat(code,sep='\n')
 @
 
-\subsection{Simulation Model}
-<<sim>>=
+\subsection*{A4 - Simulation Model}
+<<>>=
 code <- system('pygmentize -f latex zack_wrapper.m',intern=T) 
 cat(code,sep='\n')
 @
-
-\subsection{Sample Output}
-Put sample output!
 
 \end{document}  

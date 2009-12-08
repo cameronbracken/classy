@@ -1,13 +1,12 @@
-%!PS-Adobe-3.0 EPSF-3.0
-%%Creator: MATLAB, The Mathworks, Inc. Version 7.4.0.287 (R2007a). Operating System: Darwin 9.2.0 Darwin Kernel Version 9.2.0: Tue Feb  5 16:13:22 PST 2008; root:xnu-1228.3.13~1/RELEASE_I386 i386.
-%%Title: /Users/cameron/Desktop/school/current/comp4/lso/writeup/zvd.eps
-%%CreationDate: 03/12/2008  12:19:16
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: MATLAB, The Mathworks, Inc. Version 7.9.0.529 (R2009b). Operating System: Darwin 10.2.0 Darwin Kernel Version 10.2.0: Tue Nov  3 10:37:10 PST 2009; root:xnu-1486.2.11~1/RELEASE_I386 i386.
+%%Title: figs/zvd-linear-bounds-minq.eps
+%%CreationDate: 12/08/2009  08:15:39
 %%DocumentNeededFonts: Helvetica
-%%+ Palatino-Roman
 %%DocumentProcessColors: Cyan Magenta Yellow Black
-%%LanguageLevel: 2
+%%Extensions: CMYK
 %%Pages: 1
-%%BoundingBox:    36   169   574   623
+%%BoundingBox:    60   199   548   589
 %%EndComments
 
 %%BeginProlog
@@ -138,10 +137,7 @@
 /ds {stri astore pop} bdef
 /dt {dtri astore pop} bdef
 /db {2 copy /cols xdef /rows xdef mul dup 3 mul string
-  currentfile 
-  3 index 0 eq {/ASCIIHexDecode filter}
-  {/ASCII85Decode filter 3 index 2 eq {/RunLengthDecode filter} if }
-  ifelse exch readstring pop
+  currentfile exch readhexstring pop
   dup 0 3 index getinterval /rbmap xdef
   dup 2 index dup getinterval /gbmap xdef
   1 index dup 2 mul exch getinterval /bbmap xdef pop pop}bdef
@@ -162,7 +158,7 @@ end
 
 %%Page: 1 1
 %%BeginPageSetup
-%%PageBoundingBox:    36   169   574   623
+%%PageBoundingBox:    60   199   548   589
 MathWorks begin
 bpage
 %%EndPageSetup
@@ -170,10 +166,10 @@ bpage
 %%BeginObject: obj1
 bplot
 
-/dpi2point 12 def
-portraitMode 0432 7476 csm
+/dpi2point 8.33333 def
+portraitMode 0150 5100 csm
 
-    0     0  6456  5437 rc
+  357   190  4067  3251 MR c np
 85 dict begin %Colortable dictionary
 /c0 { 0.000000 0.000000 0.000000 sr} bdef
 /c1 { 1.000000 1.000000 1.000000 sr} bdef
@@ -186,116 +182,107 @@ portraitMode 0432 7476 csm
 c0
 1 j
 1 sg
-   0    0 6457 5438 rf
-6 w
-0 4431 5004 0 0 -4431 839 4839 4 MP
+   0    0 4801 3602 PR
+4.16667 w
+0 2935 3720 0 0 -2935 624 3205 4 MP
 PP
--5004 0 0 4431 5004 0 0 -4431 839 4839 5 MP stroke
-4 w
+-3720 0 0 2935 3720 0 0 -2935 624 3205 5 MP stroke
+2.77778 w
 DO
 SO
-6 w
+4.16667 w
 0 sg
- 839 4839 mt 5843 4839 L
- 839  408 mt 5843  408 L
- 839 4839 mt  839  408 L
-5843 4839 mt 5843  408 L
- 839 4839 mt 5843 4839 L
- 839 4839 mt  839  408 L
- 839 4839 mt  839 4788 L
- 839  408 mt  839  458 L
-%%IncludeResource: font Palatino-Roman
-/Palatino-Roman /ISOLatin1Encoding 144 FMSR
+ 624 3205 mt 4344 3205 L
+ 624  270 mt 4344  270 L
+ 624 3205 mt  624  270 L
+4344 3205 mt 4344  270 L
+ 624 3205 mt 4344 3205 L
+ 624 3205 mt  624  270 L
+ 624 3205 mt  624 3167 L
+ 624  270 mt  624  307 L
+%%IncludeResource: font Helvetica
+/Helvetica /ISOLatin1Encoding 83.3333 FMSR
 
- 803 5006 mt 
-(7) s
-1673 4839 mt 1673 4788 L
-1673  408 mt 1673  458 L
-1583 5006 mt 
-(7.5) s
-2507 4839 mt 2507 4788 L
-2507  408 mt 2507  458 L
-2471 5006 mt 
-(8) s
-3341 4839 mt 3341 4788 L
-3341  408 mt 3341  458 L
-3251 5006 mt 
-(8.5) s
-4175 4839 mt 4175 4788 L
-4175  408 mt 4175  458 L
-4139 5006 mt 
-(9) s
-5009 4839 mt 5009 4788 L
-5009  408 mt 5009  458 L
-4919 5006 mt 
-(9.5) s
-5843 4839 mt 5843 4788 L
-5843  408 mt 5843  458 L
-5771 5006 mt 
-(10) s
- 839 4839 mt  889 4839 L
-5843 4839 mt 5792 4839 L
- 732 4892 mt 
+ 601 3306 mt 
 (0) s
- 839 4206 mt  889 4206 L
-5843 4206 mt 5792 4206 L
- 732 4259 mt 
-(1) s
- 839 3573 mt  889 3573 L
-5843 3573 mt 5792 3573 L
- 732 3626 mt 
+1155 3205 mt 1155 3167 L
+1155  270 mt 1155  307 L
+1132 3306 mt 
 (2) s
- 839 2940 mt  889 2940 L
-5843 2940 mt 5792 2940 L
- 732 2993 mt 
-(3) s
- 839 2307 mt  889 2307 L
-5843 2307 mt 5792 2307 L
- 732 2360 mt 
+1686 3205 mt 1686 3167 L
+1686  270 mt 1686  307 L
+1663 3306 mt 
 (4) s
- 839 1674 mt  889 1674 L
-5843 1674 mt 5792 1674 L
- 732 1727 mt 
-(5) s
- 839 1041 mt  889 1041 L
-5843 1041 mt 5792 1041 L
- 732 1094 mt 
+2218 3205 mt 2218 3167 L
+2218  270 mt 2218  307 L
+2195 3306 mt 
 (6) s
- 839  408 mt  889  408 L
-5843  408 mt 5792  408 L
- 732  461 mt 
-(7) s
- 839 4839 mt 5843 4839 L
- 839  408 mt 5843  408 L
- 839 4839 mt  839  408 L
-5843 4839 mt 5843  408 L
-gs 839 408 5005 4432 rc
+2749 3205 mt 2749 3167 L
+2749  270 mt 2749  307 L
+2726 3306 mt 
+(8) s
+3281 3205 mt 3281 3167 L
+3281  270 mt 3281  307 L
+3235 3306 mt 
+(10) s
+3812 3205 mt 3812 3167 L
+3812  270 mt 3812  307 L
+3766 3306 mt 
+(12) s
+4344 3205 mt 4344 3167 L
+4344  270 mt 4344  307 L
+4298 3306 mt 
+(14) s
+ 624 3205 mt  661 3205 L
+4344 3205 mt 4306 3205 L
+ 508 3235 mt 
+(28) s
+ 624 2715 mt  661 2715 L
+4344 2715 mt 4306 2715 L
+ 508 2745 mt 
+(29) s
+ 624 2226 mt  661 2226 L
+4344 2226 mt 4306 2226 L
+ 508 2256 mt 
+(30) s
+ 624 1737 mt  661 1737 L
+4344 1737 mt 4306 1737 L
+ 508 1767 mt 
+(31) s
+ 624 1248 mt  661 1248 L
+4344 1248 mt 4306 1248 L
+ 508 1278 mt 
+(32) s
+ 624  759 mt  661  759 L
+4344  759 mt 4306  759 L
+ 508  789 mt 
+(33) s
+ 624  270 mt  661  270 L
+4344  270 mt 4306  270 L
+ 508  300 mt 
+(34) s
+ 624 3205 mt 4344 3205 L
+ 624  270 mt 4344  270 L
+ 624 3205 mt  624  270 L
+4344 3205 mt 4344  270 L
+gs 624 270 3721 2936 MR c np
 /c8 { 0.000000 0.000000 1.000000 sr} bdef
 c8
--454 -380 -759 -633 -758 -633 -758 -633 -758 -633 -758 -633 -759 -633 5843 4839 8 MP stroke
+67 101 67 102 67 101 68 63 67 57 67 56 67 56 68 57 
+67 56 67 56 67 56 68 57 67 56 67 56 67 56 68 57 
+67 56 67 56 67 56 67 57 68 56 67 56 67 57 67 56 
+68 56 67 56 67 57 67 56 68 56 67 56 67 57 67 56 
+68 56 67 56 67 57 67 56 68 56 67 57 67 56 67 56 
+68 56 67 57 67 56 67 56 68 56 67 57 67 56 67 56 
+67 56 624 270 50 MP stroke
 gr
 
 c8
 0 sg
-%%IncludeResource: font Palatino-Roman
-/Palatino-Roman /ISOLatin1Encoding 120 FMSR
-
-3310 5146 mt 
-(z) s
- 644 3148 mt  -90 rotate
-(Deamand \(m) s
-90 rotate
-%%IncludeResource: font Palatino-Roman
-/Palatino-Roman /ISOLatin1Encoding 96 FMSR
-
- 584 2453 mt  -90 rotate
-(3) s
-90 rotate
-%%IncludeResource: font Palatino-Roman
-/Palatino-Roman /ISOLatin1Encoding 120 FMSR
-
- 644 2405 mt  -90 rotate
-(/day\)) s
+2044 3406 mt 
+(Demand \(Volume/Time\)) s
+ 451 2302 mt  -90 rotate
+(Objective function at optimality) s
 90 rotate
 
 end %%Color Dict
