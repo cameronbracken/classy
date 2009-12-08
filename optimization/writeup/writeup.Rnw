@@ -1,5 +1,4 @@
-% !TEX TS-program = pdflatexmk
-
+% !TEX TS-program = Sweave
 \documentclass[12pt,twoside]{article}
 
 %%------------font choices
@@ -33,9 +32,20 @@
 \usepackage{booktabs}
 
 %%------------misc
-\usepackage{verbatim} 
+\usepackage{verbatim}
+\usepackage{fancyvrb} 
+\usepackage{color}
 \usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
 \hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%------------pygments highlighting
+\usepackage[noae,nogin]{Sweave}
+\SweaveOpts{echo=F,results=tex}
+<<pygment>>=
+setwd('../optimize')
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+@
+
 
 %%------------bibliography
 \usepackage{natbib}   
@@ -69,14 +79,22 @@
 
 \section*{Introduction}
 
-A town of Happyville is considering the use of groundwater to augment their water supply.  The city has Due to the local geography city engineer determines that the local aquifur can be modeled as a one dimensional system.  Aditionally since the town's demand does not change very frequently the system is effectively always in steady state and so a steady state model can be used. 
+A town of Happyville is considering the use of groundwater from a local aquifur to augment their water supply \autoref{fig:site}.  The aquifur is approxamately rectangular.  It is bounded on the east and west by river and on the north and south by impermiable boundaries.  The city is willing to place pumps only at the locations shown with x's in the diagram.  
 
 \begin{figure}[!ht] %  figure placement: here, top, bottom, or page
    \centering
    \includegraphics[width=.7\textwidth]{figs/site.pdf} 
    \caption{Study area, x's represent pumping locations.  Impermiable boundaries exist on the north and south sides and rivers on the east and west sides.}
-   \label{fig:flow}
+   \label{fig:site}
 \end{figure}
+
+The following conditions are true of the system and the cities water demand
+
+\begin{itemize}
+\item Each row (array) of pumping locations is independent of one another, that is, pumping within any one will only affect the head in array will not affect the head in any other arr
+\end{itemize}
+
+ Aditionally since the town's demand does not change very frequently the system is effectively always in steady state and so a steady state model can be used. 
 
 The City is interested in several alternatives for putting in pumps.  
 
@@ -177,167 +195,31 @@ A plot of the objective function $z$ versus the demand is shown in Figure 3.  Sa
 \section{Source Code and Sample output}
 \small
 \subsection{Main Program}
-\begin{verbatim}
-%this mfile sets up the runs the optimiztion
-%           max f = sum(h_i)     maximize gw head
-%   subject to:
-%           sum(Q_i) = D         pumping must satisfy demand
-%           h_i >= h*            head levels must not drop below standard
-%           Q_i >= 0             no injection 
-%the three auxilary files are:
-%   objfun.m -      z = objfun(Q) 
-%                   evaluates the objective function given the Q_i's (by
-%                   calling zack)
-%   zack.m -        h=zack(Q)
-%                   solves the diffusion equation, takes pumping rates, gives
-%                   back heads
-%   constraints.m - evaluates the nonlinear constraints (calls zack)
-%
+<<optimize, echo=F,results=tex>>=
+code <- system('pygmentize -f latex optimize.m',intern=T)
+cat(code,sep='\n')
+@
 
-
-options = optimset('LargeScale','off');
-x0=[1 0 0 0 1 0 0 0 0 1];
-
-diary('op.out')
-[x,fval,exitflag,output] = fmincon(@objfun,x0,[],[],[],[],[],[],@constraints,options);
-
-if(exitflag)
-    'All that stuff up there means OPTIMAL SOLUTION FOUND!!!!'
-    'The pumping rate was:'
-    6.5
-    'The minimum head level was:'
-    0.7
-    'The optimal pumping rates:'
-    q=x;
-    q
-    h=zack(-x,10);
-    'The head levels at optimallity:'
-    h'
-    'output saved to op.out'
-end
-diary off
-\end{verbatim}
 \clearpage
 \subsection{Objective Function}
-\begin{verbatim}
-function f = objfun(x)
-    %this function evaluates the objective function
+<<objfun>>=
+code <- system('pygmentize -f latex objfun.m',intern=T)
+cat(code,sep='\n')
+@
 
-    
-    n=10;    %number of nodes
-    
-    %x is the pumping rates, must be negative for the model
-    h=zack(-x,n);
-    
-    %fmincon minimizes by default so f must be negative to maximize
-    f=-sum(h);
-\end{verbatim}
 \subsection{Constraints}
-\begin{verbatim}
-function [c, ceq] = constraints(x)
-  % This function evaluates the constraints 
-  
-  n=10;
-  h=zack(-x,n);
-  dem=6.6;
-  minh=.7;      %h*, the minimum head value
-  
-  
-  %the first part is the nonlinear min head constraint
-  %the second part is the nonnegativity pumping constraint
-  c = [ (minh-h)', -x ] ; 
-  
-  % The demand constraint rearranged to make leq
-  % Not really a nonlinear constraint but easier to put here
-  ceq = dem-sum(x); %dem-sum(x);
-\end{verbatim}
-\newpage
+<<constraints>>=
+code <- system('pygmentize -f latex constraints.m',intern=T)
+cat(code,sep='\n')
+@
+
 \subsection{Simulation Model}
-\begin{verbatim}
-function h=zack(q,n)
-    %solves the diffusion equation given pumping rates q
-    %  n is the number of internal nodes
+<<sim>>=
+code <- system('pygmentize -f latex zack_wrapper.m',intern=T) 
+cat(code,sep='\n')
+@
 
-      dx=1/(n+1);   %distance between nodes
-      d=1;          %transmissivity
-      xl=1;         %right boundary condition
-      xr=1;         %left boundary condition
-
-      a=zeros(n,n);
-      b=zeros(n,1);
-      
-      b(1)=d*xl/(dx^2);
-      b(n)=d*xr/(dx^2);
-
-      for  i=1:n
-          b(i)=b(i)+q(i)/dx;
-      end 
-
-      for  i=1:n
-          a(i,i)=d*(+2./(dx^2));
-          if (i~=n)
-              a(i,i+1)=-d/(dx^2);
-          end
-          if(i~=1)
-              a(i,i-1)=-d/(dx^2);
-          end
-      end
-      
-      h=a\b;
-\end{verbatim}
 \subsection{Sample Output}
-\begin{verbatim}
-Optimization terminated: magnitude of search direction less than 2*options.TolX
- and maximum constraint violation is less than options.TolCon.
-Active inequalities (to within options.TolCon = 1e-06):
-  lower      upper     ineqlin   ineqnonlin
-                                     1
-                                     2
-                                     3
-                                     4
-                                     5
-                                     6
-                                     7
-                                     8
-                                     9
-                                    10
-                                    12
-                                    13
-                                    14
-                                    15
-                                    16
-                                    17
-                                    18
-                                    19
-The pumping rate was:
-    6.6000
-The minimum head level was:
-    0.7000
-The optimal pumping rates:
-    3.3000
-   -0.0000
-   -0.0000
-   -0.0000
-   -0.0000
-   -0.0000
-   -0.0000
-   -0.0000
-   -0.0000
-    3.3000
-The head levels at optimallity:
-h =
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-    0.7000
-output saved to op.out
-\end{verbatim}
-
+Put sample output!
 
 \end{document}  
