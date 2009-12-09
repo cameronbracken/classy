@@ -10,7 +10,7 @@
 \usepackage{tikz}
 
 %%------------page layout
-\usepackage[left=2cm,top=2cm,right=2cm,bottom=2cm]{geometry} %changes margins
+\usepackage[margin=1in]{geometry} %changes margins
 \usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
 \usepackage{multicol}
 
@@ -302,7 +302,7 @@ where $f$ is an unknown function. For a given $h^*$ and $Q^*$, there is a unique
 
 $$\mbox{max}\,\,D=\sum_{i=1}^nQ_i(z(D))$$
 
-Solving for $D^*$ is an iterative process requiring multiple runs of the original optimization model. The MSD for each case is shown in table \ref{msd}.  We can verify that the MSD is met by adding up the pumping rates.  Take case 1(a) for example, $\sum Q_i = 2.5 * (2 edges)*(4 rows) + 0.4 (2 edges)*(4 rows) = 23.2$.  \autoref{fig:zvd} shows the relationship between demand and optimal objective function.  The relationship is nearly linear except close to $D*$ in the pumping limited cases. 
+Solving for $D^*$ is an iterative process requiring multiple runs of the original optimization model. The MSD for each case is shown in \autoref{msd}.  We can verify that the MSD is met by adding up the pumping rates.  Take case 1(a) for example, $\sum Q_i = 2.5 * (2 edges)*(4 rows) + 0.4 (2 edges)*(4 rows) = 23.2$.  \autoref{fig:zvd} shows the relationship between demand and optimal objective function.  The relationship is nearly linear except close to $D*$ in the pumping limited cases. 
 
 \begin{table}[!htdp]
 \caption{Maximum satisfiable demand for each case.}\label{msd}
