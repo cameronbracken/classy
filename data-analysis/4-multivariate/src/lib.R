@@ -1,0 +1,8 @@
+library(pear)
+source('mar-fit.R')
+source('mar-sim.R')
+source('knn-multi-sim.R')
+source('sim-stats.R')
+source('mylag.R')
+source('skew.R')
+source('sspectrum.R')
