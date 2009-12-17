@@ -17,7 +17,7 @@ if(!file.exists('Sweave.sty'))
 \usepackage{tikz}
 
 %%------------page layout
-\usepackage[left=2.5cm,top=3cm,right=2.5cm,bottom=2cm]{geometry} %changes margins
+\usepackage{geometry} %changes margins
 \usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
 \usepackage{multicol}
 
@@ -85,6 +85,7 @@ if(!file.exists('Sweave.sty'))
   	CVEN6833 Fall, 2009
 \end{center}
 
+
 <<setup,fig=F,echo=F,results=hide,cache=F>>=
 	
 	suppressPackageStartupMessages(require(tikzDevice))
@@ -135,6 +136,7 @@ if(!file.exists('Sweave.sty'))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 1}
 
+Code to read the data is shown in \autoref{reads}.  Code to fit, simulate and calulate statistics are for the MAR(1) model are shown in \autoref{1}, \ref{mar-fit}, \ref{mar-sim} and \ref{sim-stats}.  
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<read-data,echo=F,fig=F,external=F,results=tex,cache=F>>=
@@ -188,23 +190,19 @@ if(!file.exists('Sweave.sty'))
 layout(rbind(c(1,2),c(3,4)))
 
 boxplot(lf.stats.mar$mean,main='Mean',las=3)
-	lines(lf.mean,col='red')
-	points(13,mean(lf.ann),col='red')
+	lines(lf.mean,col='red'); points(13,mean(lf.ann),col='red')
 
 boxplot(lf.stats.mar$sd,main='Standard Deviation',las=3)
-	lines(lf.sd,col='red')
-	points(13,sd(lf.ann),col='red')
+	lines(lf.sd,col='red'); points(13,sd(lf.ann),col='red')
 
 boxplot(lf.stats.mar$lag1,main='Lag1 Correlation',las=3)
-	lines(lf.lag1,col='red')
-	points(13,mylag(lf.ann,1,docor=TRUE),col='red')
+	lines(lf.lag1,col='red'); points(13,mylag(lf.ann,1,docor=TRUE),col='red')
 
 boxplot(lf.stats.mar$skew,main='Skew',
 	ylim=range(range(lf.stats.mar$skew),range(lf.skew)),las=3)
-	lines(lf.skew,col='red')
-	points(13,skew(lf.ann),col='red')
+	lines(lf.skew,col='red'); points(13,skew(lf.ann),col='red')
 @
-\caption{MAR(1) statistics for Lees Ferry. The furthest box on the right is the annual statistic.}
+\caption{MAR(1) statistics for Lees Ferry. The furthest box on the right is the annual statistic.  All the statistics are captured as expected except the skew.  The MAR model is not designed for non-normal data, although this could be partially mitigated by applying log transformations.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -214,23 +212,19 @@ boxplot(lf.stats.mar$skew,main='Skew',
 layout(rbind(c(1,2),c(3,4)))
 
 boxplot(gr.stats.mar$mean,main='Mean',las=3)
-	lines(gr.mean,col='red')
-	points(13,mean(gr.ann),col='red')
+	lines(gr.mean,col='red'); points(13,mean(gr.ann),col='red')
 
 boxplot(gr.stats.mar$sd,main='Standard Deviation',las=3)
-	lines(gr.sd,col='red')
-	points(13,sd(gr.ann),col='red')
+	lines(gr.sd,col='red'); points(13,sd(gr.ann),col='red')
 
 boxplot(gr.stats.mar$lag1,main='Lag1 Correlation',las=3)
-	lines(gr.lag1,col='red')
-	points(13,mylag(gr.ann,1,docor=TRUE),col='red')
+	lines(gr.lag1,col='red'); points(13,mylag(gr.ann,1,docor=TRUE),col='red')
 
 boxplot(gr.stats.mar$skew,main='Skew',
 	ylim=range(range(gr.stats.mar$skew),range(gr.skew)),las=3)
-	lines(gr.skew,col='red')
-	points(13,skew(gr.ann),col='red')
+	lines(gr.skew,col='red'); points(13,skew(gr.ann),col='red')
 @
-\caption{MAR(1) statistics for Green River. The furthest box on the right is the annual statistic.}
+\caption{MAR(1) statistics for Green River. The furthest box on the right is the annual statistic.  Same comments as the previous figure.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -248,7 +242,7 @@ for(i in 1:nsims){
 }
 sm.density(lf.may,add=T,col='red',lwd=2)
 @
-\caption{May pdf at Less Ferry with MAR(1).}
+\caption{May PDF at Less Ferry with MAR(1).  The bimodality of the PDF is not captured as seen with other parametric models.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -266,13 +260,15 @@ for(i in 1:nsims){
 }
 sm.density(gr.may,add=T,col='red',lwd=2)
 @
-\caption{May pdf at Green River with MAR(1).}
+\caption{May pdf at Green River with MAR(1). Same comments as the previous plot, although the PDF is slightly more normal, the irregular shape is still not captured.}
 \end{figure}
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
+
+Code to fit, simulate and calulate statistics for the KNN lag 1 model are shown in \autoref{2,knn-multi-sim}.  
 
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
@@ -300,23 +296,19 @@ sm.density(gr.may,add=T,col='red',lwd=2)
 layout(rbind(c(1,2),c(3,4)))
 
 boxplot(lf.stats.knn$mean,main='Mean',las=3)
-	lines(lf.mean,col='red')
-	points(13,mean(lf.ann),col='red')
+	lines(lf.mean,col='red'); points(13,mean(lf.ann),col='red')
 
 boxplot(lf.stats.knn$sd,main='Standard Deviation',las=3)
-	lines(lf.sd,col='red')
-	points(13,sd(lf.ann),col='red')
+	lines(lf.sd,col='red'); points(13,sd(lf.ann),col='red')
 
 boxplot(lf.stats.knn$lag1,main='Lag1 Correlation',las=3)
-	lines(lf.lag1,col='red')
-	points(13,mylag(lf.ann,1,docor=TRUE),col='red')
+	lines(lf.lag1,col='red'); points(13,mylag(lf.ann,1,docor=TRUE),col='red')
 
 boxplot(lf.stats.knn$skew,main='Skew',
 	ylim=range(range(lf.stats.knn$skew),range(lf.skew)),las=3)
-	lines(lf.skew,col='red')
-	points(13,skew(lf.ann),col='red')
+	lines(lf.skew,col='red'); points(13,skew(lf.ann),col='red')
 @
-\caption{Multivariate KNN statistics for Lees Ferry. The furthest box on the right is the annual statistic.}
+\caption{Multivariate KNN statistics for Lees Ferry. The furthest box on the right is the annual statistic.  Here we see that all the statistics are reproduced faithfully including the skew.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -326,23 +318,19 @@ boxplot(lf.stats.knn$skew,main='Skew',
 layout(rbind(c(1,2),c(3,4)))
 
 boxplot(gr.stats.knn$mean,main='Mean',las=3)
-	lines(gr.mean,col='red')
-	points(13,mean(gr.ann),col='red')
+	lines(gr.mean,col='red'); points(13,mean(gr.ann),col='red')
 
 boxplot(gr.stats.knn$sd,main='Standard Deviation',las=3)
-	lines(gr.sd,col='red')
-	points(13,sd(gr.ann),col='red')
+	lines(gr.sd,col='red'); points(13,sd(gr.ann),col='red')
 
 boxplot(gr.stats.knn$lag1,main='Lag1 Correlation',las=3)
-	lines(gr.lag1,col='red')
-	points(13,mylag(gr.ann,1,docor=TRUE),col='red')
+	lines(gr.lag1,col='red'); points(13,mylag(gr.ann,1,docor=TRUE),col='red')
 
 boxplot(gr.stats.knn$skew,main='Skew',
 	ylim=range(range(gr.stats.knn$skew),range(gr.skew)),las=3)
-	lines(gr.skew,col='red')
-	points(13,skew(gr.ann),col='red')
+	lines(gr.skew,col='red'); points(13,skew(gr.ann),col='red')
 @
-\caption{Multivariate KNN statistics for Green River. The furthest box on the right is the annual statistic.}
+\caption{Multivariate KNN statistics for Green River. The furthest box on the right is the annual statistic. Same comments as the previous figure.}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -360,7 +348,7 @@ for(i in 1:nsims){
 }
 sm.density(lf.may,add=T,col='red',lwd=2)
 @
-\caption{May pdf at Less Ferry with KNN.}
+\caption{May pdf at Less Ferry with KNN.  Here we see that the bimodality of the PDF is better represented as seen before with the knn method. }
 \end{figure}
 
 \begin{figure}[!ht]
@@ -378,7 +366,7 @@ for(i in 1:nsims){
 }
 sm.density(gr.may,add=T,col='red',lwd=2)
 @
-\caption{May pdf at Green Riverwith KNN.}
+\caption{May pdf at Green Riverwith KNN.  Here again, the shape of the PDF is better captured.}
 \end{figure}
 
 
@@ -393,6 +381,8 @@ sm.density(gr.may,add=T,col='red',lwd=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 4}
 
+Code to calculate the frequency spectrum is shown in \autoref{4}.
+
 \begin{figure}[!ht]
 \fbox{\parbox{\textwidth}{\small
 <<4,echo=F,fig=F,external=F,results=tex,cache=F>>=
@@ -404,18 +394,18 @@ sm.density(gr.may,add=T,col='red',lwd=2)
 
 \begin{figure}[!ht]
 \centering
-<<spectrum-sst, echo=T, fig=T, tikz=T, cache=F, keep.source=T>>=
+<<spectrum-sst, echo=T, fig=T, tikz=T, cache=F, keep.source=T, width=5, height=5>>=
 print(sst.plot)
 @
-\caption{SST spectrum over pacific region. The blue line is the spectrum with upper and lower confidence intervals.  The black line is the 95\% confidence interval.}
+\caption{SST spectrum over pacific region. The blue line is the spectrum with upper and lower confidence intervals.  The black line is the 95\% confidence interval.  Significant frequencies exist at 2, 3 and about 4.5 cycles per year. This makes sense from the perspective of changing seasons.}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-<<spectrum-pdsi, echo=T, fig=T, tikz=T, cache=F, keep.source=T>>=
+<<spectrum-pdsi, echo=T, fig=T, tikz=T, cache=F, keep.source=T, width=5, height=5>>=
 print(pdsi.plot)
 @
-\caption{PDSI spectrum over US. The blue line is the spectrum with upper and lower confidence intervals.  The black line is the 95\% confidence interval.}
+\caption{PDSI spectrum over US. The blue line is the spectrum with upper and lower confidence intervals.  The black line is the 95\% confidence interval.  The largest spectrum is seen in the region of 1/2 cycle per year and less.   This makes sense that soil moisture is not highly variable within a year, and may be modulated on a 2 or greater year cycle. The only other significant frequency is around 6 cycles per year.}
 \end{figure}
 
 
