@@ -65,7 +65,7 @@ if(!file.exists('Sweave.sty'))
 \fancyhead[CO]{\small HOMEWORK \#3}
 
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
-\pgfrealjobname{multivariate} 
+\pgfrealjobname{fields} 
 
 \usepackage{alltt}
 <<hi,echo=F,results=tex,fig=F,external=F>>=

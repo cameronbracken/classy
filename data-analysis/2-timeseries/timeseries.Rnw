@@ -440,6 +440,8 @@ lines(1:length(sp.seas$y),sp.seas$s,col='red',lwd=2)
 \begin{figure}[!ht]
 \centering
 <<may-pdf-par, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
+
+out <- sm.density(x.may)
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.seas[,5,i],
 		eval.points=pt,display='none')$estimate
@@ -513,6 +515,8 @@ lines(1:length(sp.mknn$y),sp.mknn$s,col='red',lwd=2)
 \begin{figure}[!ht]
 \centering
 <<may-pdf-mknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
+
+out <- sm.density(x.may)
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.mknn[,5,i],
 		eval.points=pt,display='none')$estimate
@@ -587,6 +591,7 @@ lines(1:length(sp.imknn$y),sp.imknn$s,col='red',lwd=2)
 \begin{figure}[!ht]
 \centering
 <<may-pdf-imknn, echo=T, fig=T, tikz=T, cache=T, keep.source=T,width=3.5,height=3.5>>=
+out <- sm.density(x.may)
 for(i in 1:nsims){
 	boxpt[i,] <- sm.density(sim.imknn[,5,i],
 		eval.points=pt,display='none')$estimate

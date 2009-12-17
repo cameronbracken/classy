@@ -1,8 +1,11 @@
-source('lib.R')
-load('data/ts.Rdata')
+#!/usr/bin/env Rscript
 
-m <- 2 #years back
-p <- 2 #years ahead, 2 or greater
+#load packages, functions and data
+source('setup.R')
+
+q <- 2 #years back
+r <- 2 #years ahead, 2 or greater
+
 nsims <- 250
 paleo <- meko
 paleo.b <- meko.b
@@ -12,34 +15,37 @@ hist.b <- lees.b
 n <- length(paleo)
 nh <- length(hist)
 
-hist.bmp <- mpbin(hist.b,m,p)
-hist.mp <- mpbin(hist,m,p)
-paleo.bmp <- mpbin(paleo.b,m,p)
+    #binary combinations
+b <- > expand.grid( rep( list(c(T,F)), r ) )
 
-sim <- matrix(NA,nh-m,nsims)
+hist.bqr <- lagnext(hist.b,q,r)
+hist.qr <- lagnext(hist,q,r)
+paleo.bqr <- lagnext(paleo.b,q,r)
+
+sim <- matrix(NA,nh-q,nsims)
 
 	
 for(i in (m+1):nh){
 	
-	state <- paleo.bmp$x[i,]
+	state <- paleo.bqr$x[i,]
 	
-	is.in <- !logical(nh-m-1)
-	for(j in 1:m)
-		is.in <- is.in & (hist.bmp$x[,j] == state[j])
+	is.in <- !logical(nh-q-1)
+	for(j in 1:q)
+		is.in <- is.in & (hist.bqr$x[,j] == state[j])
 	
-	hist.prev <- hist.mp$x[is.in,]
-	hist.next <- hist.mp$y[is.in,]
+	hist.prev <- hist.qr$x[is.in,]
+	hist.next <- hist.qr$y[is.in,]
 	
 	K  <- nrow(hist.next)
 	W <- 1/(1:K)
 	W <-W/sum(W)
-	browser()
+	#browser()
 	
-	for(ns in 1:nsims){
+	#for(ns in 1:nsims){
 		
 		
 		
-	}
+	#}
 	
 	
 }
