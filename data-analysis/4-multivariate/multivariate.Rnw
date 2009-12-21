@@ -88,17 +88,7 @@ if(!file.exists('Sweave.sty'))
 
 <<setup,fig=F,echo=F,results=hide,cache=F>>=
 	
-	suppressPackageStartupMessages(require(tikzDevice))
-	suppressPackageStartupMessages(require(pgfSweave))
-	suppressPackageStartupMessages(require(xtable))
-	suppressPackageStartupMessages(require(locfit))
-	suppressPackageStartupMessages(require(fields))
-	suppressPackageStartupMessages(require(xtable))
-	suppressPackageStartupMessages(require(sm))
-	suppressPackageStartupMessages(require(locfit))
-	suppressPackageStartupMessages(require(pear))
 	suppressPackageStartupMessages(require(ggplot2))
-	
 	
 	cashdir = "./cache"
 	setCacheDir(cashdir)
@@ -106,29 +96,13 @@ if(!file.exists('Sweave.sty'))
 	if(!file.exists('figs')) dir.create('figs')
 	
 	options('tikzDocumentDeclaration' = '\\documentclass[11pt]{article}')
-	nbcol <- 50
-	color <- topo.colors(nbcol)
+
 @
 
 <<source,fig=F,echo=F,results=hide,cache=F>>=
 	
 	setwd('src')
-	
-		source('lib.R')
-		if(!file.exists('output')) 	dir.create('output')
-		
-		if(file.exists('output/flows.Rdata')){
-			load('output/flows.Rdata')
-		}else{
-			source('readData.Rdata')
-		}
-		
-		for(i in c(1,2,4))
-			if(file.exists(paste('output/',i,'.Rdata',sep=''))){
-				load(paste('output/',i,'.Rdata',sep=''))
-			}else{
-				source(paste(i,'.R',sep=''))
-			}
+		if(file.exists('fc.Rdata'))load('data/fc.Rdata')
 	setwd('../')
 @
 

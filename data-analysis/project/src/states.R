@@ -7,8 +7,8 @@ q <- 2 #years back
 r <- 2 #years ahead, 2 or greater
 
 nsims <- 250
-paleo <- meko
-paleo.b <- meko.b
+paleo <- wood
+paleo.b <- wood.b
 hist <- lees
 hist.b <- lees.b
 
@@ -16,36 +16,85 @@ n <- length(paleo)
 nh <- length(hist)
 
     #binary combinations
-b <- > expand.grid( rep( list(c(T,F)), r ) )
+b <- expand.grid( rep( list(c(T,F)), r ) )
 
-hist.bqr <- lagnext(hist.b,q,r)
-hist.qr <- lagnext(hist,q,r)
-paleo.bqr <- lagnext(paleo.b,q,r)
+	#all state tansitions of paleo
+paleo.bqr <- laglead(paleo.b,q,r)
+	
+	#block transition probabilities 
+tr.paleo <- trprob(paleo.bqr$lag,paleo.bqr$lead)
 
-sim <- matrix(NA,nh-q,nsims)
+	#Quantiles of paleo and historical
+Qp <- ecdf(paleo)(paleo)
+Qp.qr <- laglead(Qp,q,r)
 
+sim.y1 <- sim.y2 <- matrix(NA,nsims,nh-q+1)
+
+	#y is the year to forecast FROM
+for(y in q:nh){
+	cat('Forecasting From Year',time(hist)[y],'\n')
+	Qh <- ecdf(hist[-((y-q+1):y)])(hist)
+	Qh.qr <- laglead(Qh,q,r)
+
+		#current binary and quantile state
+	state <- hist.b[(y-q+1):y]
+	Qstate <- Qh[(y-q+1):y]
+	Qsum <- sum(Qstate)
+	this.p <- tr.paleo$p[rows.equal(tr.paleo$from,state)]	
 	
-for(i in (m+1):nh){
+	cat('\tThe Current State is', state,'\n')
+	cat('\tThe Quantile State is', Qstate,'\n')
 	
-	state <- paleo.bqr$x[i,]
-	
-	is.in <- !logical(nh-q-1)
-	for(j in 1:q)
-		is.in <- is.in & (hist.bqr$x[,j] == state[j])
-	
-	hist.prev <- hist.qr$x[is.in,]
-	hist.next <- hist.qr$y[is.in,]
-	
-	K  <- nrow(hist.next)
-	W <- 1/(1:K)
-	W <-W/sum(W)
-	#browser()
-	
-	#for(ns in 1:nsims){
+	this.sim <- matrix(NA,nsims,r)	
 		
-		
-		
-	#}
+	for(i in 1:nsims){
 	
+			#simulate transition
+		rand <- runif(1)
+		which.to <- rank(c(rand,cumsum(this.p)))[1]
+		state.to <- tr.paleo$to[which.to,]
 	
+			#conditional pool, quantiles given state.to
+		pool.from <- Qp.qr$lag[rows.equal(paleo.bqr$lead, state.to),]
+		pool.to <- Qp.qr$lead[rows.equal(paleo.bqr$lead, state.to),]
+
+			#current and pool's quantile sum 
+		pool.Qsum <- apply(pool.from,1,sum)
+
+			#number of neighbors
+		k <- round(sqrt(nrow(pool.to)))
+
+			#weight function
+		w <- numeric(k)
+		for(j in 1:k)
+			w[j] <- (1/j)/(sum(1/(1:j)))
+		w <- cumsum(w/sum(w))	
+
+			#find nearest quantile neighbors
+		d <- sqrt(apply((pool.from - Qstate)^2,1,sum))
+		neighbors <- order(d)[2:(k+1)]
+	
+		rand <- runif(1)
+		this.neighbor <- rank(c(rand,w))[1]
+		this.quant <- pool.to[neighbors,][this.neighbor,]
+		#this.quant <- pool.to[sample(1:nrow(pool.to),1),]
+	
+		this.sim[i,] <- this.quant
+	
+	}
+	
+	sim.y1[,y-q+1] <- quantile(hist,this.sim[,1])
+	sim.y2[,y-q+1] <- quantile(hist,this.sim[,2])
 }
+colnames(sim.y1) <- (start(hist)[1]+q-1):(end(hist)[1])+1
+colnames(sim.y2) <- (start(hist)[1]+q-1):(end(hist)[1])+2
+hist.y1 <- window(hist,start(hist)[1]+q)
+hist.y2 <- window(hist,start(hist)[1]+q+1)
+
+ layout(rbind(1,2))
+ boxplot(sim.y1,outline=F)
+ lines(1:length(hist.y1),hist.y1,col='red',lwd=2)
+ boxplot(sim.y2,outline=F)
+ lines(1:length(hist.y2),hist.y2,col='red',lwd=2)
+
+save(sim.y1,sim.y2, hist.y1, hist.y2 ,file='data/fc.Rdata')
