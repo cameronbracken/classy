@@ -3,8 +3,8 @@
 source('lib.R')
 require(gtools)
 seasonal.total <- TRUE
-mean.len <- 11
-running.mean <- TRUE
+mean.len <- 5
+running.mean <- FALSE
 if(!running.mean)mean.len <- 1
 
     # NINO3 index (kaplan reconstruction)
@@ -17,6 +17,7 @@ enso <- ts(array(t(enso[,-1])), start = sy, frequency=12)
 	# 5-year running mean
 meko <- as.matrix(read.table('data/Meko.txt'))[,2]
 sy.meko <- as.matrix(read.table('data/Meko.txt'))[1,1]
+meko.raw <- meko
 if(running.mean) meko <- running(meko,width=mean.len)
 meko <- ts(meko,start = sy.meko+mean.len-1) * 10^-6
 
@@ -24,6 +25,7 @@ meko <- ts(meko,start = sy.meko+mean.len-1) * 10^-6
 	# 5-year running mean
 wood <- as.matrix(read.table('data/woodhouse.txt'))[,2]
 sy.wood <- as.matrix(read.table('data/woodhouse.txt'))[1,1]
+wood.raw <- wood
 if(running.mean) wood <- running(wood,width=mean.len)
 wood <- ts(wood,start = sy.wood +mean.len-1) * 10^-6
 
@@ -44,4 +46,5 @@ lees.b <- binary.ts(lees,median(lees))
 #lines(wood,type='s')
 #lines(lees,col='red',type='s')
 
-save(enso, meko, meko.b, wood, wood.b, lees, lees.b, file = 'data/ts.Rdata')
+save(enso, meko, meko.raw, meko.b, wood, wood.raw, wood.b, lees, lees.b, 
+	file = 'data/ts.Rdata')

@@ -128,14 +128,17 @@ trprob <- function(lag,lead){
 	tpm <- list(
 		from = matrix(NA,nrow=nc,ncol=ncol(states.lag)),
 		to = matrix(NA,nrow=nc,ncol=ncol(states.lead)), 
-		p = numeric(nc)
+		p = numeric(nc),
+		pools = list()
 		)
 		
 	n <- 0
+	tpm$pools$to <- tpm$pools$from <- list()
 	for(i in 1:nrow(states.lag)){
 		
 			#all rows starting in a particular state
 		pool <- rows.equal(lag,states.lag[i,])
+		tpm$pools$from[[i]] <- pool
 		
 		for(j in 1:nrow(states.lead)){
 			
@@ -145,9 +148,34 @@ trprob <- function(lag,lead){
 			matches <- rows.equal(lead[pool,], states.lead[j,])
 			possible <- nrow(cbind(lead[pool,]))
 			tpm$p[n] <- length( matches ) / possible
+				
+				#save the indexes of the states from and to
+			tpm$pools$to[[n]] <- matches
 		
 		}
 	}
 	return(tpm)
+	
+}
+
+binary.combos <- function(n){
+	as.matrix( expand.grid( rep( list(c(T,F)), n ) ) )
+}
+
+sim.pqr <- function(tr.paleo, conditional.pool = FALSE){
+	
+	if(conditional.pool){
+			#simulate transition
+		rand <- runif(1)
+		which.to <- rank(c(rand,cumsum(this.p)))[1]
+		state.to <- tr.paleo$to[which.to,]
+
+
+			#conditional pool, quantiles given state.to
+		pool.from <- tr.paleo$pools$from[[ which.from[which.to] ]]
+		pool.to <- tr.paleo$pools$to[[ which.from[which.to] ]]
+		pool.from <- matrix(pool.from,,q)
+		pool.to <- matrix(pool.to,,r)
+	}
 	
 }
