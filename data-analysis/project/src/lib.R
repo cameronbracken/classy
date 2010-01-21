@@ -32,7 +32,7 @@ function(bin,q,r){
 	lag <- matrix(NA, n-q-1, q)
 	lead <- matrix(NA, n-q-1, r)
 
-	for(i in 1:(n-m-1)){
+	for(i in 1:(n-q-1)){
 		lag[i,] <- bin[i:(i+q-1)]
 		lead[i,] <- bin[(i+q):(i+q+r-1)]
 	}
@@ -111,4 +111,43 @@ binarys <- function(i,align=F){
         return(sprintf(paste('%0',width,'d',sep=''),as.integer(i)))
     else
         return(i)
+}
+
+rows.equal <- function(x, y){
+	
+	if(is.null(dim(x))) x <- rbind(x)
+	which( as.logical( 
+			apply(x, 1, all.equal, y)))
+}
+
+trprob <- function(lag,lead){
+	
+	states.lag <- unique(lag)
+	states.lead <- unique(lead)
+	nc <- 2^(ncol(states.lag)+ncol(states.lead))
+	tpm <- list(
+		from = matrix(NA,nrow=nc,ncol=ncol(states.lag)),
+		to = matrix(NA,nrow=nc,ncol=ncol(states.lead)), 
+		p = numeric(nc)
+		)
+		
+	n <- 0
+	for(i in 1:nrow(states.lag)){
+		
+			#all rows starting in a particular state
+		pool <- rows.equal(lag,states.lag[i,])
+		
+		for(j in 1:nrow(states.lead)){
+			
+			n <- n + 1
+			tpm$from[n,] <- states.lag[i,]
+			tpm$to[n,] <- states.lead[j,]
+			matches <- rows.equal(lead[pool,], states.lead[j,])
+			possible <- nrow(cbind(lead[pool,]))
+			tpm$p[n] <- length( matches ) / possible
+		
+		}
+	}
+	return(tpm)
+	
 }
