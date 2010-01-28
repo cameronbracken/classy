@@ -1,28 +1,26 @@
 D = 1;
 M = 1;
-t = [0.95 1 1.05];
-x = linspace(0,3);
+x = linspace(0,5);
 
-stya = ['k' 'k' 'k'];
-styb = ['-' '-' '-'];
-styc = ['.' ' ' '-'];
+figure()
+plotinflection([0.95 1 1.05],x,D,M)
+print('-r600','-depsc','inflection1.eps')
 
-hold on
-for i=1:3
-    
-    C = M/sqrt(4*pi*D*t(i))*exp(-x.^2/(4*D*t(i)));
-    plot(x,C,[stya(i) styb(i) styc(i)])
-    
-end
+figure()
+plotinflection([1.95 2 2.05],x,D,M)
+print('-r600','-depsc','inflection2.eps')
 
-xlabel('x [length]')
-ylabel('C [concentration]')
-legend('t = 0.95', 't = 1', 't = 1.05')
+figure()
+plotinflection([2.95 3 3.05],x,D,M)
+print('-r600','-depsc','inflection3.eps')
 
-for i=1:3
-    
-    vline(sqrt(2*D*t(i)),[stya(i) styb(i) styc(i)])%,['Inflection point, t = ',num2str(t(i))])
-    
-end
-
-print('-r600','-f1','-depsc','inflection1.eps')
+%%
+x = linspace(0,5);
+t = x;
+xstar = x./sqrt(D*t);
+Cstar = exp(-xstar.^2);
+plot(Cstar,xstar)
+xlabel('x^*')
+ylabel('C^*')
+title('Dimensionless Concentration Profile')
+print('-r600','-depsc','inflection4.eps')
