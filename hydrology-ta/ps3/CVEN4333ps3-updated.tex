@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+
+\begin{document}
+
+CVEN 4333, Spring 2010, Assignment \#3, Due Thursday January 28 at 5:00 in Cameron Bracken's mailbox. No late papers accepted. 
+
+\begin{enumerate}
+\item A time series is a set of data points measured at a fixed interval in time.  In this problem you will analyze a hydrologic time series.  Please put all of your results from this problem in a document together.  If you use Word, use Insert $>$ Picture $>$ ``From File...''  when inserting PDF files, don't drag and drop.  Take a look at \url{http://animas.colorado.edu/~bracken/CVEN4333/R-intro.pdf}, we will be going through this document in class. 
+
+\begin{enumerate}
+
+\item Download the text file: \\\url{http://animas.colorado.edu/~bracken/CVEN4333/plant-inflow.txt},  This file contains daily average inflow time series at the wastwater treatment plant in Arcata, California.  The units are million gallons per day (MGD). Create a directory for your work on this assignment and save the data file there. 
+
+\item Change the working directory in \textsf{R} to the directory you created containing the data file. 
+
+\item Read this data into a data frame in \textsf{R}, use the following command:
+\begin{verbatim}
+dat <- read.table("plant-inflow.txt",header=T)
+\end{verbatim} 
+What does the \texttt{header=T} argument do (hint: use the built in help, \texttt{?read.table})?
+
+\item Missing values in the file are indicated with a value of \texttt{-9999}. Replace these values in the data frame with \texttt{NA} (so they do not mess up the plot).  Use the command:
+\begin{verbatim}
+dat[dat==-9999] <- NA
+\end{verbatim}
+
+\item To plot the the inflow time series you need to combine the year month and day values like so:
+
+\begin{verbatim}
+years <- dat$year + dat$month/12 + dat$day/365
+\end{verbatim}
+
+Now plot the inflow time series (inflow versus time) and save the plot as a pdf file in the directory you created for this assignment. Use the command below to generate the plot:
+
+\begin{verbatim}
+plot(years, dat$inflow, type="l")
+\end{verbatim}
+You will need to modify it a bit to add labels using the \texttt{xlab}, \texttt{ylab} and \texttt{main} arguments. Qualitatively describe this data, do you see any problems from a data perspective (strange values, outliers, etc.)?
+
+\item The City is interested in monitoring the inflow on December 4th of every year. Extract the data for this date into a vector.  
+\begin{verbatim}
+dec4 <- dat$inflow[dat$day == 4 & dat$month == 12]
+\end{verbatim}
+
+Calculate the mean, standard deviation, max, min, median and quartiles. The commands you need are \texttt{mean}, \texttt{sd}, \texttt{max}, \texttt{min} and \texttt{quantile}.  Display these values in a table and show the commands you used. 
+
+\item Plot a histogram of the December 4th values with a rug plot: 
+
+\begin{verbatim}
+hist(dec4)
+rug(dec4)
+\end{verbatim}
+Again, modify the hist command to add an x axis label and a main plot title. Save this plot as a pdf file.  Describe this histogram, do you notice anything funny?  What are two possible causes (thing about resolution and quantity of data)?
+
+\end{enumerate} 
+From the book:
+\item 4.3 
+\item 4.5
+\item 4.14
+
+\end{enumerate}
+
+\end{document}  
