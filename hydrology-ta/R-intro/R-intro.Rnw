@@ -1,0 +1,132 @@
+% !TEX TS-program = Sweave
+\documentclass[11pt]{article}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+%\usepackage[scaled=.92]{couriers}
+
+\usepackage[noae,nogin]{Sweave}
+<<setup,echo=F,results=hide>>=
+	if(!file.exists('figs'))dir.create('figs')
+@
+
+\newenvironment{myen}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}{\end{enumerate}
+}
+\newenvironment{myit}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}{\end{itemize}
+}
+
+\title{Introduction to R}
+\author{Cameron Bracken and Colin Sheppard}
+\date{18 September 2008}
+
+\begin{document}
+
+\SweaveOpts{prefix.string=figs/fig,eps=F}
+
+\pagestyle{empty}
+\begin{center}{\Large A Brief Introduction to R}{\\Cameron Bracken}{\\21 January 2010}\end{center}
+
+
+\section{What is R?}
+
+\url{http://www.r-project.org/about.html}
+\begin{quote}
+R is a language and environment for statistical computing and graphics. It is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly ATT, now Lucent Technologies) by John Chambers and colleagues.
+
+R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, ...) and graphical techniques, and is highly extensible.  R is very popular in Hydrology. 
+
+One of R's strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed.
+\end{quote}
+
+\noindent More concisely R is:
+\begin{myit}
+\item A powerful interpreted programming language,
+\item A data analysis and visualization tool,
+\item Very addicting once you get the hang of it.
+\end{myit}
+
+\section{Getting Started}
+
+\subsection{Installation}
+R can easily be installed for most any operating systems, visit: 
+
+\url{http://www.r-project.org/}
+
+
+\subsection{The Interface}
+To start R in windows open \verb"R.exe", in Mac OS X open \verb"R.app", in Linux or Mac OS X type \verb"R" on the command line.  
+
+\subsection{Data Types}
+The basic data types in R are:
+
+\begin{myit}
+	\item {\bf Integer}, eg. \verb"x <- 5L" (Basic numbers in R will all be stored as double precision unless you add the \verb"L")
+	\item {\bf Numeric}, eg. \verb"x <- pi/2"
+	\item {\bf Logical}, eg. \verb"x <- TRUE"
+	\item {\bf Character}, eg. \verb'x <- "foo"'
+\end{myit}
+You may have noticed the \verb"<-" assignment operator.  This works in both ways, eg. \verb"5 -> x". The \verb'=' operator is equivalent to the \verb"<-" operator.  
+
+All of the above examples result in \verb'x' as a scalar.  There are a few way of collecting scalars into a single variable:
+ 
+\begin{itemize}
+\item {\bf Vector} - A one dimensional collection of scalers with no orientation (there are no such things as column or row vectors). Vectors have a single data type depending on their contents.  Eg. \verb"x <- c(1,2,3,4)" is a numeric vector and \verb'y = c("foo","bar")' is a character vector.  The \verb'c()' function sticks things together into vectors.
+
+Individual elements can be extracted or assigned brackets.  Eg. If \verb"x = 1:5" then \verb"x[1]" would give back \verb"1".  Also subsets of vectors can also be vectors, eg., if \verb'y = c("a","b","c","d")', \verb"y[c(1,2,3)]" would give back the vector \verb'c("a","b","c")'.
+
+\item {\bf Matrix} - A two dimensional collection of scalers. eg. \verb"x <- matrix(0,nrow=2,ncol=2)".  A matrix is subset with two indicies like \verb"x[1,1]".
+
+\item {\bf List} - Is a vector with arbitrary data types in each element. For example, If \begin{verbatim}L <- list(x = 1:5, y = c("foo","bar"))\end{verbatim} then we can extract the first entry using \verb"L[[1]]" or by \verb"L$x".
+
+\item {\bf Data frame} - A special data format for statistical data, it can be treated as a matrix   with column names or a list.  The example below uses a data frame. 
+
+\end{itemize}
+
+\section{Example - Data manipulation}
+
+This example uses the data file available at: \url{http://animas.colorado.edu/~bracken/CVEN4333/plant-inflow.txt}. 
+
+To load a local file without using absolute paths we need to set the working directory using the \verb"setwd('/path/to/data')", just like the cd command in unix.  
+
+<<subsetting,fig=T,keep.source=T>>=
+	# First read in the data file
+dat <- read.table('plant-inflow.txt',header=T)
+dat[1:10,]
+
+	# Remove all of the missing values
+dat$inflow[dat$inflow==-9999] <- NA
+
+	# Create a vector of decimal years
+years <- dat$year + dat$month/12 + dat$day/365
+
+	# And plot it
+plot(years, dat$inflow, type='l',xlab='',
+	ylab='Inflow (MGD)', main='AWTP Inflow time series')
+@
+
+\section{Links}
+R Home page -
+\url{http://www.r-project.org/}
+
+R Reference Card - 
+\url{http://cran.r-project.org/doc/contrib/Short-refcard.pdf}
+
+A useful tutorial - 
+\url{http://www.cyclismo.org/tutorial/R}
+\end{document}
+
+
+
+
+
+  
