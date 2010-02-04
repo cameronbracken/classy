@@ -15,3 +15,21 @@ end
 plot(y,Cx(:,1),'k',y,Cx(:,2),'k--',y,Cx(:,3),'k:',y,Cx(:,4),'k-.')
 legend(['t = ',num2str(t(1))],['t = ',num2str(t(2))],...
        ['t = ',num2str(t(3))],['t = ',num2str(t(4))])
+title('Profile along y=y_0')
+xlabel('Distance')
+ylabel('Concentration')
+print('-r600','-depsc','slicex.eps')
+
+
+for i = 1:length(t)
+    Cy(:,i) = twoDC(x,1,t(i),M,D,x0,y0) + twoDC(x,1,t(i),M,D,x0,-y0);
+end
+
+figure()                   
+plot(y,Cy(:,1),'k',y,Cy(:,2),'k--',y,Cy(:,3),'k:',y,Cy(:,4),'k-.')
+legend(['t = ',num2str(t(1))],['t = ',num2str(t(2))],...
+       ['t = ',num2str(t(3))],['t = ',num2str(t(4))])
+title('Profile along x=x_0')
+xlabel('Distance')
+ylabel('Concentration')
+print('-r600','-depsc','slicey.eps')

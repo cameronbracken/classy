@@ -21,7 +21,7 @@ for k = 1:nframes
 		  'Margin', 5, 'EdgeColor', 'k');  
 	
 	frame = getframe(gcf);			% get movie frame
-	movie = addframe(movie, M);	% add frame to movie
+	movie = addframe(movie, frame);	% add frame to movie
 end
 
 close(gcf);					  % close current figure
