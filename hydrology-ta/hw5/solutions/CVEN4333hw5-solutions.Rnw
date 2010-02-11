@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\begin{document}
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#5 Solutions}
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+
+Specifically, report the regression coefficients (the $\beta$'s), the standard error of each coefficient, the standard error of the fit ($\sigma_\epsilon$, standard deviation of the residuals) and the $R^2$ value. Is this fit statistically significant? Why? (Get this information from the \texttt{summary} function) Repeat this for both the January and July precipitation. 
+
+\item Use the model from problem 1 to make a prediction of the rainfall at DEM grid points (use the \texttt{predict} function).  Plot a 3d surface of the predicted rainfall (using \texttt{plot.surface}) and an image plot with contours of precipitation. Repeat this for both the January and July precipitation. 
+
+\item Plot the observed versus predicted precipitation for both January and July. Also plot the residuals versus X, Y, Z and P (4 plots for each month, use the \texttt{residuals} function). Discuss the implications of these plots. 
+
+\item Discuss the assumptions, advantages and disadvantages in using a linear model in part 1.  What other factors might contribute to precipitation that could improve this model. 
+
+\item[{\it Extra Credit}] Use \texttt{interp} function from the \texttt{akima} package to linearly interpolate the precipitation to the DEM points.  Plot the interpolated surface, discuss the difference between this surface and the surface from the linear regression. Repeat this for both the January and July precipitation. 
+
+\item Book problem 3.16
+\item Book problem 3.18
+\item Book problem 3.19
+\item What is the probability that a 10 year flood will not be exceeded in any single year?
+\item Snow in the most important form of precipitation on the Front range and predicting the characteristics of the spring melt is a formidable engineering problem. Through your own research indicate what each arrow in the diagram below (From left to right at the snow atmosphere interface and then left to right in the snow pack interior) would look like mathematically. Explain the mathematics in one English sentence for each arrow.
+
+\end{enumerate}
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics{snowmodel.pdf} 
+   %\caption{example caption}
+   %\label{fig:example}
+\end{figure}
+
+\end{document}  
