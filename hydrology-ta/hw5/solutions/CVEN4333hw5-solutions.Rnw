@@ -1,9 +1,17 @@
+% !TEX TS-program = Sweave
+
+
 \documentclass[11pt]{article}
 \usepackage{geometry}
 \usepackage[colorlinks]{hyperref}
 \usepackage{graphicx}
 \usepackage{mathpazo}
 \usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+\usepackage[noae,nogin]{Sweave}
 
 \makeatletter
 \let \@sverbatim \@verbatim
@@ -11,7 +19,32 @@
 {\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
 \makeatother
 
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
 \begin{document}
+\SweaveOpts{keep.source=T}
+
+<<echo=F>>=
+library(xtable)
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+@
 
 \textbf{CVEN 4333, Spring 2010, Assignment \#5 Solutions}
 
@@ -21,29 +54,195 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item 
 
-Specifically, report the regression coefficients (the $\beta$'s), the standard error of each coefficient, the standard error of the fit ($\sigma_\epsilon$, standard deviation of the residuals) and the $R^2$ value. Is this fit statistically significant? Why? (Get this information from the \texttt{summary} function) Repeat this for both the January and July precipitation. 
+<<>>=
+	#Load the necessary packages
+suppressPackageStartupMessages(library(fields))
+suppressPackageStartupMessages(library(matlab))
+@
 
-\item Use the model from problem 1 to make a prediction of the rainfall at DEM grid points (use the \texttt{predict} function).  Plot a 3d surface of the predicted rainfall (using \texttt{plot.surface}) and an image plot with contours of precipitation. Repeat this for both the January and July precipitation. 
+Load the data for January and July
+<<>>=
+	# load the precip data for january
+janp <- read.table('colo_monthly_precip_01.dat')
+names(janp) <- c('y', 'x', 'z', 'p')
+janp <- janp[!(janp$p == -999.999),]
 
-\item Plot the observed versus predicted precipitation for both January and July. Also plot the residuals versus X, Y, Z and P (4 plots for each month, use the \texttt{residuals} function). Discuss the implications of these plots. 
+	# load the precip data for july
+julp <- read.table('colo_monthly_precip_07.dat')
+names(julp) <- c('y', 'x', 'z', 'p')
+julp <- julp[!(julp$p == -999.999),]
+
+	#load the dem
+dem <- read.table('colo_dem.dat')
+names(dem) <- c('y', 'x', 'z')
+@
+
+And fit the two models
+<<>>=
+	#fit the model for january
+lmfit.jan <- lm(p~x+y+z,data=janp)
+s.jan <- summary(lmfit.jan)
+
+	# fit the model for july
+lmfit.jul <- lm(p~x+y+z,data=julp)
+s.jul <- summary(lmfit.jul)
+@
+
+\begin{table}[!h]
+\centering
+<<echo=F,results=tex>>=
+x <- coefficients(s.jan)[,1:2]
+print.xtable.booktabs(x)
+@
+\caption{Coefficients and standard errors for the January model.}
+\end{table}
+
+\begin{table}[!h]
+\centering
+<<echo=F,results=tex>>=
+x <- coefficients(s.jul)[,1:2]
+print.xtable.booktabs(x)
+@
+\caption{Coefficients and standard errors for the January model.}
+\end{table}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{rrr}
+  \toprule
+ & $R^2$ & $\sigma_e$ \\ 
+  \midrule
+  January & \Sexpr{round(s.jan$r.squared,2)} & \Sexpr{round(s.jan$sigma,2)} \\ 
+  July & \Sexpr{round(s.jul$r.squared,2)} & \Sexpr{round(s.jul$sigma,2)} \\ 
+   \bottomrule
+\end{tabular}
+\caption{January and July model diagnostics}
+\end{center}
+\end{table}
+
+Both fits are statistically significant with $p < 2.2\mbox{e}$-$16$.
+
+\newpage
+\item 
+Fit the models
+<<>>=
+	# predict at the dem points and the model points for january
+lmpred.jan <- predict.lm( lmfit.jan, dem)
+lmpredp.jan <- predict.lm( lmfit.jan, janp)
+
+	# predict at the dem points and the model points for july
+lmpred.jul <- predict.lm( lmfit.jul, dem)
+lmpredp.jul <- predict.lm( lmfit.jul, julp)
+@
+
+And set up the data for plotting
+
+<<>>=
+	## Set up the data for plotting
+nx <- length(unique(dem$x))
+ny <- length(unique(dem$y))
+xp <- sort(unique(dem$x))
+yp <- sort(unique(dem$y))
+zp.jan <- matrix(lmpred.jan,nrow=ny)
+zp.jul <- matrix(lmpred.jul,nrow=ny)
+@
+
+\clearpage 
+And generate the plots
+
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(list(x=xp,y=yp,z=t(flipud(zp.jan))), 
+	main='Monthly Precip Prediction [mm], January', 
+	xlab='Longitude', ylab='Latitude')
+mtext('Precip [mm]',4)
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(list(x=xp,y=yp,z=t(flipud(zp.jan))), type='p', 
+	main='Monthly Precip Prediction [mm], January', zlab='Precip [mm]', 
+	xlab='Longitude',ylab='Latitude')
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(list(x=xp,y=yp,z=t(flipud(zp.jul))), 
+	main='Monthly Precip Prediction [mm], July', zlab='Precip [mm]', 
+	xlab='Longitude',ylab='Latitude')
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(list(x=xp,y=yp,z=t(flipud(zp.jul))), type='p', 
+	main='Monthly Precip Prediction [mm], July', zlab='Precip [mm]', 
+	xlab='Longitude',ylab='Latitude')
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item 
+<<fig=T,pdf=T,eps=F>>=
+res <- residuals(lmfit.jan)
+layout(rbind(c(1,2),c(3,4)))
+plot(janp$x,res,xlab='Longitude',ylab='Residuals',cex=.5)
+plot(janp$y,res,xlab='Latitude',ylab='Residuals',cex=.5)
+plot(janp$z,res,xlab='Elevation',ylab='Residuals',cex=.5)
+plot(janp$p,res,xlab='Precipitation',ylab='Residuals',cex=.5)
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+res <- residuals(lmfit.jul)
+layout(rbind(c(1,2),c(3,4)))
+plot(julp$x,res,xlab='Longitude',ylab='Residuals',cex=.5)
+plot(julp$y,res,xlab='Latitude',ylab='Residuals',cex=.5)
+plot(julp$z,res,xlab='Elevation',ylab='Residuals',cex=.5)
+plot(julp$p,res,xlab='Precipitation',ylab='Residuals',cex=.5)
+@
+
+Plot the observed versus predicted precipitation for both January and July. Also plot the residuals versus X, Y, Z and P (4 plots for each month, use the \texttt{residuals} function). Discuss the implications of these plots. 
 
 \item Discuss the assumptions, advantages and disadvantages in using a linear model in part 1.  What other factors might contribute to precipitation that could improve this model. 
 
 \item[{\it Extra Credit}] Use \texttt{interp} function from the \texttt{akima} package to linearly interpolate the precipitation to the DEM points.  Plot the interpolated surface, discuss the difference between this surface and the surface from the linear regression. Repeat this for both the January and July precipitation. 
 
+\clearpage
+
+CVEN 4333, Assignment 5, Partial solutions
+
 \item Book problem 3.16
-\item Book problem 3.18
-\item Book problem 3.19
-\item What is the probability that a 10 year flood will not be exceeded in any single year?
-\item Snow in the most important form of precipitation on the Front range and predicting the characteristics of the spring melt is a formidable engineering problem. Through your own research indicate what each arrow in the diagram below (From left to right at the snow atmosphere interface and then left to right in the snow pack interior) would look like mathematically. Explain the mathematics in one English sentence for each arrow.
+     $P(A) = .4$    $P(\bar{B}) = .6$\\     $P(B) = .5$    $P(\bar{B}) = .5$
+\item 3.18     Could be many things
+\item 3.19
+\begin{enumerate}
+\item $P(A\mbox{ and }B) = P(A)P(B)=(.4)(.5)=.2$
+\item $P(\mbox{neither occur}) = P(\bar{A})P(\bar{B})=(.6)(.5)=.3$
+\item $P(B\mbox{ and not }A) = P(\bar{A})P(B) = (.6)(.5) =.3$
+\end{enumerate}
+\item What is the probability that a 10 year flood will not be exceeded in any single year?   
+$T =$ return period $= 10$
+
+$P(F)=1/T =.1$   
+$P(\bar{F}) = 1-.1 = .9$
+
+Or see eq. 3.23 
+
+$P(\bar{F})= 1- 1/T = 0.9$
+
+\item Arrows for SW and LW fluxes would generally look like
+$E=\sigma T^4$ where for the SW it would be $T_{sun}$ and for LW it would be $T_{snow}$ or $T_{atmos}$
+
+For SHF and LHF these are usually modeled as diffusion equations where the difference in temp/water substance between snowpack and atmosphere drives a flux. often SHF = $k(T_{atm}-T_{sfc})$ where $k$ is some diffusion coeficient which is not a constant.
+
+For heat transfer between snow layers there is a similar heat transfer equation $dT/dt=\partial^2T/\partial z^2$ where the RHS are partal derivatives. This is usually approximated as: heat transfer between layers=$k(T_{layer1}-T_{layer2})$.
+
+Note there are two arrows denoting latent heat flux which is one of the things I wanted them to catch.
+
+The subsurface runoff variable will be something like: Lq where L is the latent heat of the solid-liquid phase change and q is total water melted.
+
+the precip arrow could just be a book keeping to keep track of how much mass is in the snowpack.
 
 \end{enumerate}
-
-\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics{snowmodel.pdf} 
-   %\caption{example caption}
-   %\label{fig:example}
-\end{figure}
 
 \end{document}  
