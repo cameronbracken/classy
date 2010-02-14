@@ -1,0 +1,123 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\begin{document}
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#4, Due Friday February 5 at 5:00 in Cameron Bracken's mailbox. No late papers accepted.}
+
+
+For this assignment you will need some external \textsf{R} packages.  \textsf{R} packages contain extra functionality for a wide variety of analysis. For this assignment you will need the packages \texttt{tripack}, \texttt{maps} and \texttt{fields}.  To install a packages use the \texttt{install.packages} command. For example to load the \texttt{tripack} package with 
+
+\begin{verbatim}
+install.packages('tripack')
+\end{verbatim}
+
+You must laod the package every time you start \textsf{R} with the \texttt{library} command 
+\begin{verbatim}
+library(tripack)
+\end{verbatim}
+Do this for each package. 
+
+For anything more than simple analysis in \textsf{R}, it is useful to put the command in a script so they can be easily run many times.  To do this create a text file with your commands in a plain text editor (NOT Word). \textsf{R} on Windows and Mac has a built in editor.  On the Mac select File $>$ New Document. On Windows select File $>$ New Script.  Save the file in a directory for this assignment with the \texttt{.R} extension.  You can then run the commands with the \texttt{source} command.  For example if your file is \texttt{hw4.R} then use
+\begin{verbatim}
+source('hw4.R')
+\end{verbatim} 
+Please include the script you create with the assignemnt.    
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Download the data files \texttt{colo\_precip.dat} and \texttt{colo\_dem.dat} from \url{http://cires.colorado.edu/~aslater/CVEN\_6833/colo_pcp.html}.  The first file contains mean annual total precipitation at 491 stations in colorado from 1980-2002.  The second file contains a gridded elevation data for the state of colorado (commonly referred to as a digital elevation model). The web site describes the data format. 
+
+Read in the precip data and create a surface plot using the \texttt{Tps} function from the \texttt{fields} package.  Also add the state boundaries using the \texttt{maps} package. Here is an example:
+
+\begin{verbatim}
+	# load the precip data
+rain <- read.table('colo_precip.dat')
+names(rain) <- c('y', 'x', 'z', 'r')
+	# fit a spline surface
+Z <- Tps(cbind(rain$x,rain$y),rain$r)
+surface(Z)
+map('state',add=T,lwd=2)
+\end{verbatim}
+
+Add correct labels to these plots.  Do the same for the DEM data and save these two plots. Can you visually see any correspondence between these surfaces?  What might this suggest about the relationship between ranfall and elevation?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item  Use the \texttt{voronoi.mosaic} command from the \texttt{tripack} package to create theissen polygons for this region.  You first need to remove any duplicate values
+
+\begin{verbatim}
+dupe <- duplicated(rain[,1:2])
+rain <- rain[!dupe,]
+v <- voronoi.mosaic(x = rain$x, y = rain$y,'strip')
+\end{verbatim}
+
+Plot the polygons and the and the rain gauges using the \texttt{plot.voronoi} function.  Use the \texttt{do.points=F} argument and plot the gauges seprately with \texttt{points} command using the argument \texttt{cex=.5}.  This will make the plot easier to see. Also add the state lines to this plot using the same map commad as before. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Estimate total precipitation over the given region using the both the Theissen polygons and the average:
+
+\begin{verbatim}
+area <- voronoi.area(v)
+parea <- area/sum(area,na.rm=T)
+thies.est <- sum(parea * rain$r,na.rm=T)
+arith.est <- mean(rain$r)
+\end{verbatim}
+Please comment explicitly on what each of these commands do and comment on the estimates of total precipitation.  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Download the files \texttt{independence-1hr.txt}, \texttt{independence-6hr.txt} and \texttt{independence-24hr.txt} from \url{http://animas.colorado.edu/~bracken/CVEN4333/}.  Thes file contain annual maximum rainfall amounts (inches) in 1 hour, 6 hour and 24 hour periods from Independence, CA.  Ths data was obtained from \url{http://hdsc.nws.noaa.gov/hdsc/pfds/pfds_series.html}. Read in this data and and create three vectors of rainfall intensity in inches per hour (you will need to extract the second column and divide by the respective period).  here is an example for the 6 hour data:
+
+\begin{verbatim}
+id6 <- read.table('independence-6hr.txt')[,2] / 6
+\end{verbatim}
+
+Calculate the emperical quantiles for each vector:
+
+\begin{verbatim}
+n6 <- length(id6)
+q6 <- n6:1/n6
+\end{verbatim}
+
+Make a plot of exceedance probability versus rainfall intensity which contains each of the time periods (three lines). Include a legend using the \texttt{legend} command and a grid with the \texttt{grid} command. Plot each of the lines with a different style or color (look up the \texttt{lty}, \texttt{lwd} and \texttt{col} options under \texttt{?par}). Also be sure to include axes labels.  Here is an example for just the 6 hour period
+
+\begin{verbatim}
+	# Initilize the plot so that the grid does not cover the data
+plot(q1,sort(id6),type='n',ylim=c(0,max(id1)))
+grid()
+lines(q6,sort(id6),type='s',col=2)
+
+legend('topright',c('6 hr'),lty=1,col=2)
+\end{verbatim}
+
+\item Plot IDF curves for the 2, 10, 25 and 100 year storms on a logarithmic axes.  There will only be three points per curve and four curves. You can look up the intensity corresponding to each return period wiht the quantile command:
+
+\begin{verbatim}
+rp <- 1-1/c(2,10,25,100)
+idf <- cbind(quantile(id1,rp),quantile(id6,rp),quantile(id24,rp))
+\end{verbatim}
+
+Each row of the \texttt{idf} matrix will be one line on the plot.  Use the \texttt{log='xy'} option to plot on a log scale.  Plot each line with a distinct style and include a legend and axes labels. 
+
+
+\item Discuss the use and abuse of statistics in the birthweight study. 
+\item Book problem 4-14
+\item Book problem 4-15
+\end{enumerate}
+
+\end{document}  

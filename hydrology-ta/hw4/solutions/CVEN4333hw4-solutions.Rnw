@@ -1,0 +1,255 @@
+% !TEX TS-program = pgfSweave
+
+\documentclass[11pt,twoside]{article}
+
+%%------------font choices
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+%Sweave (Must be installed)
+\usepackage[noae,nogin]{Sweave}
+
+%%------------PGF/TIKZ
+\usepackage{tikz}
+
+%%------------page layout
+\usepackage[margin=1in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+%%-----------section styles
+\usepackage{sectsty}
+	%Put period after section number
+\makeatletter 
+\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
+{\csname the#1\endcsname\quad}% default 
+{\csname #1@cntformat\endcsname}% individual control 
+} 
+\def\section@cntformat{\thesection.\quad} 
+\def\subsection@cntformat{\thesubsection.\quad} 
+\makeatother
+\sectionfont{\bf\large\raggedright}
+\subsectionfont{\bf\normalsize\raggedright}
+\subsubsectionfont{\bf}
+
+%%------------graphics
+\usepackage{graphicx} 
+\usepackage{subfigure}
+
+%%------------mathematics
+%\usepackage{amsmath,amssymb,amsthm}
+
+%%------------tables
+\usepackage{booktabs}
+
+%%------------misc
+\usepackage{verbatim} 
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%------------bibliography
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+%%-----------nicer looking captions
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+
+%\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
+\pgfrealjobname{CVEN4333hw4-solutions} 
+
+
+\begin{document}
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+%<<code,results=tex,fig=F,cache=F>>=
+%pygmentize('states.R')
+%@
+	%Sweave options
+\SweaveOpts{echo=F, prefix.string=figs/fig, fig=T, cache=T, pdf=F, eps=F, pgf=F, tikz=F, external=T}
+
+<<setup,fig=F,echo=F,results=hide,cache=F>>=
+	
+#%	suppressPackageStartupMessages(require(ggplot2))
+	
+	cashdir = "./cache"
+	setCacheDir(cashdir)
+	
+	if(!file.exists('figs')) dir.create('figs')
+	
+	options('tikzDocumentDeclaration' = '\\documentclass[11pt]{article}')
+	library(fields) # for Tps()
+	library(maps) 
+	
+@
+
+{\bf CVEN 4333 - Solutions for HW 4, problems 1-5, Feb 5, 2010}
+
+{\it Problem 1}
+
+<<precip-load,fig=F,keep.source=T,echo=T,cache=T>>=
+	#read in january mean precip
+rain <- read.table('../colo_precip.dat')
+	#add column names
+names(rain) <- c('y', 'x', 'z', 'r') 
+
+	#load the dem
+dem <- read.table('../colo_dem.dat')
+names(dem) <- c('y', 'x', 'z')
+	
+	# fit a spline surface to both
+Z <- Tps(cbind(rain$x,rain$y),rain$r) 
+Zdem <- Tps(cbind(dem$x,dem$y),dem$z)
+@
+
+\begin{figure}[!h]
+\centering
+<<precip-surface,fig=T,tikz=T,echo=T,keep.source=T,height=5>>=
+surface(Z,ylim=c(36.5,41.5),xlim=c(-109.5,-101.5),
+  main='Annual Mean Precip (mm) 1980-2007',xlab='Longitude',ylab='Latitude')
+map('state',add=T,lwd=2)
+@
+\end{figure}
+
+\begin{figure}[!h]
+\centering
+<<precip-dem,fig=T,tikz=T,echo=T,keep.source=T,height=5>>=
+surface(Zdem,ylim=c(36.5,41.5),xlim=c(-109.5,-101.5),
+  main='Digital Elevation Map (m) 1980-2007',xlab='Longitude',ylab='Latitude')
+map('state',add=T,lwd=2)
+@
+\end{figure}
+
+Precipitation tends to be higher in areas when elevation is higher.  This seems to suggest that precipitation and elevation are positively correlated.  
+
+\clearpage
+{\it Problem 2}
+\begin{figure}[!h]
+\centering
+<<theissen,tikz=T,keep.source=T,height=5,echo=T>>=
+library(tripack) #for voronoi.mosaic() 
+
+	#locate the duplicate points
+dupe <- duplicated(rain[,1:2]) 
+	#remove the duplicate points
+rain <- rain[!dupe,] 
+	#calculate theissen polynomials (aka voronoi polygons)
+v <- voronoi.mosaic(x = rain$x, y = rain$y,'strip')
+
+	#plot the stations
+plot(rain$x,rain$y,pch=16,cex=.3,xlab='Longitude', ylim=c(36.5,41.5),xlim=c(-109.5,-101.5),
+  ylab = 'Latitude',main='Theissen Polygons and Station Locations 1980-2007')
+	#plot the polygons
+plot(v, do.points=F, add=T,lwd=1,col='darkgray')  
+	#add the state lines
+map('state',add=T,lwd=3)
+
+@
+\end{figure}
+
+\clearpage
+{\it Problem 3}
+<<area-est,echo=T,fig=F,cache=F>>=
+
+	#get the area of each polygon
+area <- voronoi.area(v) 
+	#get percentage of the total area of each polygon
+	# need to add na.rm=T to remove NA values because
+	# unbounded polygons on edges have an area of NA
+parea <- area/sum(area,na.rm=T) 
+
+	#Calculate the estimate from theissen polygons
+theis.est <- sum(parea * rain$r,na.rm=T)
+cat(theis.est ,sep='\n')
+
+	#calcualte the estimate from arithmetic average
+arith.est <- mean(rain$r,na.rm=T)
+cat(mean(rain$r,na.rm=T),sep='\n')
+@
+
+\clearpage
+{\it Problem 4}
+
+<<idf-cdf-calc,echo=T,keep.source=T,fig=F>>=
+	# Read in the data and convert to intenstiy from depth
+id1 <- read.table('../independence-1hr.txt')[,2]
+id6 <- read.table('../independence-6hr.txt')[,2] / 6
+id24 <- read.table('../independence-24hr.txt')[,2] / 24
+
+	# get the number of points in each set 
+n1 <- length(id1)
+n6 <- length(id6)
+n24 <- length(id24)
+
+	#emperical quantiles
+q1 <- n1:1/n1
+q6 <- n6:1/n6
+q24 <- n24:1/n24
+@
+
+\begin{figure}[!h]
+\centering
+<<idf-cdf,echo=T,keep.source=T,tikz=T,fig=T>>=
+plot(q1,sort(id1),type='n',ylim=c(0,max(id1)), 
+	ylab='Rainfall Intensity [in/hr]', xlab = 'Excedance Probability',
+	main='Rainfall Exceedance Probabilities Independence, CA')
+grid()
+lines(q1,sort(id1),type='s',col=1)
+lines(q6,sort(id6),type='s',col=2)
+lines(q24,sort(id24),type='s',col=3)
+
+legend('topright',c('1 hr', '6 hr', '24 hr'),lty=1,col=1:3)
+@
+\end{figure}
+
+\clearpage
+{\it Problem 5}
+\begin{figure}[!h]
+\centering
+<<idf,echo=T,keep.source=T,tikz=T,fig=T,width=5.5,height=5.5>>=
+rp <- 1-1/c(2,10,25,100) # return probablilities
+	# caclulate the IDF values based on emperical quantiles of the 
+	# intensity duration data, out into a matrix
+idf <- cbind(quantile(id1,rp),quantile(id6,rp),quantile(id24,rp))
+
+	#initilize the plot
+plot(c(1,6,24),idf[1,],ylim=range(idf),xlim=c(1,24), main = 'IDF curves for Indepence, CA',
+	type='n',log='xy',xlab='Duration [hr]', ylab = 'Intensity [in/hr]')
+grid(10)
+	#draw each idf curve and a legend
+lines(c(1,6,24),idf[1,],col=1, lty=1,lwd=2)
+lines(c(1,6,24),idf[2,],col=2, lty=2,lwd=2)
+lines(c(1,6,24),idf[3,],col=3, lty=3,lwd=2)
+lines(c(1,6,24),idf[4,],col=4, lty=4,lwd=2)
+legend('bottomleft',c('2 yr', '10 yr', '25 yr', '100 yr'),lty=1:4,lwd=2,col=1:4)
+@
+\end{figure}
+
+\clearpage
+{\it Problems 1-5 Complete Script}
+
+<<complete,echo=F,fig=F,results=tex,cache=F>>=
+pygmentize('../rainfall.R')
+@
+
+\clearpage{}
+{\it Problem 6}
+
+Open Ended.  Touch on the fact that there is no discussion of statistical signifcance or confidence in the article. 
+
+{\it Problem 7}
+
+\includegraphics[width=\textwidth]{4-14.jpg}
+
+
+{\it Problem 8}
+
+Dropped
+
+\end{document}
+
