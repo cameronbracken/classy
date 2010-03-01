@@ -39,8 +39,10 @@ Qp <- ecdf(paleo)(paleo)
 Qp.qr <- laglead(Qp,q,r)
 
 pools.from <- pools.to <- W <-  vector('list',nfrom)
+
 for(i in 1:nfrom){
 	
+		#for each beginning state, get the quantile pools to and from
 	pools.from[[i]] <- Qp.qr$lag[ tr.paleo$pools$from[[i]], ]
 	pools.to[[i]] <- Qp.qr$lead[ tr.paleo$pools$from[[i]], ]
 		

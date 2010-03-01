@@ -1,4 +1,4 @@
-% !TEX TS-program = Sweave
+% !TEX TS-program = pgfSweave
 
 
 \documentclass[11pt]{article}
@@ -35,10 +35,14 @@ pygmentize <- function(file){
 @
 
 \begin{document}
-\SweaveOpts{keep.source=T}
+\SweaveOpts{keep.source=T,echo=F,prefix.strings=figs/fig}
 
 <<echo=F>>=
-library(xtable)
+	#Load the necessary packages
+suppressPackageStartupMessages(library(xtable))
+suppressPackageStartupMessages(library(fields))
+suppressPackageStartupMessages(library(matlab))
+
 print.xtable.booktabs <- function(x){
 
 print(xtable(x),
@@ -51,38 +55,22 @@ print(xtable(x),
 		'\\bottomrule ')))
 		
 }
+
+if(!file.exists('figs') dir.create('fig'))
+
 @
 
-\textbf{CVEN 4333, Spring 2010, Assignment \#5 Solutions}
+\begin{flushright}
+Cameron Bracken\\
+CVEN 5343\\
+PS \#4
+\end{flushright}
 
 \begin{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item 
-
-<<>>=
-	#Load the necessary packages
-suppressPackageStartupMessages(library(fields))
-suppressPackageStartupMessages(library(matlab))
-@
-
-Load the data for January and July
-<<>>=
-	# load the precip data for january
-janp <- read.table('colo_monthly_precip_01.dat')
-names(janp) <- c('y', 'x', 'z', 'p')
-janp <- janp[!(janp$p == -999.999),]
-
-	# load the precip data for july
-julp <- read.table('colo_monthly_precip_07.dat')
-names(julp) <- c('y', 'x', 'z', 'p')
-julp <- julp[!(julp$p == -999.999),]
-
-	#load the dem
-dem <- read.table('colo_dem.dat')
-names(dem) <- c('y', 'x', 'z')
-@
 
 And fit the two models
 <<>>=
