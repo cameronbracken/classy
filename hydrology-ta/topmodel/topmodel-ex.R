@@ -29,7 +29,8 @@ dt    <- 0.25
 
 parameters<-cbind(qs0,lnTe,m,Sr0,Srmax,td,vch,vr,k0,CD,dt)
 
-## returns an array of Nash Sutcliffe efficiencies; one for each parameter set:
+## returns an array of Nash Sutcliffe efficiencies; 
+## one for each parameter set:
 nse <- topmodel(parameters,topidx,delay,rain,ET0,Qobs = Qobs)
 
 p.best <- parameters[which(nse==max(nse)),]

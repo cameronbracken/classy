@@ -69,13 +69,9 @@ __Nash-Sutcliff Model Efficiency__
 : E = 0 - Model predicts mean of observed data
 : E < 0 - Model is worse than observed mean
 
-            T                2
-    E = 1 - ∑ (Q_o,t - Q_m,t)
-           t=1  
-            ----------------
-            T          _   2
-            ∑ (Q_o,t - Q_m)
-           t=1
+            T                2     T          _   2
+    E = 1 - ∑ (Q_o,t - Q_m,t)   /  ∑ (Q_o,t - Q_m)
+           t=1                    t=1
 
 ## TopModel
 
@@ -92,4 +88,4 @@ __Nash-Sutcliff Model Efficiency__
 - S2 has returns flow using the relationship qb = q0 exp(S3/m)
 
 ### R Package 'topmodel'
-- Interface to 
+- Interface to fortran code

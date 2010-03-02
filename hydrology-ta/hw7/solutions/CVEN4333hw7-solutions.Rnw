@@ -1,0 +1,75 @@
+% !TEX TS-program = Sweave
+
+
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+
+\renewcommand{\theFancyVerbLine}{}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,eps=F,pdf=T}
+
+<<echo=F>>=
+options(prompt=" ", continue="  ")
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+\textbf{CVEN 4333, Spring 2010, Assignment \#7 Solutions}
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+~
+
+<<boxplot,fig=T,pdf=T>>=
+x <- as.data.frame(matrix(rnorm(50*5),ncol=50))
+names(x) <- 1:50
+boxplot(x,cex=.5,ylim=c(-3,3))
+@
+\end{enumerate}
+
+\end{document}  
