@@ -24,7 +24,7 @@ image.plot(topind,axes=F,main='Topographic Index')
 ## returns a list of simulated runoff (Qobs), overland flow (qo), 
 ## subsurface flow (qs) and storage (S):
 Qsim <- topmodel(parameters,topidx,delay,rain,ET0)#,verbose = TRUE)
-times <- seq(0,by=15/86400,length.out=length(Qobs))
+times <- seq(0,by=15/1440,length.out=length(Qobs))
 
 #plot simulated and observed
 plot(times, Qobs,cex=.2, xlab='Time (days)', ylab='Flow (mm / 15 min)')
@@ -70,9 +70,36 @@ plot(times, Qobs,cex=.2,xlab='Time (days)',ylab='Discharge (mm/15min)',
 	main='Best Model')
 lines(times, Qsim.worst, col=rgb(1,0,0,.5))
 lines(times, Qsim.best, col='blue')
+legend('topleft',c('Observed','Best','Worst'),lty=c(0,1,1),col=c(1,'blue','red'),pch=c(1,-1,-1))
 
 ##Plot histograms of the top sets of parameters
 layout(matrix(1:9,ncol=3))
-for(i in 1:ncol(p.top))
-	if(!any(colnames(p.top)[i]==c('dt','vch')))
+for(i in 1:ncol(p.top)){
+	if(!any(colnames(p.top)[i]==c('dt','vch'))){
 		hist(p.top[,i],xlab='',main=colnames(p.top)[i])
+	}
+}
+
+library(MASS)
+vr <- p.top[,8]
+
+    #Fit normal
+normal.fit <- fitdistr(vr, 'normal')
+mean <- normal.fit$estimate[1]
+sd <- normal.fit$estimate[2]
+
+    #Fit exponential
+exp.fit <- fitdistr(vr, 'exponential')
+exp.lam <- exp.fit$estimate[1]
+
+    #Fit Gamma
+gamma.fit <- fitdistr(vr, dgamma, list(shape = 1, rate = 0.1), lower = 0.001)
+shape <- gamma.fit$estimate[1]
+rate <- gamma.fit$estimate[2]
+
+	#plot the results
+x <- seq(0,3000,,1000)
+hist(vr,freq=F,xlim=c(0,max(vr)))
+lines(x,dgamma(x,shape,rate),col='green')
+lines(x,dnorm(x,mean,sd),col='orange')
+lines(x,dexp(x,exp.lam),col='purple')

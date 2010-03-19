@@ -1,5 +1,6 @@
 % !TEX TS-program = pgfSweave
 
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices
@@ -252,11 +253,11 @@ Possible extensions include:
 \end{enumerate} 
 
 \clearpage
-\bibliography{../../references}
+\bibliography{references}
 
 \section*{Appendix - Source code}
 <<code,results=tex,fig=F,cache=F>>=
-code <- system('pygmentize -f latex src/states.R',intern=T)
+code <- system('pygmentize -f latex src/second-year.R',intern=T)
 cat(code,sep='\n')
 @
 

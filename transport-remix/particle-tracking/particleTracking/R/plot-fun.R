@@ -2,7 +2,14 @@ plotFun <- function(type){
 	
 	if(plotType == "hex"){
 		
-		hb <- hexbin(positions,xbnds=xlim,ybnds=ylim)
+		out <- 
+			(positions[,1] < xlim[1] | 
+				positions[,1] > xlim[2]) |
+			(positions[,2] < ylim[1] | 
+				positions[,2] > ylim[2])
+		nleak <- length(which(out))
+		
+		hb <- hexbin(positions[!out,],xbnds=xlim,ybnds=ylim)
 		if( !any(hb@count < maxcnt ) ) return()
 		trans <- function(cnt) sqrt(4*cnt+2)
 	    inv   <- function(y) (y^2-2)/4
@@ -42,15 +49,15 @@ plotFun <- function(type){
 	}else if(plotType == "dc"){
 		
 		col <- densCols(positions,colramp=cr)
-		plot(positions$x,positions$y,xlim=xlim,ylim=ylim,col=col,pch=20)
+		plot(positions[,1],positions[,2],xlim=xlim,ylim=ylim,col=col,pch=20)
 		
 	}else if(plotType == "h2d"){
 		
 		col <- c("white", blues9[-(1:3)])
-		rx <- range(positions$x,na.rm = T)
-		ry <- range(positions$y,na.rm = T)
+		rx <- range(positions[,1],na.rm = T)
+		ry <- range(positions[,2],na.rm = T)
 		nbins <- round(c(diff(rx)/diff(xlim)*50,diff(ry)/diff(ylim)*50))
-		hist2d(positions$x,positions$y, nbins=nbins, 
+		hist2d(positions[,1],positions[,1], nbins=nbins, 
 			col = cr(10), xlim = xlim, #, same.scale=T
 			ylim = ylim, zlim=c(0,maxcnt))
 		
