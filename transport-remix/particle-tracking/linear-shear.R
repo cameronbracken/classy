@@ -3,19 +3,18 @@
 # Pure diffusion particle tracking 
 
 nd <- 2        # dimensions
-np <- 500000    # particles
+np <- 50000    # particles
 nv <- 0        # vortexes
-nt <- 20     # timesteps
+nt <- 100     # timesteps
 dt <- .1       # timestep 
+Us <- 10
 
 D <- c(.1,.1)  # Diffusion coefficient
 nleak <- 0
 movieFrameSkip <- 100
-maxcnt <- np*.01
+maxcnt <- np*.1
 
 movie <- TRUE
-slices <- TRUE
-swfDevice <- FALSE
 plotType <- "hex" # or "hex" 
                   # or "ss" (smooth scatter) 
                   # or "h2d" (2d histogram) 
@@ -23,8 +22,8 @@ plotType <- "hex" # or "hex"
                   # or "dc" (plot w/ density colors)
 
 	# plotting boundaries
-bnd.max.x <- ceiling(nt*sqrt(2*D[1]*dt)/15)
-bnd.max.y <- ceiling(nt*sqrt(2*D[2]*dt)/15)
+bnd.max.x <- ceiling(nt*sqrt(2*D[1]*dt)+Us*dt*nt*2)
+bnd.max.y <- ceiling(nt*sqrt(2*D[2]*dt))
 xlim <- c(-bnd.max.x,bnd.max.x)
 ylim <- c(-bnd.max.y,bnd.max.y)
 times <- seq(dt,length.out=nt,by=dt)
@@ -39,10 +38,8 @@ positions <- matrix(0,np+nv,nd+1)
 
 colorRamps()
 
-if(swfDevice && movie){
-	swf('pure-diffusion.swf',frameRate=5)
-}else if(movie){ 
-	pdf('pure-diffusion.pdf')
+if(movie){ 
+	pdf('linear-shear.pdf')
 }
 
 pb <- txtProgressBar(1,nt*dt,style=3)
@@ -50,39 +47,27 @@ for(i in times){
 		
 	setTxtProgressBar(pb, i)
 	
-	x <- .Fortran('pure_diffusion',
+	x <- .Fortran('linear_shear',
 		positions = as.double(positions[,1:2]),
 		np = as.integer(np),
-		nt = as.integer(1),
+		nt = as.integer(25),
 		dt = as.double(dt),
 		Dx = as.double(D[1]),
-		Dy = as.double(D[2]))
+		Dy = as.double(D[2]),
+		Us = as.double(Us))
 
 	positions[,1:2] <- matrix(x$positions,ncol=2)
 	
-	if(movie){
+	if(movie)
 		plotFun(plotType)
-		if(swfDevice) swfAddPlayerControls(x=xlim[2],y=ylim[1])
-	}
-	
-	if(i == times[nt/2]){
-		
-		if(slices){
-			nb <- 35
-			pdf('pure-diffusion-slices.pdf')
-				plotSlices(positions,nb)
-			dev.off()
-		}
-	
-	}
 }
 close(pb)
 if(movie) dev.off()
 
-if(!swfDevice & movie){
+if(movie){
 silence <- 
-	system('pdf2swf -l -B alternate_simple_viewer.swf pure-diffusion.pdf',
+	system('pdf2swf -l -B alternate_simple_viewer.swf linear-shear.pdf',
 		intern=T)
 silence <- 
-	system('swfcombine --dummy -r 7 pure-diffusion.swf -o pure-diffusion.swf')
+	system('swfcombine --dummy -r 7 linear-shear.swf -o linear-shear.swf')
 }
