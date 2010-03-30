@@ -16,7 +16,7 @@ plotFun <- function(type){
 		#trans <- log2
 		#inv <- function(x)2^x
 	
-		P <- plot(hb,colramp=cr,border=gray(.7),
+		P <- plot(hb,colramp=cr,border=gray(.7),xlab='X',ylab='Y',
 			maxcnt=maxcnt,trans=trans,inv=inv,mincnt = 2)# not the single ones
 		#plot(hb,pen=gray(.7),border=gray(.2),
 		#	maxcnt=np/2,trans=trans,inv=inv,style='lattice',maxarea=2)
@@ -39,8 +39,9 @@ plotFun <- function(type){
 	}else if(plotType == "ssi"){
 		
 		est <- bkde2D(positions[apply(!is.na(positions),1,any),],
-			c(diff(xlim)/100,diff(ylim)/100),c(100,100))
-		image.plot(est$x1, est$x2, est$fhat,col=crw(12),zlim=c(0,1/(np/50)),xlim=xlim,ylim=ylim)
+			c(diff(xlim)/50,diff(ylim)/50),c(50,50))
+		image.plot(est$x1, est$x2, est$fhat,col=crw(12),
+			zlim=c(0,1/(np/200)),xlim=xlim,ylim=ylim)
 		
 	}else if(plotType == "ss"){
 		
@@ -49,7 +50,9 @@ plotFun <- function(type){
 	}else if(plotType == "dc"){
 		
 		col <- densCols(positions,colramp=cr)
-		plot(positions[,1],positions[,2],xlim=xlim,ylim=ylim,col=col,pch=20)
+		par(mar=rep(1,4))
+		plot(positions,xlim=xlim,ylim=ylim,col=col,pch=20,
+				xlab='',ylab='',axes=F)
 		
 	}else if(plotType == "h2d"){
 		

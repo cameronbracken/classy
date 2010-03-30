@@ -154,7 +154,7 @@ with(largest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
 
 largest.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=largest)
 abline(largest.fit)
-@
+@NWBPX532
 
 <<>>=
 summary(largest.fit)
