@@ -209,21 +209,29 @@ Plot the observed versus predicted precipitation for both January and July. Also
 
 \clearpage
 
-CVEN 4333, Assignment 5, Partial solutions
+{\bf CVEN 4333, Assignment 5, Partial solutions}
 
 \item Book problem 3.16
-     $P(A) = .4$    $P(\bar{B}) = .6$\\     $P(B) = .5$    $P(\bar{B}) = .5$
-\item 3.18     Could be many things
-\item 3.19
+
+     $P(A) = .4$    $P(\bar{B}) = .6$\\
+     $P(B) = .5$    $P(\bar{B}) = .5$
+
+\item 3.18
+     Could be many things
+
+\item 3.19
 \begin{enumerate}
 \item $P(A\mbox{ and }B) = P(A)P(B)=(.4)(.5)=.2$
 \item $P(\mbox{neither occur}) = P(\bar{A})P(\bar{B})=(.6)(.5)=.3$
 \item $P(B\mbox{ and not }A) = P(\bar{A})P(B) = (.6)(.5) =.3$
 \end{enumerate}
-\item What is the probability that a 10 year flood will not be exceeded in any single year?   
+
+\item What is the probability that a 10 year flood will not be exceeded in any single year?
+   
 $T =$ return period $= 10$
 
-$P(F)=1/T =.1$   
+$P(F)=1/T =.1$
+   
 $P(\bar{F}) = 1-.1 = .9$
 
 Or see eq. 3.23 
