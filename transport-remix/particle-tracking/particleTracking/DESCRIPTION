@@ -1,0 +1,11 @@
+Package: particleTracking
+Type: Package
+Title: Particle tracking
+Version: 0.1
+Date: 2010-03-18
+Author: Cameron Bracken
+Maintainer: The tikzDevice team <tikzdevice-bugs@lists.r-forge.r-project.org>
+Description: Particle Tracking code
+License: GPL (>= 2.0)
+Depends: hexbin, KernSmooth, fields, gplots, RColorBrewer, swfDevice, moments
+LazyLoad: yes

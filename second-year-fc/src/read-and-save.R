@@ -35,6 +35,7 @@ lees <- as.matrix(read.table('data/LeesFerry.txt'))[,-1]
 sy <- scan('data/LeesFerry.txt',comment.char='#', n=1, quiet=T)
 months <- if(seasonal.total) 4:7 else 1:12
 lees <- apply(lees[,months], 1, sum)
+#if(running.mean) lees <- running(lees,width=mean.len)
 lees <- ts(lees, start = sy) * 10^-6
 
     #Get binary state series based on median of historical

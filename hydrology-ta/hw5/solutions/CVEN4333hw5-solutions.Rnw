@@ -1,4 +1,4 @@
-% !TEX TS-program = Sweave
+% !TEX TS-program = pgfSweave
 
 
 \documentclass[11pt]{article}
@@ -27,11 +27,22 @@
 \DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
 \DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
 
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
 \begin{document}
-\SweaveOpts{keep.source=T}
+\SweaveOpts{keep.source=T,echo=F,prefix.strings=figs/fig}
 
 <<echo=F>>=
-library(xtable)
+	#Load the necessary packages
+suppressPackageStartupMessages(library(xtable))
+suppressPackageStartupMessages(library(fields))
+suppressPackageStartupMessages(library(matlab))
+
 print.xtable.booktabs <- function(x){
 
 print(xtable(x),
@@ -44,38 +55,22 @@ print(xtable(x),
 		'\\bottomrule ')))
 		
 }
+
+if(!file.exists('figs') dir.create('fig'))
+
 @
 
-\textbf{CVEN 4333, Spring 2010, Assignment \#5 Solutions}
+\begin{flushright}
+Cameron Bracken\\
+CVEN 5343\\
+PS \#4
+\end{flushright}
 
 \begin{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item 
-
-<<>>=
-	#Load the necessary packages
-suppressPackageStartupMessages(library(fields))
-suppressPackageStartupMessages(library(matlab))
-@
-
-Load the data for January and July
-<<>>=
-	# load the precip data for january
-janp <- read.table('colo_monthly_precip_01.dat')
-names(janp) <- c('y', 'x', 'z', 'p')
-janp <- janp[!(janp$p == -999.999),]
-
-	# load the precip data for july
-julp <- read.table('colo_monthly_precip_07.dat')
-names(julp) <- c('y', 'x', 'z', 'p')
-julp <- julp[!(julp$p == -999.999),]
-
-	#load the dem
-dem <- read.table('colo_dem.dat')
-names(dem) <- c('y', 'x', 'z')
-@
 
 And fit the two models
 <<>>=
@@ -183,6 +178,20 @@ plot.surface(list(x=xp,y=yp,z=t(flipud(zp.jul))), type='p',
 \clearpage
 \item 
 <<fig=T,pdf=T,eps=F>>=
+	#Observed versus predicted for january
+plot(janp$p,lmpredp.jan,xlab='Observed',ylab='Predicted')
+abline(0,1)
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+	#Observed versus predicted for july
+plot(julp$p,lmpredp.jul,xlab='Observed',ylab='Predicted')
+abline(0,1)
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
 res <- residuals(lmfit.jan)
 layout(rbind(c(1,2),c(3,4)))
 plot(janp$x,res,xlab='Longitude',ylab='Residuals',cex=.5)
@@ -201,11 +210,42 @@ plot(julp$z,res,xlab='Elevation',ylab='Residuals',cex=.5)
 plot(julp$p,res,xlab='Precipitation',ylab='Residuals',cex=.5)
 @
 
-Plot the observed versus predicted precipitation for both January and July. Also plot the residuals versus X, Y, Z and P (4 plots for each month, use the \texttt{residuals} function). Discuss the implications of these plots. 
+The major conclusion from these plots is that the model errors (the residuals) are not constant with respect to any of the variables, in other words the model is not homoskedastic (constant error variance).  This violates a fundamental assumption of linear regression and essentially invalidates the model.   Contrasting the two months, the error variace for July is much more stable than in January, so a linear model may be somewhat more valid then.  This is likely du to the lower amounts of precipitation and less variability in July.  The lower right plots (residuals versus precip) show a systematic error in the model, the model tends to under-predict low precip and over-predict high precip. 
 
-\item Discuss the assumptions, advantages and disadvantages in using a linear model in part 1.  What other factors might contribute to precipitation that could improve this model. 
 
-\item[{\it Extra Credit}] Use \texttt{interp} function from the \texttt{akima} package to linearly interpolate the precipitation to the DEM points.  Plot the interpolated surface, discuss the difference between this surface and the surface from the linear regression. Repeat this for both the January and July precipitation. 
+\item A linear model assumes that precipitation is a linear function of elevation, which we know is untrue (at least in colorado), try plotting precip versus z in January and see what you get.  Most precipitation is is generated at higher altitudes and travels to lower altitudes in the form of runoff.  A linear model, since it fits a single function globally, is not able to to capture, local features of the data. For example, due to some kind of microclimate, a two regios of thesame elevation may get vastly different precip. Other factors that might contribure to precip are, wind patterns, pressure, temperature, humidity and various other climatological factors. 
+
+\clearpage
+\item[{\it Extra Credit}] 
+
+<<>>=
+library(akima)
+zp.ak.jan <- interp(janp$x,janp$y,janp$p,xp,yp,duplicate='mean')
+zp.ak.jul <- interp(julp$x,julp$y,julp$p,xp,yp,duplicate='mean')
+@
+
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(zp.ak.jan, 
+	main='Interpolated Monthly Precip Prediction [mm], January', 
+	xlab='Longitude', ylab='Latitude',zlab='Precip',type='p')
+@
+
+\clearpage
+<<fig=T,pdf=T,eps=F>>=
+plot.surface(zp.ak.jul, 
+	main='Interpolated Monthly Precip Prediction [mm], July', 
+	xlab='Longitude', ylab='Latitude',zlab='Precip',type='p')
+@
+
+The surfaces from linear interpolation generally resemble those from regression but are very different in magnitude.  A carful analysis would surely show that values at the DEM points are very far off. 
+
+\clearpage
+
+{\it Problems 1-4 Complete Script}
+<<complete,echo=F,fig=F,results=tex,cache=F>>=
+pygmentize('regression.R')
+@
+
 
 \clearpage
 

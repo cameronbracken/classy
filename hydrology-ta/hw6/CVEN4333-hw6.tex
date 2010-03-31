@@ -1,0 +1,28 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\begin{document}
+{\bf CVEN 433 Problem Set  6. DUE FRIDAY, February 19 at 5:00 in Cameron Bracken’s mailbox. No late papers accepted.}
+\begin{enumerate} 
+
+\item Much of Large scale-hydrology is based on making your best estimate given limited data. With this in mind compare equations 5.1 and 5.2 from the text.
+\begin{enumerate}
+\item Explain the physical rationale behind the exponential factor in parentheses which differentiates these two equations. What is the exponential supposed to represent?\item How do you think these two equations were derived (what are the foundations)?
+\end{enumerate}\item Explain how you would estimate the parameters in equation 5.2 if you were a water supply engineer for Boulder Valley Water District. Come up with explicit values (numbers) as best you can. Could the data in Tables 5.1 and 5.2 be of use? 
+\item Look at Horton’s equations for Interception in example 5.1 for ash and oak tree.  Plot each equation (any software or by hand) from a range of 0 to 6 inches in ? inch increments.
+\begin{enumerate}\item For P = 1.5 these equations give the same answer. At what value of precipitation do these two   curves begin to diverge?\item Explain physically and biologically why these equations differ and why they diverge at some point?\item Does it make physical sense to plot these curves at P=0? Explain.
+\end{enumerate}\item \textsf{R} problem from PS 5 Due with this problem set
+\end{enumerate}
+
+
+\end{document}  

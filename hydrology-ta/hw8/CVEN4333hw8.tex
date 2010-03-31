@@ -1,0 +1,234 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage{epstopdf}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\newcommand{\R}{\textsf{R}}
+
+\begin{document}
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#8, Due Friday March 19 at 5:00 in Cameron Bracken's mailbox. No late papers accepted.}
+
+Please include the \textsf{R} script you create with this assignment.
+
+This assignment will focus on running and interpreting the output of {\scshape topmodel}, a rainfall runoff model that can be run from \R{}. We will be using data from the Huagrahuma basin in Ecuador that comes with the \R{} package \texttt{topmodel} (make sure to install this package). 
+
+
+\begin{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Load the package (you need the fields package too) and the data:
+
+\begin{verbatim}
+library(fields)
+library(topmodel)
+data(huagrahuma.dem)
+data(huagrahuma)
+attach(huagrahuma)
+\end{verbatim}
+
+Using \R{},
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Plot image maps of the basin DEM with elevation contours:
+
+\begin{verbatim}
+image.plot(huagrahuma.dem,axes=F)
+contour(huagrahuma.dem,add=T)
+\end{verbatim}
+
+By hand or with a computer drawing program, do your best to draw the Huagrahuma watershed on top of the DEM (i.e. delineate the huagrahuma watershed). Draw a contiguous line which is always perpendicular to the elevation contours, there is only one such line. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item The contributing area at each DEM point in the basin (this is the area that contributes to runoff at a particular point based on flowlines)
+
+\begin{verbatim}
+carea <- topidx(huagrahuma.dem, resolution= 25)$area
+image.plot(carea,axes=F,main='Contributing Area')
+\end{verbatim}
+
+What does it mean that the grid cells with the highest contributing area seem to fall along the center of the basin?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item lot image maps of the topographic index at every point in the basin.  The topographic index is 
+$$\ln(a/\tan\beta)$$
+
+where $a$ is the area of a grid cell and $\beta$ is the slope angle of a grid cell. 
+
+To calculate and plot it:
+\begin{verbatim}
+ti <- topidx(huagrahuma.dem, resolution= 25)$atb
+image.plot(ti,axes=F,main='Topographic Index')
+\end{verbatim}
+
+What is the Topographic index telling us?
+
+\end{enumerate}
+
+
+For all of these plots use the \texttt{axes=F} argument to turn off the axes (since we do not explicitly know the basin lat/lon). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Using the default parameters from the \texttt{huagrahuma} data, run {\textsc topmodel} once in \R{}. 
+
+\begin{verbatim}
+Qsim <- topmodel(parameters,topidx,delay,rain,ET0)
+\end{verbatim}
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item By looking at the help page (\texttt{?topmodel}), describe each of the input arguments (you don't need to describe each of the parameters). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Plot the observed and simulated flow at the outlet over time (units are given in the help page). 
+
+\begin{verbatim}
+    #make a time vector in decimal days
+time <- seq(0,by=15/1440,length.out=length(Qobs))
+    #plot simulated and observed
+plot(time, Qobs,cex=.2)
+lines(time, Qsim)
+\end{verbatim}
+
+Change the color of the simulated line and add a legend. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Plot the observed versus predicted flow and add a one to one line.  Comment on what you see. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Use the \texttt{NSeff} function to calculate the Nash-Sutcliffe efficiency (NSE). 
+\end{enumerate}
+
+
+
+\item Assume that all of the parameters (besides \texttt{vch}) in {\textsc topmodel} are not known for certain (i.e. they have uncertainty associated with them) and we want to calibrate the model of the Huagrahuma basin to best match the observed data.  A real study of this nature would require many field measurements.  Monte Carlo simulation is one method we can use for calibration which is easy to implement, though it is not guaranteed to give us the best parameter set.  To do this we will randomly vary the model parameters and calculate the NSE of the resulting simulation. First define the parameter sets:
+
+\begin{verbatim}
+    #number of monte carlo simulations
+runs<-10000
+
+qs0   <- runif(runs)*4e-5
+lnTe  <- runif(runs)*3-2
+m     <- runif(runs)*0.2
+Sr0   <- runif(runs)*0.02
+Srmax <- runif(runs)*2
+td    <- runif(runs)*3
+vch   <- 1000
+vr    <- 100+runif(runs)*2400
+k0    <- runif(runs)*0.01
+CD    <- runif(runs)*5
+dt    <- 0.25
+
+parameters<-cbind(qs0,lnTe,m,Sr0,Srmax,td,vch,vr,k0,CD,dt)
+\end{verbatim}
+
+Then run the model a bunch of times and calculate the NSE for each parameter set ({\bf Warning: this will take a couple of minutes to run!!!}):
+
+\begin{verbatim}
+    # Nash Sutcliffe efficiencies for each random set of parameters
+nse <- topmodel(parameters,topidx,delay,rain,ET0,Qobs = Qobs)
+\end{verbatim}
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Plot time series of observed and predicted flow for the best and worst parameter sets (one set of points and two lines) add a legend. To extract the best and worst models:
+
+\begin{verbatim}
+    # Run the model a few more times 
+    # to extract the best worst and top models
+p.best <- parameters[which(nse==max(nse)),]
+p.worst <- parameters[which(nse==min(nse)),]
+Qsim.best <- topmodel(p.best, topidx, delay, rain, ET0)
+Qsim.worst <- topmodel(p.worst, topidx, delay, rain, ET0)
+\end{verbatim}
+
+Describe the effects of poor calibration in this situation. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+What is the NSE for the best model.  Did you do better than the original parameter set (you may not)?  Speculate on a better method for calibration than Monte Carlo simulation. 
+\end{enumerate}
+
+\item Assume that the top parameter sets have captured a a sample of the real probability distributions of the parameters. Visualize the parameter sets as histograms:
+
+\begin{verbatim}
+p.top <- parameters[which(nse > .8),]
+layout(matrix(1:9,ncol=3))
+for(i in 1:ncol(p.top)){
+    if(!any(colnames(p.top)[i]==c('dt','vch'))){
+        hist(p.top[,i],xlab='',main=colnames(p.top)[i])
+    }
+}
+\end{verbatim}
+
+This statement uses a loop and a conditional statement (if). Don't worry if it doesn't make sense.  Which histograms appear to have some structure associated with them?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Try and fit Normal and Gamma and Exponential probability distributions to the parameter \texttt{vr}. Report the best fit parameters. 
+
+\begin{verbatim}
+
+library(MASS)
+vr <- p.top[,8]
+
+    #Fit normal
+normal.fit <- fitdistr(vr, 'normal')
+mean <- normal.fit$estimate[1]
+sd <- normal.fit$estimate[2]
+
+    #Fit exponential
+exp.fit <- fitdistr(vr, 'exponential')
+exp.lam <- exp.fit$estimate[1]
+
+    #Fit Gamma
+gamma.fit <- fitdistr(vr, dgamma, list(shape = 1, rate = 0.1), lower = 0.001)
+shape <- gamma.fit$estimate[1]
+rate <- gamma.fit$estimate[2]
+
+	#plot the results
+x <- seq(0,3000,,1000)
+hist(vr,freq=F,xlim=c(0,max(vr)))
+lines(x,dgamma(x,shape,rate),col='green')
+lines(x,dnorm(x,mean,sd),col='orange')
+lines(x,dexp(x,exp.lam),col='purple')
+\end{verbatim}
+
+Add a legend to this plot. Without doing any actual quantitative comparison, discuss which distribution you think fits the best and why.  What qualities of these distributions may justify or invalidate their use?  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[\it Extra Credit] Describe (in a few sentences) each of the parameters that are needed to run {\textsc topmodel}. Look up this information in the \texttt{topmodel} references. 
+
+\end{enumerate}
+\end{document}  
+
+
+
+
+
+
+

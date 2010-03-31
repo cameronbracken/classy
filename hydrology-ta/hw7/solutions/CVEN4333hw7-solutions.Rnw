@@ -1,0 +1,203 @@
+% !TEX TS-program = Sweave
+
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{tikz}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+\renewcommand{\theFancyVerbLine}{}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{frame=single,numbers=left,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,eps=F,pdf=T}
+
+<<echo=F>>=
+options(prompt=" ", continue="  ")
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+\textbf{CVEN 4333, Spring 2010, Assignment \#7 Solutions}
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Book problem 7.1
+
+$f_0=3.0$ in/hr\\
+$k=0.29\,\mbox{hr}^{-1}$\\ 
+$f_c=0.55$ in/hr\\ 
+$T=10$ hours
+
+Using equation 7.1:
+\begin{align}
+f_p &= f_c+ (f_0-f_c)e_{-kt}\nonumber\\
+V = \displaystyle\int^T_0f_p(t)dt &=\displaystyle\int^T_0f_c+ (f_0-f_c)e_{-kt}dt\nonumber\\
+&= \left[tf_c\right]^T_0+\left[\frac{f_c-f_0}{k}e^{-kt}\right]^T_0\nonumber\\
+V &= Tf_c+\frac{f_c-f_0}{k}\left[e^{-kT}-1\right]\\
+  & = (10 \mbox{hr})(0.55 \mbox{in/hr})+\frac{0.55\mbox{in/hr}-3.0\mbox{in/hr}}{0.29\mbox{hr}^{-1}}\left[e^{(0.29\,hr^{-1})(10\,hr)}\right]\nonumber
+\end{align}
+
+\ansbox{V = 13.49\,\mbox{in}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Book problem 7.3
+
+$f_0=3.0$ in/hr\\
+$f_c=0.55$ in/hr\\ 
+$T=10$ hours\\
+$V=30$ inches
+
+Use equation 1 derived in problem 7.1.
+
+$$V = Tf_c+\frac{f_c-f_0}{k}\left[e^{-kT}-1\right]$$
+
+Using solver or a root finder any optimization software, minimize the following quantity:
+
+$$\left|Tf_c+\frac{f_c-f_0}{k}\left[e^{-kT}-1\right]-V\right|$$
+
+(Absolute value because k cannot be negative)
+
+\ansbox{k=0.1027\,\mbox{hr}^{-1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Book problem 7.6
+
+Don't need the area given. 
+
+\begin{enumerate}
+\item 
+$$P = 1/2\mbox{hr}(4+2+6+5)(\mbox{in/hr})$$
+\ansbox{P=8.5\mbox{in}}
+
+\item Need $\phi$ such that the total volume under is $5.5$ in, aka, the volume under is 3 in. Let $I_i$ be the reinfall intensity for period $i$, let $t_p=1/2$hr and let $V=3in$. 
+
+\begin{align}
+V   &=\displaystyle\sum_it_p(I_i-\phi)\nonumber\\
+    &=t_p\displaystyle\sum_i(I_i-\phi)\nonumber\\
+    &=t_p\left(\displaystyle\sum_iI_i-\displaystyle\sum_i\phi\right)\nonumber\\
+    &=t_p[(I_1-\phi)+(I_2-\phi)+(I_3-\phi)+(I_4-\phi)]\nonumber\\
+    &=t_p\left[\displaystyle\sum_iI_i-4\phi\right]\nonumber\\
+\phi&=\frac{1}{4}\left(\displaystyle\sum_iI_i-\frac{V}{t_p}\right)\nonumber\\
+    &=\frac{1}{4}\left(17\,\mbox{in/hr}-\frac{3\,\mbox{in}}{1/2\,\mbox{hr}}\right)\nonumber
+\end{align}
+\ansbox{\phi=2.75\,\mbox{in/hr}}
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Book problem 7.11
+
+Look at figure 7.14. Runoff occurs ofter about 2 inches of rain.
+
+\item
+\item
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item The variability is purely due to the small sample size (aka sampling variability) since we know what distribution the numbers are coming from.  In other words there is no meaning to the varibility it is simply randomness. The plots for parts (a) and (b) are shown together.
+
+<<boxplot2,fig=T,pdf=T,height=7>>=
+x5 <- as.data.frame(matrix(rnorm(50*5),ncol=50))
+x50 <- as.data.frame(matrix(rnorm(50*50),ncol=50))
+x500 <- as.data.frame(matrix(rnorm(50*500),ncol=50))
+names(x5) <- names(x50) <- names(x500) <- 1:50
+	
+layout(cbind(1:3))
+	
+par(mar=c(4,4,1,1))
+boxplot(x5,cex=.5,ylim=c(-3,3),xlab='Sample Number',
+	ylab='Z (n = 5)', 
+	main='Samples from a standard normal distribution.')
+abline(h=0,lty=2,col=2,lwd=2)
+	
+boxplot(x50,cex=.5,ylim=c(-3,3),xlab='Sample Number',
+	ylab='Z (n = 50)')
+abline(h=0,lty=2,col=2,lwd=2)
+	
+boxplot(x500,cex=.5,ylim=c(-3,3),xlab='Sample Number',
+	ylab='Z (n = 500)')
+abline(h=0,lty=2,col=2,lwd=2)
+@
+
+
+\item As the sample size increases we see more consistant behavior between each sample.  This is because we as sample size increases, we get a better ``picture'' of what the original distibution actually is.  Essentially we fill in all the holes in our knowledge.  Using small sample sizes can be misleading. 
+
+\clearpage
+\item 
+
+<<hist,fig=T,pdf=T,width=5.5,height=5.5>>=
+	#theoritical normal
+x <- seq(-3,3,,1000) 
+p.theory <- dnorm(x) 
+
+	#loop to create plot for each sample
+layout(rbind(1:2,3:4))
+for(i in c(5,50,500,5000)){
+	p.sample <- rnorm(i) 
+	hist(p.sample,freq=F,xlim=c(-3,3),xlab='Z',
+		main=paste('n =',i))
+	lines(x,p.theory,lwd=1.5)
+}
+@
+
+The explanation for these histograms is essentially the same as part (b).  For small sample sizes, the histogram does not look like a normal distribution due to sampling variability.  As the sample size increases, the histgram begins to look more normal.
+
+\end{enumerate}
+\end{enumerate}
+
+\end{document}  

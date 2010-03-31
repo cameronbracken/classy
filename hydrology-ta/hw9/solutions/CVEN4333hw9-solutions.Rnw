@@ -1,0 +1,182 @@
+% !TEX TS-program = Sweave
+
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{tikz}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,eps=F,pdf=T}
+
+<<echo=F>>=
+options(prompt=" ", continue="  ")
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+\textbf{CVEN 4333, Spring 2010, Assignment \#9 Solutions}
+
+\begin{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf In \R{}, read in the data and extract the rivers with the largest, smallest and middle sized specific runoff from the data set.  Keep in mind all of these rivers are very large.}
+
+<<>>=
+rivers <- read.csv('rivers.csv')
+
+	#Pull out the largest, smalles and middle rivers
+largest <- rivers[rivers$Specific.Runoff >= .98,]
+smallest <- rivers[rivers$Specific.Runoff < 0.15,]
+middle <- rivers[rivers$Specific.Runoff > 0.15 & rivers$Specific.Runoff < .98,]
+@
+
+{\bf Reproduce Figure 1 from the Lo\'aiciga paper. Plot the Drainage area versus specific runoff on a log scale and add the numbers for the largest and smallest basins.\bf}
+
+<<fig=T,width=5,height=5>>=
+	# Plot the Specific runoff
+with(rivers, 
+	plot(Drainage.Area,Specific.Runoff,log='xy',xlim=c(1,1000),ylim=c(.01,10),
+		main='Specific Runoff',xlab='Drainage Area [10,000 m^2]',
+		ylab='Specific Runoff [m/yr]'))
+	#Add the text for the largest and smallest rivers
+with(largest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
+with(smallest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
+@
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item {Reproduce Lo\'aiciga's Figure 2.  Plot the drainage area versus mean runoff for all the rivers. Plot the numbers and the best fit scaling relationship.}
+
+<<fig=T>>=
+	# Plot all the rivers and a best fit scaling relationship 
+with(rivers, 
+	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
+		main='All Rivers'))
+
+	# Best fit scaling relationship 
+all.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=rivers)
+abline(all.fit)
+
+	#add the numbers
+with(largest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
+with(smallest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
+@
+
+{\bf Report the $C$ and $m$ coefficients that you calculate, their standard errors and the $R^2$.}
+<<>>=
+summary(all.fit)
+@
+
+{\bf Interpret these results. Do they agree with the paper?}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item {\bf Repeat the same analysis on the basins with the largest and smallest specific area to recreate Figures 3 and 4. For both Plot the data with their numbers and the best fit scaling relationship. Also report the coefficients their standard errors and the $R^2$.  Interperet these results and compare the the paper.}
+
+<<fig=T>>=
+	# Plot the Mean runoff for the middle rivers
+with(middle, 
+	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
+		main='Middle Rivers',xlab='Drainage Area [10,000 m^2]',
+		ylab='Runoff [km^3/yr]'))
+	
+middle.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=middle)
+abline(middle.fit)
+@
+
+<<>>=
+summary(middle.fit)
+@
+
+\clearpage
+<<fig=T>>=
+	#Plot the largest rivers and a best fit scaling relationship
+with(largest, 
+	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
+	main='Largest Rivers',xlab='Drainage Area [10,000 m^2]',
+	ylab='Runoff [km^3/yr]'))
+with(largest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
+
+largest.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=largest)
+abline(largest.fit)
+@NWBPX532
+
+<<>>=
+summary(largest.fit)
+@
+
+\item Describe quantitatively and qualitatively what specific runoff is. Speculate on why this so strongly influences the scaling relationship. Why might basins with a specific runoff $>$ 1 be so highly correlated?  
+
+\item What does a relation between area and specific runoff imply physically? Why would his correlations ($R^2$) get stronger in larger rivers?
+
+\item What are the advantages of power laws in hydrology? Explain the significance of equation 2 as part of your answer.
+
+\item Book problem 8.8
+
+\item Book problem 8.16
+
+\end{enumerate}
+
+\end{document}  
+
+
+
+
+
+
+

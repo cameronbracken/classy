@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage{epstopdf}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\newcommand{\R}{\textsf{R}}
+
+\begin{document}
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#9, Due Friday April 2 at 5:00 in Cameron Bracken's mailbox. No late papers accepted.}
+
+Please include the \textsf{R} script you create with this assignment.
+
+This assignment will focus on scaling relationships between basin area and basin average runoff.  We will be reproducing and analyzing the results in the paper:  
+
+\begin{quotation}
+\noindent Lo\'aiciga, H. Runoff scaling in large rivers of the world. Professional Geographer, 49(3) 1997, pages 356--364.
+\end{quotation}
+
+Make sure you read this paper. 
+
+\begin{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Download the data file \texttt{rivers.csv} from \url{http://animas.colorado.edu/~bracken/CVEN4333/}.  This contains the data from the paper above.  In \R{}, read in the data and extract the rivers with the largest, smallest and middle sized specific runoff from the data set.  Keep in mind all of these rivers are very large.
+
+\begin{verbatim}
+rivers <- read.csv('rivers.csv')
+
+    #Pull out the largest, smallest and middle rivers
+largest <- rivers[rivers$Specific.Runoff >= .98,]
+smallest <- rivers[rivers$Specific.Runoff < 0.15,]
+middle <- rivers[rivers$Specific.Runoff > 0.15 & rivers$Specific.Runoff <= .98,]
+\end{verbatim}
+
+Reproduce Figure 1 from the Lo\'aiciga paper. Plot the Drainage area versus specific runoff on a log scale and add the numbers for the largest and smallest basins.  
+
+\begin{verbatim}
+    # Plot the Specific runoff
+with(rivers, 
+    plot(Drainage.Area,Specific.Runoff,log='xy',xlim=c(1,1000),ylim=c(.01,10),
+        main='Specific Runoff'))
+    #Add the text for the largest and smallest rivers
+with(largest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
+with(smallest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
+\end{verbatim}
+ 
+The with function is a handy one to avoid using the \texttt{\$} operator all the time. For example you could also write the second line above:
+
+\begin{verbatim}
+text(largest$Drainage.Area, largest$Specific.Runoff, largest$Number,pos=4)
+\end{verbatim}
+
+Use either way you like. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Reproduce Lo\'aiciga's Figure 2.  Plot the drainage area versus mean runoff for all the rivers. Plot the numbers and the best fit scaling relationship.  Use the \texttt{lm()} function as we have done before to fit the scaling relationship:
+
+$$\log Q=\log C+m\log A+\nu$$
+
+Like this
+
+\begin{verbatim}
+all.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=rivers)
+\end{verbatim}
+
+Plot this line with \texttt{abline(all.fit)}.  Report the $C$ and $m$ coefficients that you calculate, their standard errors and the $R^2$  Interpret these results. Do they agree with the paper?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Lo\'aiciga's suggests that Specific Runoff might be a good criteria for creating piecewise scaling relationships.  Repeat the same analysis on the basins with the largest and smallest specific area to recreate Figures 3 and 4. For both Plot the data with their numbers and the best fit scaling relationship. Also report the coefficients their standard errors and the $R^2$.  Interperet these results and compare the the paper. 
+
+\item Describe quantitatively and qualitatively what specific runoff is. Speculate on why this so strongly influences the scaling relationship. Why might basins with a specific runoff $>$ 1 be so highly correlated?  
+
+\item What does a relation between area and specific runoff imply physically? Why would his correlations ($R^2$) get stronger in larger rivers?
+
+\item What are the advantages of power laws in hydrology? Explain the significance of equation 2 as part of your answer.
+
+\item Book problem 8.8
+
+\item Book problem 8.16
+
+\end{enumerate}
+\end{document}  
+
+
+
+
+
+
+

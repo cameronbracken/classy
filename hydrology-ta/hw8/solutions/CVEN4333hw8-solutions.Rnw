@@ -1,0 +1,338 @@
+% !TEX TS-program = Sweave
+
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{tikz}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,eps=F,pdf=T}
+
+<<echo=F>>=
+options(prompt=" ", continue="  ")
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+\textbf{CVEN 4333, Spring 2010, Assignment \#8 Solutions}
+
+\begin{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Load the package (you need the fields package too) and the data:
+
+<<>>=
+library(fields)
+library(topmodel)
+data(huagrahuma.dem)
+data(huagrahuma)
+h <- huagrahuma
+Qobs <- h$Qobs
+@
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Plot image maps of the basin DEM with elevation contours:
+
+<<eval=F>>=
+image.plot(huagrahuma.dem,axes=F,xlab='Longitude',ylab='Latitude',
+    main='Huagrahuma DEM (m)')
+contour(huagrahuma.dem,add=T)
+@
+
+\includegraphics[width=.9\textwidth]{basin.png}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item The contributing area at each DEM point in the basin
+
+<<fig=T>>=
+carea <- topidx(huagrahuma.dem, resolution= 25)$area
+image.plot(carea,axes=F,main='Contributing Area (m^2)',
+    xlab='Longitude',ylab='Latitude')
+@
+
+{\bf What does it mean that the grid cells with the highest contributing area seem to fall along the center of the basin?}
+
+Water flows from high elevations around the edges of the basin to low elevations along the center of the basin.  Areas near the center of the basin receive runoff from the largest surrounding areas. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item The topographic index at each DEM point:
+
+<<fig=T>>=
+ti <- topidx(huagrahuma.dem, resolution= 25)$atb
+image.plot(ti,axes=F,main='Topographic Index (dimensionless)',
+    xlab='Longitude',ylab='Latitude')
+@
+
+{\bf What is the Topographic index telling us?}
+
+Since the area of each grid cell is the same, the Tipographic index is giving us a measure of slope, at everypoint in the basin.  The larger the slope, the smaller the topograpic index. Using this index, we can clearly see the dominant flow paths in the basin. 
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Using the default parameters from the \texttt{huagrahuma} data, run {\textsc topmodel} once in \R{}. }
+
+<<>>=
+    # Run once
+Qsim <- topmodel(h$parameters,h$topidx,h$delay,h$rain,h$ET0)
+@
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf By looking at the help page (\texttt{?topmodel}), describe each of the input arguments (you don't need to describe each of the parameters). }
+
+\begin{itemize}
+\item[\bf\texttt{parameters}] A vector of the topmodel parameters.
+\item[\bf\texttt{topidx}] A matrix containing the topographic index at each grid point
+\item[\bf\texttt{delay}] A two column matrix containing cumulative relative area in the first column and time to the outlet in the second column.  Essentially if some area of the basin was rained upon, what would be the average time to peak at the outlet. 
+\item[\bf\texttt{rain}] A vector of rain data for each time step.  Units of meters per unit of time  of the model timestep. 
+\item[\bf\texttt{ET0}] A vector of evapotranspiration data.  Units of meters per unit of time  of the model timestep. 
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Plot the observed and simulated flow at the outlet over time (units are given in the help page).} 
+
+<<fig=T>>=
+    # make a time vector in decimal days 
+    # (the original assignment had an error here)
+times <- seq(0,by=15/1440,length.out=length(Qobs))
+    #plot simulated and observed
+plot(times, Qobs,cex=.4, xlab='Time (days)', ylab='Flow (mm / 15 min)')
+lines(times, Qsim, col='blue')
+legend('topleft',c('Observed','Predicted'),pch=c(1,-1),lty=c(0,1),col=c(1,4))
+@ 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Plot the observed versus predicted flow and add a one to one line. Comment on what you see.}
+
+<<fig=T>>=
+plot(Qobs,Qsim, main = 'Observed v. Predicted Flow (mm / 15 min)', 
+	xlab='Observed', ylab= 'Predicted')
+abline(0,1)
+@
+
+In a perfect model, all the points would fall along the 1:1 line. In our case, with an imperfect model and observed data, we would like to see uniform scatter around the 1:1 line, indicating no bias in the model.  There is certainly a portion of the points that look distinctly biased between 0.0001 and 0.0002. There seems not do be much distinct bias in the higher or lower regions. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Use the \texttt{NSeff} function to calculate the Nash-Sutcliffe efficiency (NSE). }
+
+<<>>=
+NSeff(Qobs,Qsim)
+@
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Randomly vary the model parameters and calculate the NSE of the resulting simulation.}
+
+<<>>=
+#number of monte carlo simulations
+runs<-10000
+
+qs0   <- runif(runs)*4e-5
+lnTe  <- runif(runs)*3-2
+m     <- runif(runs)*0.2
+Sr0   <- runif(runs)*0.02
+Srmax <- runif(runs)*2
+td    <- runif(runs)*3
+vch   <- 1000
+vr    <- 100+runif(runs)*2400
+k0    <- runif(runs)*0.01
+CD    <- runif(runs)*5
+dt    <- 0.25
+
+parameters<-cbind(qs0,lnTe,m,Sr0,Srmax,td,vch,vr,k0,CD,dt)
+@
+
+{\bf Then run the model a bunch of times and calculate the NSE for each parameter set:}
+
+<<>>=
+    # load the nse from a data file or run the model and save the values
+saveFile <- 'nse.RData'
+if(!file.exists(saveFile)){
+		# returns an array of Nash Sutcliffe efficiencies; 
+    	# one for each parameter set:
+	nse <- topmodel(parameters,h$topidx,h$delay,h$rain,h$ET0,Qobs = Qobs)
+	save(nse,file=saveFile)
+}else{
+	load(saveFile)
+}
+@
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Plot time series of observed and predicted flow for the best and worst parameter sets (one set of points and two lines) add a legend.}
+
+<<fig=T>>=
+    # Run the model a few more times 
+    # to extract the best worst and top models
+p.best <- parameters[which(nse==max(nse)),]
+p.top <- parameters[which(nse > .8),]
+p.worst <- parameters[which(nse==min(nse)),]
+Qsim.best <- topmodel(p.best, h$topidx, h$delay, h$rain, h$ET0)
+Qsim.top <- topmodel(p.best, h$topidx, h$delay, h$rain, h$ET0)
+Qsim.worst <- topmodel(p.worst, h$topidx, h$delay, h$rain, h$ET0)
+
+    # plot observed and simulated discharge for the best and worst models:
+plot(times, Qobs,cex=.4,xlab='Time (days)',ylab='Discharge (mm/15min)',
+	main='Best Model')
+lines(times, Qsim.worst, col=rgb(1,0,0,.5))
+lines(times, Qsim.best, col='blue')
+legend('topleft',c('Observed','Best','Worst'),
+    lty=c(0,1,1),col=c(1,'blue','red'),pch=c(1,-1,-1))
+@
+
+Poor calibration effectively causes the model to react instantaneously to any rainfall.  Water is instantly routed to the outlet causing huge spikes followed by zero flow. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf What is the NSE for the best model.}  
+
+<<>>=
+NSeff(Qobs,Qsim.best)
+@
+
+{\bf Did you do better than the original parameter set (you may not)? }
+
+This particular set of runs acieved about a \Sexpr{round(100*(1-NSeff(Qobs,Qsim)/max(nse)),0)}\% higher maximum efficiency.
+
+{\bf Speculate on a better method for calibration than Monte Carlo simulation.}
+
+In general we would like to minimize the difference between the modeled and observed values keeping in mind that the observed values have uncertainty accociated with them:
+
+$$\min z = \displaystyle\sum_i\left(Qsim_i-Qobs_i\right)^2$$
+
+A better method for calibration might continually tweak the parameters based on sets which performed well. This way we reduce the number of model runs. 
+
+\end{enumerate}
+
+\item {\bf Visualize the parameter sets as histograms}
+
+<<fig=T>>=
+##Plot histograms of the top sets of parameters
+layout(matrix(1:9,ncol=3))
+for(i in 1:ncol(p.top)){
+	if(!any(colnames(p.top)[i]==c('dt','vch'))){
+		hist(p.top[,i],xlab='',main=colnames(p.top)[i])
+	}
+}
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf Fit Normal and Gamma and Exponential probability distributions to the parameter \texttt{vr}. Report the best fit parameters.}
+
+<<fig=T>>=
+library(MASS)
+vr <- p.top[,8]
+
+    #Fit normal
+normal.fit <- fitdistr(vr, 'normal')
+cat(mean <- normal.fit$estimate[1],sep='\n')
+cat(sd <- normal.fit$estimate[2],sep='\n')
+
+    #Fit exponential
+exp.fit <- fitdistr(vr, 'exponential')
+cat(exp.lam <- exp.fit$estimate[1],sep='\n')
+
+    #Fit Gamma
+gamma.fit <- fitdistr(vr, dgamma, list(shape = 5, rate = 0.01), lower = 0.001)
+cat(shape <- gamma.fit$estimate[1],sep='\n')
+cat(rate <- gamma.fit$estimate[2],sep='\n')
+
+	#plot the results
+x <- seq(0,3000,,1000)
+hist(vr,freq=F,xlim=c(0,max(vr)))
+lines(x,dgamma(x,shape,rate),col='green')
+lines(x,dnorm(x,mean,sd),col='orange')
+lines(x,dexp(x,exp.lam),col='purple')
+legend('topleft',c('Gamma','Normal','Exponential'),
+    lty=1,col=c('green','purple','orange'),pch=-1)
+@
+
+{\bf Without doing any actual quantitative comparison, discuss which distribution you think fits the best and why.  What qualities of these distributions may justify or invalidate their use? }
+
+Visually, the Gamma distribution appears to fit the best.  The distribution appears to have skew assiciated with it, which could invaludate the use of the normal distribution.  The histogram also has a distinct peak which is not a property of the exponential distribution and could invalidate its use. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[\it Extra Credit] {\bf Describe (in a few sentences) each of the parameters that are needed to run {\textsc topmodel}. Look up this information in the \texttt{topmodel} references. }
+
+Answers should not be copied out of the topmodel help page. Descriptions should be in your own words from the topmodel references (journal articles).
+
+\end{enumerate}
+\end{document}  
+
+
+
+
+
+
+
