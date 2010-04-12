@@ -1,9 +1,11 @@
 colorRamps <- function(){
 		# color ramp functions 
 	cr <<- colorRampPalette( 
-		c(gray(.9), rgb(.7,.7,.7), rgb(0,0,1), rep(rgb(0,1,0),2)) )
+		c(gray(.6), rgb(.7,.7,.7), rgb(0,0,1), rep(rgb(0,1,0),2)) )
 	crw <<- colorRampPalette( 
 		c('white', gray(.9), rgb(.7,.7,.7), rgb(0,0,1), rep(rgb(0,1,0),2)) )
+	crr <<- colorRampPalette( 
+		c('white', gray(.7), rgb(.4,.4,.4), rep(rgb(1,0,0),2)) )
 }
 
 makePdf2SwfMovie <- function(name){

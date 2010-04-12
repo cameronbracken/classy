@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage{epstopdf}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\newcommand{\R}{\textsf{R}}
+
+\usepackage{/Library/Frameworks/R.framework/Resources/share/texmf/Sweave}
+\begin{document}
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#9, Due Friday April 2 at 5:00 in Cameron Bracken's mailbox. No late papers accepted.}
+
+Please include the \textsf{R} script you create with this assignment.
+
+This assignment will focus on scaling relationships between basin area and basin average runoff.  We will be reproducing and analyzing the results in the paper:  
+
+\begin{quotation}
+\noindent Lo\'aiciga, H. Runoff scaling in large rivers of the world. Professional Geographer, 49(3) 1997, pages 356--364.
+\end{quotation}
+
+Make sure you read this paper. 
+
+\begin{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item {\bf In \R{}, read in the data and extract the rivers with the largest, smallest and middle sized specific runoff from the data set.  Keep in mind all of these rivers are very large.}
+
+\begin{Schunk}
+\begin{Sinput}
+> rivers <- read.csv("rivers.csv")

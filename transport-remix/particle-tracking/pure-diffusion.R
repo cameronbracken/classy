@@ -2,20 +2,21 @@
 
 # Pure diffusion particle tracking 
 
+name <- 'pure_diffusion'
 nd <- 2        # dimensions
 np <- 500000    # particles
 nv <- 0        # vortexes
-nt <- 20     # timesteps
-dt <- .1       # timestep 
+nt <- 200     # timesteps
+dt <- .01       # timestep 
+nb <- 100
 
-D <- c(.1,.1)  # Diffusion coefficient
+D <- c(.01,.01)  # Diffusion coefficient
 nleak <- 0
 movieFrameSkip <- 100
 maxcnt <- np*.01
 
-movie <- TRUE
+movie <- FALSE
 slices <- TRUE
-swfDevice <- FALSE
 plotType <- "hex" # or "hex" 
                   # or "ss" (smooth scatter) 
                   # or "h2d" (2d histogram) 
@@ -39,13 +40,12 @@ positions <- matrix(0,np+nv,nd+1)
 
 colorRamps()
 
-if(swfDevice && movie){
-	swf('pure-diffusion.swf',frameRate=5)
-}else if(movie){ 
-	pdf('pure-diffusion.pdf')
+if(movie){ 
+	pdf(paste(name,'pdf',sep='.'))
+	plotFun(plotType)
 }
 
-pb <- txtProgressBar(1,nt*dt,style=3)
+pb <- txtProgressBar(dt,nt*dt,style=3)
 for(i in times){
 		
 	setTxtProgressBar(pb, i)
@@ -60,16 +60,15 @@ for(i in times){
 
 	positions[,1:2] <- matrix(x$positions,ncol=2)
 	
-	if(movie){
+	if(movie)
 		plotFun(plotType)
-		if(swfDevice) swfAddPlayerControls(x=xlim[2],y=ylim[1])
-	}
+	
 	
 	if(i == times[nt/2]){
 		
 		if(slices){
 			nb <- 35
-			pdf('pure-diffusion-slices.pdf')
+			pdf(paste(name,'_slices.pdf',sep=''))
 				plotSlices(positions,nb)
 			dev.off()
 		}
@@ -77,12 +76,8 @@ for(i in times){
 	}
 }
 close(pb)
-if(movie) dev.off()
 
-if(!swfDevice & movie){
-silence <- 
-	system('pdf2swf -l -B alternate_simple_viewer.swf pure-diffusion.pdf',
-		intern=T)
-silence <- 
-	system('swfcombine --dummy -r 7 pure-diffusion.swf -o pure-diffusion.swf')
+if(movie){
+	dev.off()
+	#makePdf2SwfMovie(name)
 }
