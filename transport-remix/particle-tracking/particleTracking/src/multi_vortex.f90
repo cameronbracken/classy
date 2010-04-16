@@ -1,10 +1,10 @@
-subroutine multi_vortex(positions,np,nt,nv,dt,Dx,Dy,A,B,type)
+subroutine multi_vortex(positions,np,nt,nv,vs,dt,Dx,Dy,A,B,type)
 	implicit none
 	
 	integer::i, p, v, nd, np, nv, nt, type
 	double precision:: dt, Dx,Dy, A, B
 	double precision::rnorm(np)
-	double precision::positions(np+nv,np+nv), vorticies(nv,nv)
+	double precision::positions(np+nv,np+nv), vorticies(nv,nv), vs(nv)
 	double precision, dimension(2)::u
 	double precision:: normrnd, forced, ideal, oseen
 	double precision:: u_th, distx, disty, rel_rad
@@ -16,6 +16,12 @@ subroutine multi_vortex(positions,np,nt,nv,dt,Dx,Dy,A,B,type)
 	!save the vorticies so they all move simultaneously
 	vorticies = positions((np+1):(np+nv),1:2)
 	
+	!call dblepr("vorticies(1,1)", 1, vorticies(1,1), 1)
+	!call dblepr("vorticies(1,2)", 1, vorticies(1,2), 1)
+	!call dblepr("vorticies(2,1)", 1, vorticies(2,1), 1)
+	!call dblepr("vorticies(2,2)", 1, vorticies(2,2), 1)
+	!call dblepr("vorticies(3,1)", 1, vorticies(3,1), 1)
+	!call dblepr("vorticies(3,2)", 1, vorticies(3,2), 1)
 		
 	do i = 1,nt
 		do p = 1,(np+nv)
@@ -56,11 +62,15 @@ subroutine multi_vortex(positions,np,nt,nv,dt,Dx,Dy,A,B,type)
 				!   (switch coordinates and negative x)
 				! scale to unit length and then multiply by angular velocity
 				if(rel_rad > .00001)then
-					u(1) = u(1) + -disty / rel_rad * u_th
-					u(2) = u(2) + distx / rel_rad * u_th
+					u(1) = u(1) + -disty / rel_rad * u_th * vs(v)
+					u(2) = u(2) + distx / rel_rad * u_th * vs(v)
 				end if
 				
+				
 			end do	
+			!if(p < 10)then
+			!	call dblepr("u", 1, u, 2)
+			!end if
 			
 				! X
 			positions(p,1) = positions(p,1) + u(1)*dt/dble(nt) + &
