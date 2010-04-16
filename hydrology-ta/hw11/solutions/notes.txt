@@ -1,0 +1,13 @@
+Site Info: http://scitech.pyr.ec.gc.ca/waterweb/fullgraph.asp?stnID=08NM134&lang=0
+Historic Data: http://www.wsc.ec.gc.ca/hydat/H2O/index_e.cfm?cname=graph.cfm&RequestTimeout=300
+Flag Info: http://scitech.pyr.ec.gc.ca/waterweb/Help.asp
+
+Explanation of Historic Streamflow Summary
+A - Manual Gauge - indicates that one or more manual gauge observations per day were obtained and used as the mean for the day for a gauging station equipped with a recording gauge during that particular year. A station may have several periods of recording or manual gauges throughout its history. For more details concerning the type of gauge operated during the period of record, the Surface Water Data Reference Index should be consulted. This symbol is used during open-water periods only. 
+
+B - Ice Conditions - indicates that for a gauging station where discharge data are obtained the presence of ice has affected the stage-discharge relationship. 
+
+E - Estimated - indicates any estimated data. It indicates that the value was determined by some indirect method such as interpolation, extrapolation, estimation from a graph of observed readings, comparson with other streams or by comparson with meteorological data. 
+
+R - Revised - indicates that a revision, correction or addition has been made to the historical discharge data base after January 1, 1989.
+

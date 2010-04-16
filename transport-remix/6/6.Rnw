@@ -1,0 +1,194 @@
+% !TEX TS-program = pgfSweave
+
+
+\documentclass[11pt]{article}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+\pgfrealjobname{6}
+\newlength{\imagewidth}
+\newlength{\imagescale}
+
+\usepackage[margin=1in]{geometry}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+\SweaveOpts{keep.source=T,echo=F,prefix.string=figs/fig}
+
+<<setup,echo=F>>=
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+setCacheDir('cache')
+options(warn=-1)
+
+@
+
+<<data>>=
+daaata <- 'output/ad_data.RData'
+
+if(!file.exists(daaata)){
+	x <- scan('output/xt',nlines=1)
+	t <- scan('output/xt',nlines=1,skip=1)
+	C_an <- as.matrix(read.table('output/analytical'))
+	C_fd <- as.matrix(read.table('output/numerical'))
+	save(C_fd,C_an,x,t,file=daaata)
+}else{
+	load(daaata)
+}
+
+xlim <- range(x)
+U0 <- 1
+P <- max(t)
+ul <- 400
+ll <- 300
+C0 <- max(C_fd)
+@
+
+\begin{flushright}
+Cameron Bracken\\
+CVEN 5343\\
+PS \#6
+\end{flushright}
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+Let $a$ and $b$ be the upper and lower bounds of the initial concentration distribution. By analogy with the solution in problem set 3 the analytical solution is:
+
+\ansbox{C(x,t)=-C_0\left[\mbox{erf}\left(\frac{x-a-u(t)}{\sqrt{4Dt}}\right)-\mbox{erf}\left(\frac{x-b+u(t)}{\sqrt{4Dt}}\right)\right]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+
+Rearranging the finite difference equations in terms of the unknowns gives:
+
+\begin{multline}
+(\alpha-\beta-\gamma)C_{j-1,n+1}+(4\alpha+2\beta)C_{j,n+1}+(\alpha+\beta+\gamma)C_{j+1,n+1}=\\(\alpha+\beta-\gamma)C_{j-1,n}+(4\alpha-2\beta)C_{j,n}+(\alpha-\beta+\gamma)C_{j+1,n}\nonumber
+\end{multline}
+
+where 
+
+$$
+\alpha = \frac{1}{6\Delta t}\quad,\quad
+\beta = \frac{u_n}{4\Delta x}\quad\mbox{and}\quad
+\gamma = \frac{D}{2\Delta x^2}.
+$$
+
+Written in matrix form:
+
+$$A^{(n)}\mathbf{C}^{(n+1)}=\mathbf{f^{(n)}}+B^{(n)}\mathbf{C}^{(n)}$$
+
+Where $A^(n)$ is a tridiagonal matrix (at iteration $n$) with lower diagonal $\alpha-\beta-\gamma$, diagonal $4\alpha+2\beta$ and upper diagonal $\alpha+\beta+\gamma$.  $B$ is also a tridiagonal matrix with lower diagonal  $\alpha+\beta-\gamma$, diagonal $4\alpha+2\beta$ and upper diagonal $\alpha-\beta+\gamma$. $\mathbf{f}$ is the ``junk'' vector consisting of boundary condition information, which in this case we are ignoring so $\mathbf{f}$is equivalent to the zero vector. 
+
+The system can be solved:
+
+$$\mathbf{C}^{(n+1)}=\mbox{inv}(A^{(n)})(\mathbf{f}^{(n)}+B^{(n)}\mathbf{C}^{(n)})$$
+
+By the CFL conditions, a timestep of 1/2 minutes is appropriate. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item 
+
+
+\begin{figure}[!ht]
+\centering
+\hspace{.5cm}
+<<avn,fig=T,tikz=T,width=6,height=6,cache=T,external=T>>=
+
+
+plot(x, C_an[1, ], ylim = c(0, max(C_fd)), type = "l", xlim = xlim, 
+		xlab = "Distance downstream", 
+		ylab = "Concentration [kg/m]", font = 1)
+
+for(i in c(0,10,360,720)){
+
+	u <- P/2/pi * U0 * (cos(2 * pi * t[i+1]/P) - 1)
+	
+	lines(x - u, C_an[i+1, ])
+	points(x,C_fd[i+1,],cex=.3)
+	
+	if(i == 0)lines(c(ul,ll), c(C0,C0),type='h')
+
+}
+text(200,.98,'t = 0 min',pos=3)
+text(400,.95,'t = 10 min',pos=4)
+text(200,.4,'t = 360 min',pos=3)
+text(600,.8,'t = 720 min',pos=4)
+legend('topright',c('Analytical ~','Numerical ~'),lty=c(1,0),pch=c(-1,1))
+
+@
+\caption{Analytical and Numerical solutions at various timesteps.}
+\end{figure}
+
+<<int>>=
+f_fd <- function(xout,i){approx(x,C_fd[i,],xout)$y}
+f_an <- function(xout,i){approx(x,C_an[i,],xout)$y}
+@
+
+<<echo=T>>=
+	#analytical solution
+integrate(f_fd,0,1000,i=721)
+	#numerical solution
+integrate(f_an,0,1000,i=721)
+@
+
+Integrating the mass for the analytical and numerical solution gives slightly different answers. This is probably due to slight errors on the boundaries. 
+
+\item In the Dropbox, named \texttt{1dAD.mp4}.
+
+\end{enumerate}
+
+\end{document}  

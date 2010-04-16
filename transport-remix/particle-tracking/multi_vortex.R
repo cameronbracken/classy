@@ -4,23 +4,24 @@
 
 name <- 'multi_vortex'
 nd <- 2        # dimensions
-np <- 5000    # particles
+np <- 500    # particles
 nv <- 3        # vortexes
-nt <- 400      # timesteps
+nt <- 300      # timesteps
 nc <- 2        # number of constituents
 nb <- 100
-r <- .01
-dt <- .3       # timestep 
+r <- .015
+dt <- .5       # timestep 
 A <- 1       #Vortex scale
 B <- 1       # Vortex shape
-tol <- .005   # tolerance for plotting points
+tol <- .01   # tolerance for plotting points
 vtype <- "oseen"   #1=forced,2=ideal,3=oseen 
 ic <- 'polyc' #or point or line or blob or polys or polyc
 track <- FALSE
 ntrack <- 6
+nadd <- 3500 # max number of points to add in a single iteration
 reaction <- FALSE
 movie <- TRUE
-imgtype <- 'jpg'
+imgtype <- 'pdf'
 imgdir <- 'img'
 
 D <- c(0.00,0.00)  #c(0.001,0.001) Diffusion coefficient
@@ -74,7 +75,7 @@ vs <- rep(1,length(vs))
 
 colorRamps()
 if(movie){ 
-	dev.movie <-  if(imgtype =='pdf') pdf(paste(name,'pdf',sep='.'))
+	dev.movie <-  if(imgtype =='pdf') pdf(paste(name,'pdf',sep='.'),onefile=F)
 	else CairoJPEG(file.path(imgdir,'%03d.jpg'),quality=100)
 	plotFun(plotType)
 }
@@ -85,10 +86,10 @@ if(reaction){
 	
 }
 
-pb <- txtProgressBar(dt,nt*dt,style=3)
+#pb <- txtProgressBar(dt,nt*dt,style=3)
 for(i in times){
 		
-	setTxtProgressBar(pb, i)
+	#setTxtProgressBar(pb, i)
 	
 	x <- .Fortran(as.character(name),
 		positions = as.double(positions[,1:2]),
@@ -106,15 +107,19 @@ for(i in times){
 	positions[,1:2] <- matrix(x$positions,ncol=2)
 	ilen[which(i==times)] <- sum(sqrt(diff(positions[,1])^2 + diff(positions[,2])^2))
 	
+	oldnp <- np
 	if(nc > 1){
 		
-		one <- sparsify(head(positions,na))
-		na <- nrow(one)
-		two <- sparsify(head(tail(positions,nb+nv),nb))
-		nb <- nrow(two)
+		ti <- system.time({
+			one <- sparsify(head(positions,na))
+			na <- nrow(one)
+			two <- sparsify(head(tail(positions,nb+nv),nb))
+			nb <- nrow(two)
+		})
 		vor <- tail(positions,nv)
 		#browser()
 		positions <- rbind(one,two,vor)
+		
 		
 		np <- na + nb
 		
@@ -150,8 +155,11 @@ for(i in times){
 		dev.set(dev.movie)
 		plotFun(plotType)
 	}
+	cat('Using',sprintf('%6d',np),'points took',sprintf('%4.1f',ti[['elapsed']]),
+		'seconds,',round(i/(dt*nt)*100,0),'\b% done\n')
+	if((np-oldnp) >nadd) break
 }
-close(pb)
+#close(pb)
 
 if(track){
 	umag <- ux <- uy <- matrix(NA,length(times),ntrack)
@@ -176,6 +184,7 @@ if(movie) {
 	dev.off()
 	mname <- paste(name,vtype,difftype,ic,'.mp4',sep='_')
 	system(paste('ffmpeg -r 20 -sameq -y -i img/%03d.jpg',mname))
+	print(np)
 	#system(paste('open ',mname,sep=''))
 	#makePdf2SwfMovie(name)
 }
