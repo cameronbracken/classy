@@ -12,6 +12,7 @@
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{tikz}
+\pgfrealjobname{CVEN4333hw9-solutions}
 \newcommand{\ansbox}[1]{%
 	\begin{center}
 		\tikz{\node[draw,rectangle]{%
@@ -44,10 +45,12 @@ pygmentize <- function(file){
 @
 
 \begin{document}
-\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,eps=F,pdf=T}
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,cache=T}
 
-<<echo=F>>=
+<<echo=F,cache=F>>=
+require(xtable)
 options(prompt=" ", continue="  ")
+setCacheDir('cache')
 
 print.xtable.booktabs <- function(x){
 
@@ -91,6 +94,7 @@ with(rivers,
 	plot(Drainage.Area,Specific.Runoff,log='xy',xlim=c(1,1000),ylim=c(.01,10),
 		main='Specific Runoff',xlab='Drainage Area [10,000 m$^2$]',
 		ylab='Specific Runoff [m/yr]'))
+		
 	#Add the text for the largest and smallest rivers
 with(largest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
 with(smallest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
@@ -99,16 +103,18 @@ with(smallest, text(Drainage.Area, Specific.Runoff, Number,pos=4))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-\item {Reproduce Lo\'aiciga's Figure 2.  Plot the drainage area versus mean runoff for all the rivers. Plot the numbers and the best fit scaling relationship.}
+\item {\bf Reproduce Lo\'aiciga's Figure 2.  Plot the drainage area versus mean runoff for all the rivers. Plot the numbers and the best fit scaling relationship.}
 
-<<fig=T>>=
+<<fig=T,width=5,height=5>>=
 	# Plot all the rivers and a best fit scaling relationship 
 with(rivers, 
 	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
-		main='All Rivers'))
+		main='All Rivers',xlab='Drainage Area [10,000 m$^2$]',
+		ylab='Runoff [m/yr]'))
 
 	# Best fit scaling relationship 
 all.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=rivers)
+all.fit.s <- summary(all.fit)
 abline(all.fit)
 
 	#add the numbers
@@ -117,18 +123,27 @@ with(smallest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
 @
 
 {\bf Report the $C$ and $m$ coefficients that you calculate, their standard errors and the $R^2$.}
-<<>>=
-summary(all.fit)
+\begin{table}[!h]
+\centering
+<<echo=F,results=tex>>=
+x <- coefficients(all.fit.s)[,1:2]
+x[1,] <- 10^x[1,]
+print.xtable.booktabs(x)
 @
+\caption{Coefficients and standard errors for all of the rivers.}
+\end{table}
+
+Other statistics in table \ref{diagnostics} below.
 
 {\bf Interpret these results. Do they agree with the paper?}
 
+The coefficients are shown in Table 1.  This model had a relatively low $R^2$ of \Sexpr{round(all.fit.s$r.squared,2)} which matches the paper. Note that the overall standard error is in units of log(km$^3$/yr).  To calculate the actuall standard error you need to use the original model formula. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\clearpage
 \item {\bf Repeat the same analysis on the basins with the largest and smallest specific area to recreate Figures 3 and 4. For both Plot the data with their numbers and the best fit scaling relationship. Also report the coefficients their standard errors and the $R^2$.  Interperet these results and compare the the paper.}
 
-<<fig=T>>=
+<<fig=T,width=5,height=5>>=
 	# Plot the Mean runoff for the middle rivers
 with(middle, 
 	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
@@ -136,15 +151,25 @@ with(middle,
 		ylab='Runoff [km$^3$/yr]'))
 	
 middle.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=middle)
+middle.fit.s <- summary(middle.fit)
+
 abline(middle.fit)
 @
 
-<<>>=
-summary(middle.fit)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[!h]
+\centering
+<<echo=F,results=tex>>=
+x <- coefficients(middle.fit.s)[,1:2]
+x[1,] <- 10^x[1,]
+print.xtable.booktabs(x)
 @
+\caption{Coefficients and standard errors for the middle rivers.}
+\end{table}
 
-\clearpage
-<<fig=T>>=
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<fig=T,width=5,height=5>>=
 	#Plot the largest rivers and a best fit scaling relationship
 with(largest, 
 	plot(Drainage.Area,Mean.Runoff,log='xy',xlim=c(1,1000),ylim=c(1,10000),
@@ -153,22 +178,71 @@ with(largest,
 with(largest, text(Drainage.Area, Mean.Runoff, Number,pos=4))
 
 largest.fit <- lm(log10(Mean.Runoff)~log10(Drainage.Area),data=largest)
+largest.fit.s <- summary(largest.fit)
 abline(largest.fit)
-@NWBPX532
-
-<<>>=
-summary(largest.fit)
 @
 
-\item Describe quantitatively and qualitatively what specific runoff is. Speculate on why this so strongly influences the scaling relationship. Why might basins with a specific runoff $>$ 1 be so highly correlated?  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[!h]
+\centering
+<<echo=F,results=tex>>=
+x <- coefficients(largest.fit.s)[,1:2]
+x[1,] <- 10^x[1,]
+print.xtable.booktabs(x)
+@
+\caption{Coefficients and standard errors for the largest rivers.}
+\end{table}
 
-\item What does a relation between area and specific runoff imply physically? Why would his correlations ($R^2$) get stronger in larger rivers?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{rrr}
+  \toprule
+ & $R^2$ & $\sigma_e$ \\ 
+  \midrule
+  All Rivers & \Sexpr{round(all.fit.s$r.squared,2)} & \Sexpr{round(all.fit.s$sigma,2)} \\ 
+  Middle Rivers & \Sexpr{round(middle.fit.s$r.squared,2)} & \Sexpr{round(middle.fit.s$sigma,2)} \\
+  Largest Rivers & \Sexpr{round(largest.fit.s$r.squared,2)} & \Sexpr{round(largest.fit.s$sigma,2)} \\ 
+   \bottomrule
+\end{tabular}
+\caption{Model diagnostics: All, Middle and Largest Rivers}\label{diagnostics}
+\end{center}
+\end{table}
 
-\item What are the advantages of power laws in hydrology? Explain the significance of equation 2 as part of your answer.
+All of the model coefficients match the paper exactly.  Using a piecewise relationship based on specific runoff better than using a single relationship for all of the rivers.  The middle and largest rivers have much better fits and smaller errors separately than the overall relationship.  
+
+\item {\bf Describe quantitatively and qualitatively what specific runoff is. Speculate on why this so strongly influences the scaling relationship. Why might basins with a specific runoff $>$ 1 be so highly correlated? }
+
+Specific runoff describes the amount of runoff per unit area of a basin.  In other words, in each a basin with a high specific runoff, each unit of area would produce more runoff on average than a basin with a low specific area. This quantity has very much to do with the specific qualities of a basin such as soil type, soil moisture, frequency of rainfall, humidity, etc.  Basins with a high specific runoff may tend to have similar climates latitudes and/or soil properties. 
+
+\item {\bf What does a relation between area and specific runoff imply physically? Why would his correlations ($R^2$) get stronger in larger rivers?}
+
+In a basin with a high specific runoff, each unit of area would produce more runoff on average than a basin with a low specific area. This quantity has very much to do with the specific qualities of a basin such as soil type, soil moisture, frequency of rainfall, humidity, etc.  Basins with a high specific runoff may tend to have similar climates latitudes and/or soil properties. 
+
+\item {\bf What are the advantages of power laws in hydrology? Explain the significance of equation 2 as part of your answer.}
+
+Power laws are nonlinear models so they capture many relationships in the environment.  They are also simple to understand, manipulate matematically and linearize.  As a consequence the coefficients are easy estimate through linear regression. Equation 2 is a great example in that is capture the nonlinearity of the scaling realtionship of rivers as basin size increases but is also very simple to understand and use. 
 
 \item Book problem 8.8
 
+Drainage density = $\sum$ channel segment lengths / basin area
+
+= 44 mi / 6400 ac = 0.000688 mi/ac
+= 4.40 mi/mi$^2$
+
 \item Book problem 8.16
+
+$Q_{50} = 555A^{0.682}S^{0.250}$
+
+$Q_{100} = 555A^{0.694}S^{0.261}$
+
+$A = 0.43$
+
+$S = 62$ ft/mi
+
+$Q_{50} = 876$ cfs
+
+$Q_{100} = 1027$ cfs
 
 \end{enumerate}
 

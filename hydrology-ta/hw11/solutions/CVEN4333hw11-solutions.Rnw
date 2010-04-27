@@ -1,0 +1,246 @@
+% !TEX TS-program = pgfSweave
+
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage[parfill]{parskip}
+\usepackage{fancyvrb}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{tikz}
+\pgfrealjobname{CVEN4333hw11-solutions}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+\usepackage[noae,nogin]{Sweave}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+\begin{document}
+
+\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,cache=T}
+<<setup,echo=F,cache=F>>=
+setCacheDir('cache')
+if(!file.exists('figs'))dir.create('figs')
+@
+
+\textbf{CVEN 4333, Spring 2010, Assignment \#11 Solutions.}
+
+\begin{enumerate}
+\item Read this article and answer the following questions: 
+
+\begin{enumerate}
+\item {\bf What is the paired catchment technique? Why is this technique useful?}
+The paired catchment technique is used to analyze the characteristics of a watershed by comparing it to another with similar hydrologic characteristics and saptial locations.  Typically one basin serves as a control.
+
+This may be used in the case of missing data or to identify a statistically significant response to a disturbance such as logging. In the former case, regression is used to fill in missing data via regression. 
+
+
+
+\item {\bf What factors in Greata Creek might confound the results?}
+
+In particular Greata Creek underwent 9\% logging over the study period though exactly when is unknown.  Based on the literature, logging of less than 20\% is not typically statistically detectable, the authors reason that this would cause an increase in flows. 
+
+\item {\bf Why might a small snowmelt driven basin be sensitive to land use changes?}
+
+In a small basin, a small change in land use can have a large effect proportionally.  Land use changes can affect infiltration, detention and interception.  In addition land use cahnges may effect when and how snow melts causing shifts in peak flow timing and magnitude.  
+
+\item {\bf What factors do the authors discuss in Camp Creek (other than logging) that may contribute to changes in the streamflow regime?}
+
+The authors cite a Pacific Decadal Ocilation climate shift in 1977 which could have contributed to  lower snow accumulation.  The other reason given by the authors is related to the recovery (to natural conditions) of the basin.  As trees begin to grow back after harvesting the rates of recovery of accumulation and melt may differ, changing the streamflow regime in unknown ways.  The authors also discuss the general poor paring of the two basins with respect to the elevation profiles. 
+
+\item {\bf The authors construct paired effect models for each month as well as for annual data and for peak flow data but only the April model is statistically significant.  What reasons do the authors give for this?}
+
+Confounding factors (i.e. poor paring) may be hiding a true signal.  For example the flows may be desyncronized in the two basins because of logging.  The high average streamflow in April also might create a clear detectable signal which is overwhelmed in other months.
+
+\end{enumerate}
+
+\item Read in the data:
+
+<<>>=
+source('read.ec.flow.R')
+camp <- read.ec.flow('flowDaily_Camp.csv')
+greata <- read.ec.flow('flowDaily_Greata.csv')
+@
+
+\item {bf Make time vectors and plot both timeseries just like we did in HW 3.}
+<<fig=T,cache=T,external=T>>=
+    #Time vectors
+times.c <- camp$y + camp$m/12 + camp$d/365
+times.g <- greata$y + greata$m/12 + greata$d/365
+
+plot(times.c,camp$flow,col='blue',xlab='Time',ylab='Flow [cms]',type='l')
+lines(times.g,greata$flow,col='red')
+legend('topright',c('Camp Creek','Greata Creek'),pch=-1,lty=1,col=c('blue','red'))
+@
+
+\item Extract monthly data for April so that we can reproduce the one statistically significant model in the paper:
+
+<<>>=
+    #List of years for each site
+y.c <- unique(camp$y)
+y.g <- unique(greata$y)
+    # preallocate vectors
+peak.c <- apr.c <- numeric(length(y.c))
+peak.g <- apr.g <- numeric(length(y.g))
+
+    # mean april flows at bot sites 
+for(y in 1:length(y.c)){
+	peak.c[y] <- max(camp$flow[camp$y == y.c[y]])
+	apr.c[y] <- mean(camp$flow[camp$y == y.c[y] & camp$m == 4])
+}
+for(y in 1:length(y.g)){
+	peak.g[y] <- max(greata$flow[greata$y == y.g[y]])
+	apr.g[y] <- mean(greata$flow[greata$y == y.g[y] & greata$m == 4])
+}
+	
+peak.c <- peak.c[y.c %in% y.g]
+apr.c <- apr.c[y.c %in% y.g]
+apr.c.pre <- apr.c[y.g<1978]
+apr.g.pre <- apr.g[y.g<1978]
+apr.c.post <- apr.c[y.g>=1978]
+apr.g.post <- apr.g[y.g>=1978]
+
+@
+
+\item Reproduce the results for the April model:
+
+<<>>=
+print(summary(lm(apr.c.pre~apr.g.pre)))
+@
+
+Both coefficients match the paper exactly.
+
+\item Calcualte and plot the average annual hydrograph of mean daily flow:
+
+<<>>=
+    #Days per month
+dpm <- c(31,29,31,30,31,30,31,31,30,31,30,31)
+    #preallocate
+am.c.pre <- am.g.pre <- am.c.post <- am.g.post <- numeric(366)
+day <- 0
+    #for each month, go through each day and calculate the 
+    # mean for the pre and post logging periods at each site. 
+for(m in 1:12){
+    for(d in 1:dpm[m]){
+        day <- day + 1
+        this.day.c <- camp$m == m & camp$d == d
+        this.day.g <- greata$m == m & greata$d == d
+        am.c.pre[day] <- mean(camp$flow[this.day.c & camp$y < 1978])
+        am.c.post[day] <- mean(camp$flow[this.day.c & camp$y >= 1978])
+        am.g.pre[day] <- mean(greata$flow[this.day.g & greata$y < 1978])
+        am.g.post[day] <- mean(greata$flow[this.day.g & greata$y >= 1978])
+     }
+}
+
+@
+
+Plot both sites on the same graph, and to highlight the differences in the hydrographs during each period, fill them in:
+
+<<fig=T,cache=T,external=T,keep.source=F,width=5,height=5>>=
+plot(am.c.pre,type='l',col='red',xlab='Day of the year',ylab="Flow [cms]")
+lines(am.g.pre,type='l',col='green')
+polygon(c(1:366,366:1),c(am.c.pre,rev(am.g.pre)),density=10,angle=45,border=NA)
+legend('topright',c('Camp Creek','Greata Creek'),pch=-1,lty=1,lwd=2,col=c('red','green'))
+@
+
+<<fig=T,cache=T,external=T,keep.source=F,width=5,height=5>>=
+plot(am.c.post,type='l',col='red',xlab='Day of the year',ylab="Flow [cms]")
+lines(am.g.post,type='l',col='green')
+polygon(c(1:366,366:1),c(am.c.post,rev(am.g.post)),density=10,angle=45,border=NA)
+legend('topright',c('Camp Creek','Greata Creek'),pch=-1,lty=1,lwd=2,col=c('red','green'))
+@
+ 
+
+\clearpage
+\item Book Probelem 9.1
+
+\includegraphics[width=\textwidth]{figs/9-1a.jpg}
+\includegraphics[width=\textwidth]{figs/9-1b.jpg}
+
+\item Book Probelem 9.4
+
+\includegraphics[width=\textwidth]{figs/9-4a.jpg}
+\includegraphics[width=.4\textwidth]{figs/9-4b.jpg}
+
+\item Book Probelem 9.8 (for Boulder creek) *
+
+Elevation change for boulder creek watershed = 8659 ft
+
+Area = \SI{1160}{km^2} = \SI{453}{mi^2}
+
+\SI{60}{km} long = \num{37.5} mi
+
+\SI{20}{km} wide = \num{12.5} mi
+
+a) USBR $60[11.9*(37.5)^3/8659]^.385 = 365$ minutes
+
+other methods should vary
+
+\item Book Probelem 9.11
+
+\includegraphics[width=\textwidth]{figs/9-11a.jpg}
+
+\includegraphics[width=\textwidth]{figs/9-11b.jpg}
+
+\item Book Probelem 9.26 (for Boulder creek and as compared to observational hydrograph) *
+
+$L_{ca} = 21.9$ mi
+
+$C_t = 1.2$
+
+$L = 37.5$ mi
+
+get $t_l=8.99$ hours
+
+time base = $4.1$ days
+
+duration = $0.75$ hr
+
+peak discharge = $19200$ cfs using $C_p=0.6$
+
+$W_50=13.5$ hours 
+
+$W_75=7.6$ hours
+
+\item Book Probelem 9.37
+
+In book
+
+\end{enumerate}
+\end{document}  
+
+
+
+
+
+
+

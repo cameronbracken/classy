@@ -15,7 +15,7 @@ A <- 1       #Vortex scale
 B <- 1       # Vortex shape
 tol <- .01   # tolerance for plotting points
 vtype <- "oseen"   #1=forced,2=ideal,3=oseen 
-ic <- 'polyc' #or point or line or blob or polys or polyc
+ic <- 'polys' #or point or line or blob or polys or polyc
 track <- FALSE
 ntrack <- 6
 nadd <- 3500 # max number of points to add in a single iteration
@@ -75,7 +75,7 @@ vs <- rep(1,length(vs))
 
 colorRamps()
 if(movie){ 
-	dev.movie <-  if(imgtype =='pdf') pdf(paste(name,'pdf',sep='.'),onefile=F)
+	dev.movie <-  if(imgtype =='pdf') pdf(paste(name,'pdf',sep='.'),onefile=T)
 	else CairoJPEG(file.path(imgdir,'%03d.jpg'),quality=100)
 	plotFun(plotType)
 }
@@ -152,12 +152,13 @@ for(i in times){
 				xlim=xlim, ylim=ylim, axes=F, xlab='',ylab='')
 	}
 	if(movie){
-		dev.set(dev.movie)
+		if(imgtype != 'pdf')dev.set(dev.movie)
 		plotFun(plotType)
 	}
 	cat('Using',sprintf('%6d',np),'points took',sprintf('%4.1f',ti[['elapsed']]),
 		'seconds,',round(i/(dt*nt)*100,0),'\b% done\n')
 	if((np-oldnp) >nadd) break
+	if(ti[['elapsed']] > 300) break
 }
 #close(pb)
 

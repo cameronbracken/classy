@@ -39,7 +39,7 @@ initVortex <- function(ic,nc=1){
 			cbind(rep(z/2,np),rep(z/2,np))
 		
 	}else if(ic == 'polys'){
-
+		z <- 0
 		p <- 
 		if(nc>1)
 			rbind(
