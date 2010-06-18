@@ -1,4 +1,4 @@
-initVortex <- function(ic,nc=1){
+initVortex <- function(ic,nc=1,dis = 0){
 	
 	vp <- numeric(nv)
 	if(nv > 0)
@@ -39,24 +39,24 @@ initVortex <- function(ic,nc=1){
 			cbind(rep(z/2,np),rep(z/2,np))
 		
 	}else if(ic == 'polys'){
-		z <- 0
+		sep <- 2*B
 		p <- 
 		if(nc>1)
 			rbind(
 				cbind(c(
-			 		seq(-1.5*z,-.5,,np/8),
-				 	seq(-.5,-.5,,np/8),
-				 	seq(-.5,-1.5*z,,np/8),
-				 	seq(-1.5*z,-1.5*z,,np/8)),
+			 		seq(-sep*z,-dis,,np/8),
+				 	seq(-dis,-dis,,np/8),
+				 	seq(-dis,-sep*z,,np/8),
+				 	seq(-sep*z,-sep*z,,np/8)),
 				 	c(seq(-z,-z,,np/8),
 				 	seq(-z,z,,np/8),
 				 	seq(z,z,,np/8),
 				 	seq(z,-z,,np/8))),
 				cbind(c(
-				 	seq(1.5*z,.5,,np/8),
-				 	seq(.5,.5,,np/8),
-				 	seq(.5,1.5*z,,np/8),
-				 	seq(1.5*z,1.5*z,,np/8)),
+				 	seq(sep*z,dis,,np/8),
+				 	seq(dis,dis,,np/8),
+				 	seq(dis,sep*z,,np/8),
+				 	seq(sep*z,sep*z,,np/8)),
 				 	c(seq(-z,-z,,np/8),
 				 	seq(-z,z,,np/8),
 				 	seq(z,z,,np/8),
@@ -72,7 +72,32 @@ initVortex <- function(ic,nc=1){
 			 	seq(z,z,,np/4),
 			 	seq(z,-z,,np/4)))
 
-		}else if(ic == 'polyc'){
+		}else if(ic == 'polys4'){
+			sep <- 0
+			p <- 
+			if(nc>1)
+				cbind(
+					c(seq(-z,-dis,,np/16),seq(-dis,-dis,,np/16),seq(-dis,-z,,np/16),seq(-z,-z,,np/16),
+				 	  seq(-z,-dis,,np/16),seq(-dis,-dis,,np/16),seq(-dis,-z,,np/16),seq(-z,-z,,np/16),
+					  seq(dis,z,,np/16),seq(z,z,,np/16),seq(z,dis,,np/16),seq(dis,dis,,np/16),
+					  seq(dis,z,,np/16),seq(z,z,,np/16),seq(z,dis,,np/16),seq(dis,dis,,np/16)),
+					c(seq(dis,dis,,np/16),seq(dis,z,,np/16),seq(z,z,,np/16),seq(z,dis,,np/16),
+					  seq(-dis,-dis,,np/16),seq(-dis,-z,,np/16),seq(-z,-z,,np/16),seq(-z,-dis,,np/16),
+					  seq(dis,dis,,np/16),seq(dis,z,,np/16),seq(z,z,,np/16),seq(z,dis,,np/16),
+					  seq(-z,-z,,np/16),seq(-z,-dis,,np/16),seq(-dis,-dis,,np/16),seq(-dis,-z,,np/16)))
+			else
+				cbind(c(
+				 	seq(-z,z,,np/4),
+				 	seq(z,z,,np/4),
+				 	seq(z,-z,,np/4),
+				 	seq(-z,-z,,np/4)),
+				 	c(seq(-z,-z,,np/4),
+				 	seq(-z,z,,np/4),
+				 	seq(z,z,,np/4),
+				 	seq(z,-z,,np/4)))
+				
+
+			}else if(ic == 'polyc'){
 
 			t <- if(nc>1)
 				c(seq(0,2*pi,,np/2),seq(0,2*pi,,np/2))

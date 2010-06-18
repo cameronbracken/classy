@@ -135,11 +135,26 @@ plotFun <- function(type){
 		plot(positions,axes=F,type='n',xlim=xlim,ylim=ylim,xlab='',ylab='')
 		polygon(one[,1],one[,2],col='blue',border=NA,lwd=1)
 		polygon(two[,1],two[,2],col='red',border=NA,lwd=1)
-		points(vor,pch=20)
+		#points(vor,pch=20)
+		
+	
+	}else if(type == 'poly4'){
+		
+		par(mar=rep(0,4))
+		one <- head(positions,n1)
+		two <- positions[(n1+1):(n1+n2),]
+		three <- positions[(n1+n2+1):(n1+n2+n3),]
+		four <- positions[(n1+n2+n3+1):(n1+n2+n3+n4),]
+		vor <- tail(positions,nv)
+		plot(positions,axes=F,type='n',xlim=xlim,ylim=ylim,xlab='',ylab='')
+		polygon(one[,1],one[,2],col='blue',border=NA,lwd=1)
+		polygon(two[,1],two[,2],col='red',border=NA,lwd=1)
+		polygon(three[,1],three[,2],col='green',border=NA,lwd=1)
+		polygon(four[,1],four[,2],col='yellow',border=NA,lwd=1)
+		#points(vor,pch=20)
 		
 		
 	}
-	
 	
 	
 }

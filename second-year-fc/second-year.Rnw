@@ -3,26 +3,56 @@
 \RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
-%%------------font choices
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[sc]{mathpazo}
 \linespread{1.05}         % Palatino needs more leading (space between lines)
 
-%Sweave
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Sweave
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<sweave,echo=F,results=hide,fig=F,cache=F>>=
 if(!file.exists('Sweave.sty'))
 	file.copy(file.path(R.home(),'share','texmf','Sweave.sty'),'.')
 @
 \usepackage[noae,nogin]{Sweave}
 
-%%------------PGF/TIKZ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{tikz}
 
-%%------------page layout
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Code Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{minted}
+%\usemintedstyle{perldoc}
+%\definecolor{bg}{rgb}{0.95,0.95,0.95}
+%\newminted{R}{bgcolor=bg}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[margin=1in]{geometry} %changes margins
 \usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
 \usepackage{multicol}
 
-%%-----------section styles
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Section Styles
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{sectsty}
 	%Put period after section number
 \makeatletter 
@@ -37,30 +67,58 @@ if(!file.exists('Sweave.sty'))
 \subsectionfont{\bf\normalsize\raggedright}
 \subsubsectionfont{\bf}
 
-%%------------graphics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx} 
 \usepackage{subfigure}
 
-%%------------mathematics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\usepackage{amsmath,amssymb,amsthm}
 
-%%------------tables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{booktabs}
 
-%%------------misc
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{verbatim} 
 \usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
 \hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
 
-%%------------bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{natbib}   
 %\setcitestyle{square,aysep={},yysep={;}}
 \bibliographystyle{agufull04}
 
-%%-----------nicer looking captions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Captions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
 
-%%-----------page header declaration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead{}
@@ -75,8 +133,9 @@ if(!file.exists('Sweave.sty'))
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
 \pgfrealjobname{second-year} 
 
-
 \begin{document}
+
+
 <<pygment,results=tex,echo=F>>=
 cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
 @
@@ -263,6 +322,9 @@ cat(code,sep='\n')
 
 \end{document}
 
+<<cleanup,echo=F,results=hide,fig=F,cache=F>>=
+if(!file.exists('Rplots.pdf'))dummy <- file.remove('Rplots.pdf')
+@
 
 
 

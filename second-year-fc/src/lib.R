@@ -66,11 +66,11 @@ function(x, limit = median(x), tie = 1 ){
     #
     # Ex. 
     #
-    # getBinaryVector(1:10)
+    # binary.ts(1:10)
     ## [1] 0 0 0 0 0 1 1 1 1 1
-    # getBinaryVector(1:10,8)
+    # binary.ts(1:10,8)
     ## [1] 0 0 0 0 0 0 0 1 1 1
-    # getBinaryVector(1:10,8,tie=0)
+    # binary.ts(1:10,8,tie=0)
     ## [1] 0 0 0 0 0 0 0 0 1 1
     
     b <- integer(length(x))
@@ -86,6 +86,29 @@ function(x, limit = median(x), tie = 1 ){
         return(b)
 }
 
+ntile.ts <- 
+function(x, n, limit = seq(min(x),max(x),by=diff(range(x))/n), tie = 1 ){
+    # returns a binary representation of x, 1 above limit, 0 below
+    #
+    
+    b <- integer(length(x))
+    
+	for(i in 1:(n+1)){
+    	filter <- 
+		if(tie == 1) 
+			x >= limit[i] & x <= limit[i+1]
+		else 
+			x > limit[i] & x <= limit[i+1]
+    
+	    #only need to set the 1's because b is already 0's
+	    b[filter] <- as.integer(i-1)
+	}
+    
+    if(class(x) == 'ts') 
+        return(ts(b,start=start(x),end=end(x))) 
+    else 
+        return(b)
+}
 
 binarys <- function(i,align=F){
     # returns the binary representation of integer vector i (coerced) 
@@ -178,4 +201,22 @@ sim.pqr <- function(tr.paleo, conditional.pool = FALSE){
 		pool.to <- matrix(pool.to,,r)
 	}
 	
+}
+
+mylag <- 
+function(x,lag,docor=FALSE){
+
+    if(lag>length(x)) 
+		warning("Lag is larger than input vector length, returning NA's") 
+
+    if(lag<0)  lagn = c(rep(NA,abs(lag)),x[-(length(x):(length(x)+lag+1))])
+    if(lag==0) lagn = x    
+    if(lag>0)  lagn = c(x[-(1:lag)],rep(NA,lag))
+
+    remove = !is.na(lagn) & !is.na(x)
+    if(docor){
+		return(cor(x[remove],lagn[remove]))
+    }else{
+		return(lagn)
+	}
 }

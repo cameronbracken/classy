@@ -45,7 +45,7 @@ pygmentize <- function(file){
 @
 
 \begin{document}
-\SweaveOpts{keep.source=T,echo=T,prefix.string=figs/fig,cache=T}
+\SweaveOpts{keep.source=F,echo=T,prefix.string=figs/fig,cache=T}
 
 <<echo=F,cache=F>>=
 require(xtable)
@@ -80,7 +80,7 @@ if(!file.exists('figs')) dir.create('figs')
 <<>>=
 rivers <- read.csv('rivers.csv')
 
-	#Pull out the largest, smalles and middle rivers
+    #Pull out the largest, smalles and middle rivers
 largest <- rivers[rivers$Specific.Runoff >= .98,]
 smallest <- rivers[rivers$Specific.Runoff < 0.15,]
 middle <- rivers[rivers$Specific.Runoff > 0.15 & rivers$Specific.Runoff < .98,]

@@ -13,24 +13,35 @@ sy <- scan('data/inino3.txt',comment.char='#', n=1, quiet=T)
 enso[enso == -999.9] <- NA
 enso <- ts(array(t(enso[,-1])), start = sy, frequency=12)
 
+	######################################################
+	#
 	# Meko reconstructions converted to MAF and 
-	# 5-year running mean
+	#
+	######################################################
 meko <- as.matrix(read.table('data/Meko.txt'))[,2]
 sy.meko <- as.matrix(read.table('data/Meko.txt'))[1,1]
 meko.raw <- meko
 if(running.mean) meko <- running(meko,width=mean.len)
 meko <- ts(meko,start = sy.meko+mean.len-1) * 10^-6
 
+	######################################################
+	#
     # Woodhouse reconstructions converted to MAF and 
-	# 5-year running mean
+	#
+	######################################################
 wood <- as.matrix(read.table('data/woodhouse.txt'))[,2]
 sy.wood <- as.matrix(read.table('data/woodhouse.txt'))[1,1]
 wood.raw <- wood
 if(running.mean) wood <- running(wood,width=mean.len)
 wood <- ts(wood,start = sy.wood +mean.len-1) * 10^-6
 
-    #Lees Ferry Monthly volumes can be seasonal or not depending on 
-    # flag at the top of this file
+	######################################################
+	#
+    #Lees Ferry Monthly volumes 
+	# (can be seasonal or not depending on flag at 
+	#	the top of this file
+	#
+	######################################################
 lees <- as.matrix(read.table('data/LeesFerry.txt'))[,-1]
 sy <- scan('data/LeesFerry.txt',comment.char='#', n=1, quiet=T)
 months <- if(seasonal.total) 4:7 else 1:12

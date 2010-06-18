@@ -135,7 +135,7 @@ for(y in q:nh){
 		#this.quant <- this.pool.to[sample(1:nrow(this.pool.to),1),]
 	
 		this.sim[i,] <- this.quant
-	
+		browser()
 	}
 	
 	sim.y1[,y-q+1] <- quantile(hist,this.sim[,1])

@@ -4,13 +4,13 @@
 
 name <- 'multi_vortex'
 nd <- 2        # dimensions
-np <- 500    # particles
-nv <- 3        # vortexes
+np <- 10*8    # particles
+nv <- 8        # vortexes
 nt <- 300      # timesteps
 nc <- 2        # number of constituents
 nb <- 100
 r <- .015
-dt <- .5       # timestep 
+dt <- .1       # timestep 
 A <- 1       #Vortex scale
 B <- 1       # Vortex shape
 tol <- .01   # tolerance for plotting points
@@ -40,6 +40,7 @@ if(file.exists(imgdir) & movie)
 dir.create(imgdir)
 if(nc<2)reaction <- FALSE
 na <- nb <- np/2
+n1 <- n2 <- n3 <- n4 <- np/4
 vtype_f <- switch(vtype, forced = 1, ideal = 2, oseen = 3)
 difftype <- ifelse(any(D > 0),'diff','nodiff')
 
@@ -103,7 +104,8 @@ for(i in times){
 		A = as.double(A),
 		B = as.double(B),
 		type = as.integer(vtype_f))
-
+	
+		
 	positions[,1:2] <- matrix(x$positions,ncol=2)
 	ilen[which(i==times)] <- sum(sqrt(diff(positions[,1])^2 + diff(positions[,2])^2))
 	
@@ -111,17 +113,38 @@ for(i in times){
 	if(nc > 1){
 		
 		ti <- system.time({
-			one <- sparsify(head(positions,na))
-			na <- nrow(one)
-			two <- sparsify(head(tail(positions,nb+nv),nb))
-			nb <- nrow(two)
+			if(nc == 2){
+				
+				one <- sparsify(head(positions,na))
+				na <- nrow(one)
+				two <- sparsify(head(tail(positions,nb+nv),nb))
+				nb <- nrow(two)
+				
+				vor <- tail(positions,nv)
+				#browser()
+				positions <- rbind(one,two,vor)
+				
+				np <- na + nb
+				
+			}else if(nc == 4){
+				
+				one <- sparsify(head(positions,n1))
+				two <- sparsify(positions[(n1+1):(n1+n2),])
+				three <- sparsify(positions[(n1+n2+1):(n1+n2+n3),])
+				four <- sparsify(positions[(n1+n2+n3+1):(n1+n2+n3+n4),])
+				
+				n1 <- nrow(one)
+				n2 <- nrow(two)
+				n3 <- nrow(three)
+				n4 <- nrow(four)
+				
+				vor <- tail(positions,nv)
+				#browser()
+				positions <- rbind(one,two,three,four,vor)
+				
+				np <- n1 + n2 + n3 + n4
+			}
 		})
-		vor <- tail(positions,nv)
-		#browser()
-		positions <- rbind(one,two,vor)
-		
-		
-		np <- na + nb
 		
 	}else{
 
