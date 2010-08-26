@@ -1,4 +1,4 @@
-mar.sim <- function(Z,A,B,nsims = 250, ny = length(Z[,1,1])){
+mar_sim <- function(Z,A,B,nsims = 250, ny = length(Z[,1,1])){
 	
 	#Now Simulate
 	sims <- array(NA,dim=c(dim(Z),nsims))
@@ -9,7 +9,7 @@ mar.sim <- function(Z,A,B,nsims = 250, ny = length(Z[,1,1])){
 
 		## Start with a random Dec value
 		Z.last = cbind( Z[sample(1:ny,1), 12, ] )
-		browser()
+		#browser()
 		
 		for(j in 1:ny)
 			for(month in 1:12){

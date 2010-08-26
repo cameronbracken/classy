@@ -5,7 +5,7 @@ source('lib.R')
 
 Cmat <- mar.fit(Z)
 
-mar.sim <- mar.sim(Z,Cmat$A,Cmat$B)
+mar.sim <- mar_sim(Z,Cmat$A,Cmat$B)
 
 #Put back seasonal mean and sd
 for(i in 1:nsims){

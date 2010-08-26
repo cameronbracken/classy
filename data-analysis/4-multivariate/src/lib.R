@@ -1,4 +1,5 @@
 library(pear)
+library(ggplot2)
 source('mar-fit.R')
 source('mar-sim.R')
 source('knn-multi-sim.R')

@@ -1,5 +1,5 @@
 % !TEX TS-program = pgfSweave
-
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices
@@ -89,6 +89,7 @@ if(!file.exists('Sweave.sty'))
 <<setup,fig=F,echo=F,results=hide,cache=F>>=
 	
 	suppressPackageStartupMessages(require(ggplot2))
+	suppressPackageStartupMessages(require(sm))
 	
 	cashdir = "./cache"
 	setCacheDir(cashdir)
@@ -103,6 +104,10 @@ if(!file.exists('Sweave.sty'))
 	
 	setwd('src')
 		if(file.exists('fc.Rdata'))load('data/fc.Rdata')
+		if(file.exists('output/4.Rdata'))load('output/4.Rdata')
+		if(file.exists('output/flows.Rdata'))load('output/flows.Rdata')
+		if(file.exists('output/1.Rdata'))load('output/1.Rdata')
+		if(file.exists('output/2.Rdata'))load('output/2.Rdata')
 	setwd('../')
 @
 

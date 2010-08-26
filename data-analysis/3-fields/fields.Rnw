@@ -1,5 +1,6 @@
 % !TEX TS-program = pgfSweave
 
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices

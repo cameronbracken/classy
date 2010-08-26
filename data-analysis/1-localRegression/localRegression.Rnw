@@ -1,5 +1,6 @@
 % !TEX TS-program = pgfSweave
 
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices
@@ -60,7 +61,7 @@ if(!file.exists('Sweave.sty'))
 \renewcommand{\footrulewidth}{0pt}
 \fancyhead[LE,RO]{\thepage}   %page numbers
 
-\fancyhead[CE]{\small CVENxxxx FALL 2009}
+\fancyhead[CE]{\small CVEN6833 FALL 2009}
 \fancyhead[CO]{\small LOCAL POLYNOMIAL REGRESSION}
 
 %\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
@@ -75,7 +76,7 @@ if(!file.exists('Sweave.sty'))
 \begin{center}
 	\textbf{\Large Local Polynomial Regression}
  	{\bf\\ Cameron Bracken \\}
-  	CVEN6xxx September, 2009
+  	CVEN6833 September, 2009
 \end{center}
 
 <<setup,fig=F,echo=F,results=hide,cache=F>>=

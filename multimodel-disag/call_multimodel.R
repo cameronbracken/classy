@@ -39,7 +39,8 @@ outputfile = args[4]
 	#trainingrange=1:200
 	#npts=400
 	
-	#psets=selectpredictors(allpredictors[trainingrange,],response[trainingrange],paste(basepath,'../../data/multimodelinfo.out',sep=''))
+	#psets=selectpredictors(allpredictors[trainingrange,],response[trainingrange],
+		#paste(basepath,'../../data/multimodelinfo.out',sep=''))
 	psets=selectpredictors(allpredictors[trainingrange,],response[trainingrange],'multimodelinfo.out')
 
 	gcvs=as.vector(psets$p[,(ncol(psets$p)-3)])      # Takes only GCV information 

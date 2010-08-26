@@ -1,5 +1,6 @@
 % !TEX TS-program = pgfSweave
 
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%------------font choices
@@ -59,15 +60,29 @@ if(!file.exists('Sweave.sty'))
 %%-----------nicer looking captions
 \usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
 
+%% Microtype
+\usepackage{microtype}
+\makeatletter 
+\def\MT@register@subst@font{
+   \MT@exp@one@n\MT@in@clist\font@name\MT@font@list 
+   \ifMT@inlist@\else\xdef\MT@font@list{\MT@font@list\font@name,}\fi} 
+\makeatother 
+
 %%-----------page header declaration
 \usepackage{fancyhdr}
 \pagestyle{fancy}
+% Clear default headers and footers
 \fancyhead{}
 \fancyfoot{}
+% No line (rule) on top or bottom of page
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\fancyhead[LE,RO]{\thepage}   %page numbers
+% get rid of warning about too small headheight
+\headheight 13.6pt
+%page numbers on inside of page
+\fancyhead[LE,RO]{\thepage}
 
+% title on center top of page
 \fancyhead[CE]{\small CVEN6833 FALL 2009}
 \fancyhead[CO]{\small A METHOD FOR FORECASTING SECOND YEAR PEAK SEASON STREAMFLOW}
 
