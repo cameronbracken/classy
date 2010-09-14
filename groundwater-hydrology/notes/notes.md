@@ -108,14 +108,14 @@ Water flows in a direction opposite of the gradient.
 
 #### Hydraulic Gradient
 
-<< \grad h = \frac{\partial h}{\partial x}\hat{i} + \frac{\partial h}{\partial y}\hat{j} + \frac{\partial h}{\partial z}\hat{k} >>
+<< \nabla h = \frac{\partial h}{\partial x}\hat{i} + \frac{\partial h}{\partial y}\hat{j} + \frac{\partial h}{\partial z}\hat{k} >>
 
 - vector (magnitude and direction)
 - water is flowing in opposite direction of gradient
 
 ##### Horizontal gradient
 
-<< \grad h = \frac{\partial h}{\partial x}\hat{i} + \frac{\partial h}{\partial y}\hat{j} >>
+<< \nabla h = \frac{\partial h}{\partial x}\hat{i} + \frac{\partial h}{\partial y}\hat{j} >>
 
 - need three points minimum
 
@@ -204,7 +204,7 @@ K = \frac{-Q}{A\,\frac{dh}{dL}} = \frac{-2 \mbox{cm}/\mbox{s}}{(63 \mbox{cm}^2) 
 
 <<q = \frac{Q}{A}>>
 	
-<<q = -K\grad h>>
+<<q = -K\nabla h>>
 	
 <!--
 \begin{equation}
@@ -214,7 +214,7 @@ K = \frac{-Q}{A\,\frac{dh}{dL}} = \frac{-2 \mbox{cm}/\mbox{s}}{(63 \mbox{cm}^2) 
 
 #### Pore velocity 
 
-<<v = \frac{Q}{nA} = \frac{k}{n}\grad h = \frac{q}{n}>>
+<<v = \frac{Q}{nA} = \frac{k}{n}\nabla h = \frac{q}{n}>>
 
 - Also known as: Average velocity  of water molecules, average linear velocity, groundwater velocity, or just velocity 
 
@@ -279,13 +279,129 @@ Heterogeneous
 
 !!!!!!!!!!! See derivation in notes !!!!!!!!!!
 
-<< \frac{K_1}{\tan\alpha_1}=\frac{K_2}{\tan\alpha_2}>>
+<< \frac{K_1}{\tan\alpha_1}=\frac{K_2}{\tan\alpha_2} >>
 
 In natural systems flow in aquifer approxamately horizontal (low vertical head gradient) and flow through an aquitard is approxamately vertical (high vertical head gradient).
 
+##Hydraulic conductivity: Anisotropy - 7 September 2010
+
+#### Objectives
+- Define principle direction of anisotropy
+- State darcy's law in three dimensions for and anisotropic medium, and explain each term
+- Calculate components of the hydraulic conductivity tensor
+- State the conditions that result in a diagonal << K >> tensor. 
+- Describe the difference in flow direction of an isotropic  medium and an anisotropic medium for a given hydraulic gradient. 
+
+#### Layered material
+
+Anisotropic
+: Material properties vary with direction 
+
+Isotropic
+: Material properties do not vary with direction
+
+#### Principal Directions
+
+- << K_{||}>> - Along direction of layer
+- << K_{\bot} >> - along the direction perpendicular to layers
+
+Principal directions of anisotropy
+: direction parallel and perpendicular to layering
+
+<< K_3 >> - anisotropy ratio
+
+<< K_3 = \frac{K_{||}}{K_{\bot}} >>
+
+#### Darcy's in 3D for Anisotropic Materials
+
+<< q_x = -K_{x x} \frac{\partial h}{\partial x} -K_{xy} \frac{\partial h}{\partial y}-K_{xz} \frac{\partial h}{\partial z}>>
+
+<< q_y = -K_{yx} \frac{\partial h}{\partial x} -K_{yy} \frac{\partial h}{\partial y}-K_{yz} \frac{\partial h}{\partial z}>>
+
+<< q_z = -K_{zx} \frac{\partial h}{\partial x} -K_{zy} \frac{\partial h}{\partial y}-K_{zz} \frac{\partial h}{\partial z}>>
+
+- << q_z >> - Component of flow in << z >> direction
+- << K_{zx} >> - contribution of << q_z >> die to gradient in x
+
+
+
+<!--
+\[
+ \left[\begin{array}{c}q_x\\q_y\\q_z\end{array}\right] =  \left[\begin{array}{ccc}
+K_{xx} & K_{xy} & K_{xz}\\
+K_{yx} & K_{yy} & K_{yz}\\
+K_{zx} & K_{zy} & K_{zz}
+\end{array}\right]
+\left[\begin{array}{c}\partial h/\partial x\\\partial h/\partial y\\\partial h/\partial z\\\end{array}\right]
+\]
+-->
+
+<!--
+\[
+\mathbf{q} = -\underline{\underline{K}} \nabla h
+\]
+-->
+
+!!!!!!!!!more derivation in notes
+
+#### Conductivity Tensor components in 2D
+
+<< K_{x x} = K_{||} cos^2\theta + K_{\bot} sin^2\theta>>
+
+<< K_{xy} = (K_{||} - K_{\bot})\sin\theta\cos\theta >>
+
+<< K_{yy} = K_{\bot} cos^2\theta + K_{||} sin^2\theta>>
+
+<< \underline{\underline{K}}>> is symmetric
+
+#### Darcy's law matrix form
+<!--
+\[
+ \left[\begin{array}{c}q_x\\q_y\end{array}\right] =  \left[\begin{array}{ccc}
+K_{x x} & K_{xy} \\
+K_{yx} & K_{yy} 
+\end{array}\right]
+\left[\begin{array}{c}\partial h/\partial x\\\partial h/\partial y\end{array}\right]
+\]
+-->
+
+##### Principal direction of anisotropy aligned with coordinate axis.
+
+<!--
+\[
+ \underline{\underline{K}} = \left[\begin{array}{ccc}
+K_{||} & 0\\
+0 & K_{\bot} 
+\end{array}\right]
+\]
+-->
+
+##### Isotropic material
+
+<!--
+\[
+ \underline{\underline{K}} = \left[\begin{array}{ccc}
+K & 0\\
+0 & K
+\end{array}\right]
+\]
+-->
+
+* Flow direction is in opposite direction of << \nabla h>> only for isotropic materials. 
+
+##### Homogeneous anisotropic
+
+<!--
+\[
+ \left[\begin{array}{c}q_x\\q_y\end{array}\right] =  \left[\begin{array}{ccc}
+K_{x x}(x,y) & K_{xy}(x,y) \\
+K_{yx}(x,y) & K_{yy}(x,y) 
+\end{array}\right]
+\left[\begin{array}{c}\partial h/\partial x\\\partial h/\partial y\end{array}\right]
+\]
+-->
 
 ##Hydraulic conductivity: Laboratory measurements
-##Hydraulic conductivity: Anisotropy
 ##Storage Properties
 ##Flow equations: Confined aquifers
 ##Flow equations: Unconfined aquifers

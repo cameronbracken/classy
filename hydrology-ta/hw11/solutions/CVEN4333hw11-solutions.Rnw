@@ -33,11 +33,12 @@
 \renewcommand{\)}{\end{verbatim}}
 \newcommand{\R}{\textsf{R}}
 
-\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
-\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+%\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
 
 <<pygment,results=tex,echo=F>>=
+require(utils)
 cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
 pygmentize <- function(file){
 	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
@@ -92,12 +93,14 @@ greata <- read.ec.flow('flowDaily_Greata.csv')
 @
 
 \item {bf Make time vectors and plot both timeseries just like we did in HW 3.}
+
 <<fig=T,cache=T,external=T>>=
     #Time vectors
 times.c <- camp$y + camp$m/12 + camp$d/365
 times.g <- greata$y + greata$m/12 + greata$d/365
 
 plot(times.c,camp$flow,col='blue',xlab='Time',ylab='Flow [cms]',type='l')
+
 lines(times.g,greata$flow,col='red')
 legend('topright',c('Camp Creek','Greata Creek'),pch=-1,lty=1,col=c('blue','red'))
 @
@@ -105,10 +108,11 @@ legend('topright',c('Camp Creek','Greata Creek'),pch=-1,lty=1,col=c('blue','red'
 \item Extract monthly data for April so that we can reproduce the one statistically significant model in the paper:
 
 <<>>=
+
     #List of years for each site
 y.c <- unique(camp$y)
 y.g <- unique(greata$y)
-    # preallocate vectors
+	    # preallocate vectors
 peak.c <- apr.c <- numeric(length(y.c))
 peak.g <- apr.g <- numeric(length(y.g))
 
