@@ -177,7 +177,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set this to the name of your document !!!!!!!!
-\pgfrealjobname{1} 
+\pgfrealjobname{2} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -213,9 +213,7 @@ require(lmomco)
 \SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F}
 
 \thispagestyle{empty}
-\textbf{Cameron Bracken}\\
-CVEN 5333, September, 2010\\
-Problem Set 1
+
 
 
 
@@ -233,7 +231,7 @@ Problem Set 1
 
 << pp >>=
 	# get the data (in the second column)
-x <- as.matrix(read.table('1.dat'))[,2]
+x <- as.matrix(read.table('2.dat'))[,2]
 	#weibull plotting positions and parameters
 wpp <- pp(x)
 weibull <- parwei(lmom.ub(x))
