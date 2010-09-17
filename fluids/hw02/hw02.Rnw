@@ -1,0 +1,522 @@
+% !TEX TS-program = pgfSweave
+
+\RequirePackage{atbegshi}
+\documentclass[11pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Verbatim
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{fancyvrb}
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Sweave
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \usepackage[noae,nogin]{Sweave}
+% dont actually use Sweave.sty, just use its definitions
+%%%% Begin Sweave.sty definitions
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl}
+
+\newenvironment{Schunk}{}{}
+
+\newcommand{\Sconcordance}[1]{%
+  \ifx\pdfoutput\undefined%
+  \csname newcount\endcsname\pdfoutput\fi%
+  \ifcase\pdfoutput\special{#1}%
+  \else\immediate\pdfobj{#1}\fi}
+%%%%% End Sweave.sty definitions
+  
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+
+% make ' in verbatim copy-pasteable
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+% Redefine the verbatim environment for sweave output
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<echo=F,cache=F>>=
+require(xtable)
+options(prompt=" ", continue="  ")
+setCacheDir('cache')
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Code Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use pygmantize(file) to output highlighted code
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+% Does not work with externailization
+%\usepackage{texments}
+%\usestyle{perldoc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Section Styles
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{sectsty}
+	%Put period after section number
+\makeatletter 
+\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
+{\csname the#1\endcsname\quad}% default 
+{\csname #1@cntformat\endcsname}% individual control 
+} 
+\def\section@cntformat{\thesection.\quad} 
+\def\subsection@cntformat{\thesubsection.\quad} 
+\makeatother
+\sectionfont{\bf\large\raggedright}
+\subsectionfont{\bf\normalsize\raggedright}
+\subsubsectionfont{\bf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage{subfigure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Captions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small CVEN 5313 FALL 2010}
+\fancyhead[CO]{\small Problem Set 2}
+
+\pgfrealjobname{hw02} 
+
+<<echo=F,results=hide>>=
+require(reporttools)
+#source('2-3.R')
+#source('4.R')
+
+@
+\begin{document}
+\SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F, echo=F}
+
+\thispagestyle{empty}
+\textbf{Cameron Bracken}\\
+CVEN 5313, Fall 2010\\
+Problem Set 1
+
+z
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(a)  At $y=d$ there are two values of x ($x_0$, $x_1$) corresponding to the left and right edges of the free surface.  
+
+$$
+x_0 = -\sqrt{\frac{d}{a}},\,\,\,
+x_1 = \sqrt{\frac{d}{a}}
+$$
+
+Then the width can be expressed as 
+
+\begin{align}
+B&=x_1-x_0\nonumber\\
+&= -\sqrt{\frac{d}{a}}-\sqrt{\frac{d}{a}}\nonumber
+\end{align}
+$$\boxed{B=2a^{-\frac{1}{2}}d^{\frac{1}{2}}}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(b) 
+
+$$A = Bd-\int^{x_1}_{x_0}ax^2dx$$
+$$ = Bd-\int^{\sqrt{\frac{d}{a}}}_{-\sqrt{\frac{d}{a}}}ax^2dx$$
+$$ = Bd-a\left[\frac{1}{3}x^3\right]^{\sqrt{\frac{d}{a}}}_{-\sqrt{\frac{d}{a}}}$$
+$$ = Bd-\frac{a}{3}\left[\left(\frac{d}{a}\right)^\frac{3}{2}+\left(\frac{d}{a}\right)^{\frac{3}{2}}\right]$$
+$$ = Bd-\frac{2a}{3}\left(\frac{d}{a}\right)^\frac{3}{2}$$
+$$ = Bd-\frac{2}{3}a^{-\frac{1}{2}}d^{\frac{3}{2}}$$
+$$ = d\left[B-\frac{2}{3}a^{-\frac{1}{2}}d^{\frac{1}{2}}\right]$$
+
+Use the value of $B$ from part (a)
+
+$$A=d\left[B-\frac{1}{3}B\right]$$
+$$\boxed{A=\frac{2}{3}dB}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(c) Let $y=d$ for this problem. First notice that 
+
+$$A = \frac{2}{3}B(y)y=\frac{4y^{3/2}}{3a^{\frac{1}{2}}}$$
+$$\frac{dA}{dy} = \left(\frac{4}{3a^{\frac{1}{2}}}\right)\left(\frac{3}{2}\right)y^{\frac{1}{2}} =\frac{4y^{\frac{3}{2}}}{3a^{\frac{1}{2}}}\left(\frac{3}{2}y^{-1}\right) = \frac{3A}{2y}$$
+
+Now take the derivative of the specific energy equation with respect to $y$ and set equal to zero to solve for critical depth.
+
+$$\frac{dE}{dy}=1=\frac{Q^2}{gA^3}\frac{dA}{dy}=0$$
+
+Plug in the expression for $dA/dy$
+
+$$1-\frac{Q^2A\left(\frac{3}{2y}\right)}{gA^3}=0$$
+$$1-\frac{3Q^2}{2gyA^2}=0$$
+$$\frac{2}{3}A^2yg-Q^2$$
+$$\frac{2}{3}\left(\frac{4y^{\frac{3}{2}}}{3a^{\frac{1}{2}}}\right)^2yg-Q^2$$
+$$\frac{32g}{27a}y^4-Q^2$$
+$$\boxed{y_c=Q^{\frac{1}{2}}\left[\frac{27a}{32g}\right]^{\frac{1}{4}}}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(d)
+
+Define $E^*=\frac{E}{d_c}$ and $d^*=\frac{d}{d_c}$. Start with the energy equation
+ 
+ $$E = d + \frac{Q^2}{2gA^2}$$
+
+Divide by $d_c^4$
+
+ $$\frac{E}{d_c^4} = \frac{d}{d_c^4} + \frac{Q^2}{2gA^2d_c^4}$$
+ 
+and plug in the expression from part (c) for $d_c$ into the denomenator of the second term on the right as well as the expression for $A$ in part (c)
+
+$$\frac{E}{d_c^4} = \frac{d}{d_c^4} + \frac{Q^2}{2gQ^2\left(\frac{27a}{32g}\right) \left(\frac{16d^3}{9a}\right)}$$
+$$\frac{E}{d_c^4} = \frac{d}{d_c^4} + \frac{1}{3d^3}$$
+
+Multiply through by $d_c^3$
+
+$$\frac{E}{d_c} = \frac{d}{d_c} + \frac{d_c^3}{3d^3}$$
+$$\boxed{E^* = d^* + \frac{1}{3d^{*3}}}$$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 2}
+
+<<echo=F>>=
+source('2-3.R')
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(a) 
+$$Fr_1=\frac{Q}{A_1\sqrt{gd_0}}$$
+$$Fr_1=\frac{Q}{B_0d_0\sqrt{gd_0}}$$
+$$=\frac{0.125\mathrm{m}^3\mathrm{s}^{-1}}{(1.25\mathrm{m})(0.25\mathrm{m})\sqrt{(9.81\mathrm{m}\mathrm{s}^{-2})(0.025\mathrm{m})}}$$
+$$Fr_1=0.25$$
+
+The initial flow is \underline{subcritical}.
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(b,c,d)  The surface water profile is shown in Figure \ref{sub} (a). The dimensional specific energy diagram is shown in Figure \ref{sub} (b) and the nondimensional specific energy diagram is shown in Figure \ref{sub} (c).
+
+\begin{figure}[!ht] %  figure placement: here, top, bottom, or page
+   \centering
+<< subcritical, fig=T, tikz=T, height=7, width=7, external=T>>=
+AwesomePlots(sub,      delta0_sub, xp, p, E_sub, '')
+@
+   \caption{Flow through a constriction starting from a subcritical regime. (a) Shows the surface water profile, (b) shows the dimensional specific energy diagram, and (c) shows the nondimensional specific energy diagram.  Numbers correspond to stations 1-5. }
+   \label{sub}
+\end{figure}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(e) To solve for $\delta_0^{\mathrm{crit}}$ use the relationship 
+
+$$B_c=B_0-2\delta_c(L/2)$$
+$$=B_0-\delta_0^{\mathrm{crit}}[1-\cos({\pi})]$$
+$$\boxed{\delta_0^{\mathrm{crit}}= \frac{1}{2}(B_0-B_c)}$$
+
+$B_c$ is calculated from 
+
+$$B_c=\left(\frac{3}{2}\right)^{\frac{3}{2}}\frac{Q}{\sqrt{gE^3_1}}$$
+
+and $E_1$ is from the energy equation
+
+$$E_1=d_0+\frac{q^2}{2gd_0^2}$$
+
+crunching the numbers gives
+
+$$\boxed{\delta_0^{\mathrm{crit}}=\Sexpr{round(delta_crit(d0_sub),3)}}$$
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(f) The surface water profile is shown in Figure \ref{subc} (a). The dimensional specific energy diagram is shown in Figure \ref{subc} (b) and the nondimensional specific energy diagram is shown in Figure \ref{subc} (c).
+
+\begin{figure}[!ht] %  figure placement: here, top, bottom, or page
+   \centering
+<< subcritical_c, fig=T, tikz=T, height=7, width=7, external=T>>=
+AwesomePlots(sub_crit, delta0c_sub, xp, p, E_sub, '')
+@
+   \caption{Flow through a constriction starting from a subcritical regime and transition to critical. (a) Shows the surface water profile, (b) shows the dimensional specific energy diagram, and (c) shows the nondimensional specific energy diagram.  Numbers correspond to stations 1-5. }
+   \label{subc}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(g) In this case if $\delta_0 > \delta_0^{\mathrm{crit}}$ the downstream conditions would change to meet satisfy the energy and momentum balances. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 3}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(a) 
+$$Fr_1=\frac{Q}{A_1\sqrt{gd_0}}$$
+$$Fr_1=\frac{Q}{B_0d_0\sqrt{gd_0}}$$
+$$=\frac{0.125\mathrm{m}^3\mathrm{s}^{-1}}{(1.25\mathrm{m})(0.06\mathrm{m})\sqrt{(9.81\mathrm{m}\mathrm{s}^{-2})(0.06\mathrm{m})}}$$
+$$Fr_1=2.2$$
+
+The initial flow is \underline{supercritical}.
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(b,c,d)  The surface water profile is shown in Figure \ref{sup} (a). The dimensional specific energy diagram is shown in Figure \ref{sup} (b) and the nondimensional specific energy diagram is shown in Figure \ref{sup} (c).
+
+\begin{figure}[!ht] %  figure placement: here, top, bottom, or page
+   \centering
+<< supercritical, fig=T, tikz=T, height=7,width=7, external=T>>=
+AwesomePlots(sup,      delta0_sup, xp, p, E_sup, '')
+@
+
+   \caption{Flow through a constriction starting from a supercritical regime. (a) Shows the surface water profile, (b) shows the dimensional specific energy diagram, and (c) shows the nondimensional specific energy diagram.  Numbers correspond to stations 1-5. }
+   \label{sup}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(e) Using the same relationships as problem 3(e) we get
+
+\begin{center}$\boxed{\delta_0^{\mathrm{crit}}=\Sexpr{round(delta_crit(d0_sup),3)}}$\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(f) The surface water profile is shown in Figure \ref{supc} (a). The dimensional specific energy diagram is shown in Figure \ref{supc} (b) and the nondimensional specific energy diagram is shown in Figure \ref{supc} (c).
+
+\begin{figure}[!ht] %  figure placement: here, top, bottom, or page
+   \centering
+<< supercritical_c, fig=T, tikz=T, height=7,width=7, external=T>>=
+AwesomePlots(sup_crit, delta0c_sup, xp, p, E_sup, '')
+@
+   \caption{Flow through a constriction starting from a supercritical regime and transition to critical. (a) Shows the surface water profile, (b) shows the dimensional specific energy diagram, and (c) shows the nondimensional specific energy diagram.  Numbers correspond to stations 1-5. }
+   \label{supc}
+\end{figure}
+
+(g) In this case if $\delta_0 > \delta_0^{\mathrm{crit}}$ a hydraulic jump would occur. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(a) Equating the energy at point 1 and 2
+
+$$E_1=E_2+\Delta z$$
+$$d_1+\frac{Q^2}{2gB_1^2d_1^2}=d_2+\frac{Q^2}{2gB_2^2d_2^2} + \Delta z$$
+$$\frac{Q^2}{2g}\left(\frac{1}{2gB_1^2d_1^2}-\frac{1}{2gB_2^2d_2^2}\right)=d_2-d1+\Delta z$$
+$$\boxed{Q=\left[\frac{2g(d_2-d1+\Delta z)}{B_1^{-2}d_1^{-2}-B_2^{-2}d_2^{-2}}\right]^{\frac{1}{2}}}$$
+
+(b) Since $d_2=d_c$
+$$d_2^3=\frac{Q}{B^2_2g}$$
+$$\boxed{Q_{\mathrm{crit}}=\left(d_2^3B_2^2g\right)^{\frac{1}{2}}}$$
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p4, fig=T,tikz=T,external=T,height=5>>=
+source('4.R')
+@
+   \caption{Calibration curve for control section.}
+   \label{calib}
+\end{figure}
+
+(c) 
+(i) From the calibration curve $Q$ is approximately 5 m/s
+
+<<senergy, fig=T,tikz=T>>=
+d <- seq(.5,2,,1000)
+d1 <- 1.8
+d2 <- 1.4
+Q <- 6
+E1 <- d + 6^2/(B1^2*2*g*d^2)
+E2 <- d + 6^2/(B2^2*2*g*d^2)
+plot(E1,d,type='l',xlab='$E_1$',ylab='$d$')
+lines(E2,d)
+E1p <- d1+6^2/(B1^2*2*g*d1^2)
+E2p <- d2+6^2/(B2^2*2*g*d2^2)
+points(E1p,d1)
+points(E2p,d2)
+text(c(E1p,E2p),c(d1,d2),pos=1,offset=2)
+abline(a=0,b=1)
+@
+
+(i) We know that the flow through the constriction is critical so from the calibration curve we know $d_2$ is approximately 1.3 m and from the froude number $Q$ is approximately 9.3.
+
+<<senergy2, fig=T,tikz=T>>=
+d <- seq(.5,2,,1000)
+d1 <- 1.8
+d2 <- 1.3
+Q <- 9.3
+E1 <- d + Q^2/(B1^2*2*g*d^2)
+E2 <- d + Q^2/(B2^2*2*g*d^2)
+plot(E1,d,type='l',xlab='$E_1$',ylab='$d$')
+lines(E2,d)
+E1p <- d1+Q^2/(B1^2*2*g*d1^2)
+E2p <- d2+Q^2/(B2^2*2*g*d2^2)
+points(E1p,d1)
+points(E2p,d2)
+text(c(E1p,E2p),c(d1,d2),pos=2,offset=2)
+abline(a=0,b=1)
+@
+
+
+\section*{Code}
+
+%\pygment{r}{x <- 1}
+%\includecode[r]{2-3.R}
+%\includecode[r]{4.R}
+%<<code1, results=tex>>=
+%pygmentize('2-3.R')
+%@
+
+%<<code2, results=tex>>=
+%pygmentize('constriction.R')
+%@
+
+%<<code3, results=tex>>=
+%pygmentize('4.R')
+%@
+
+\end{document}

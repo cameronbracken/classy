@@ -2,7 +2,7 @@ constriction <- function(x,delta0,d0,sub=TRUE,crit=FALSE){
 	d <- d_star <- B <- d_c <- E_star <- q <- numeric(length(x))
 	k <- ifelse(sub,0,4*pi/3)
 	E <- d0 + Q^2/(B_0^2*2*g*d0^2)
-	print(E)
+	#print(E)
 
 	for( i in seq_along(x) ){
 	
@@ -67,20 +67,21 @@ AwesomePlots <- function(obj,delta0,xp,p,E, main, np=1000){
 	d_plot <- seq(0,1,,np)
 	E_plot <- SEcurves(xp,d_plot,delta0)
 
-	quartz(height=4)
-	layout(matrix(c(1,2),1))
+	layout(matrix(c(1,1,2,3),2,byrow=T))
 	
 	###  Flow Depth 
 	plot(obj$x,obj$d,ylim=c(0,.3),type='l',col='blue', xlab='$x$', ylab= '$d$',
-		main=main)
+		main=main,sub='(a)')
 	abline(h=0,lty='dashed')
+	points(obj$x[p],obj$d[p])
+	text(obj$x[p],obj$d[p],1:5,pos=3,col='darkred')
 	
 	# dimensional Specific energy 
 	for(i in seq_along(xp)){
 		if(i == 1){
 			r <- c(0,.3)
-			plot(E_plot[i,],d_plot,ylim=r,xlim=c(0,.3),type='l',xlab='E',
-				ylab='d', main = main)
+			plot(E_plot[i,],d_plot,ylim=r,xlim=c(0,.3),type='l',xlab='$E$',
+				ylab='$d$', main = main,sub='(b)')
 			abline(b=1,a=0)
 			abline(v=E,lty='dashed')
 		}else{
@@ -88,15 +89,16 @@ AwesomePlots <- function(obj,delta0,xp,p,E, main, np=1000){
 		}
 	}
 	points(obj$Es[p]*obj$dc[p],obj$d[p])
+	text(obj$Es[p]*obj$dc[p],obj$d[p],1:5,pos=c(4,4,4,2,2),col='darkred')
 	
 	# Non-dimensional specific Energy
-	quartz(width=3.5,height=4)
 	d_plot <- seq(0,4,,np)
 	E_plot <- d_plot + 1/(2*d_plot^2)
 	plot(E_plot,d_plot,ylim=c(0,3),xlim=c(0,4),type='l',xlab='$E^*$',
-		ylab='$d^*$', main = main)
+		ylab='$d^*$', main = main,sub='(c)')
 	abline(b=1,a=0)
 	points(obj$Es[p],obj$ds[p])
-	
+	text(obj$Es[p],obj$ds[p],1:5,pos=c(4,4,4,2,2),col='darkred')
 	
 }
+
