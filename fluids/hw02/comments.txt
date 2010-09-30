@@ -1,0 +1,5 @@
+A number of people have asked questions about calculating depths in problem 2.  I want to remind everyone that I presented in lecture a closed-form solution for the roots of the specific energy equation.  The closed-form is non-dimensional, but that does not prevent you from using it for dimensional applications (just non-dimensionalize and the re-dimensionalize).
+
+Problem 2 (f) should read  "with delta_0 = (delta_0)^crit"  instead of "with delta = (delta_0)^crit"
+
+In Problem 4 (b), I ask you to express Q_crit as a function of d_2.  Just to be clear,  your answer will also have a B_2 in it, which is fine.

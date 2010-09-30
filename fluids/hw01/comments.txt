@@ -1,0 +1,1 @@
+There is a minor typo in the first problem set.  In problem 3, the text in the hint should read "...the term in brackets on the LHS of Eq. 3 ..." instead of "Eq. 10".
