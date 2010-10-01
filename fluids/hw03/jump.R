@@ -12,5 +12,6 @@ Fr2 <- q/sqrt(g*d2^3)
 
 d3 <- d2/2*(sqrt(1+8*Fr2^2)-1)
 Fr3 <- q/sqrt(g*d3^3)
+V3 <- q/d3
 
 deltaEp <- 100/16*(sqrt(1+8*Fr2^2)-3)^3/(sqrt(1+8*Fr2^2)-1)

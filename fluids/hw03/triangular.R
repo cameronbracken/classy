@@ -3,8 +3,7 @@ Q <- 20
 S0 <- 0.001
 y <- n*Q/sqrt(S0)
 
-sf <- function(dn)(1/8)^(1/3)*dn^(8/3)
-f <- function(x)abs(sf(x)-y)
-dn <- optimize(f,c(2,4))$minimum
 
+dn <- {{n*Q*8^(1/3)}/sqrt(S0)}^(3/8)
 dc <- (Q^2/2)^(1/5)
+S0c <- (n*Q)^2/(dc^16*(sqrt(2)/4)^4)^(1/3)

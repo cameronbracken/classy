@@ -156,6 +156,11 @@ pygmentize <- function(file){
 			$\displaystyle#1$};}
 	\end{center}
 }
+% roman numerals
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -204,14 +209,14 @@ pygmentize <- function(file){
 \fancyhead[CE]{\small CVEN 5313 FALL 2010}
 \fancyhead[CO]{\small Problem Set 3}
 
-\pgfrealjobname{hw02} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Set to the basename of your file
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pgfrealjobname{hw03} 
 
-<<echo=F,results=hide>>=
-#require(reporttools)
-source('jump.R')
-#source('4.R')
 
-@
 \begin{document}
 \SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F, echo=F}
 
@@ -229,25 +234,414 @@ Problem Set 3
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-(a)  
+(a)  Setting up the dimensional analysis 
 
+$$
+\begin{array}{c}
+\\L\\T\\M
+\end{array}
+\begin{array}{l}
+	\begin{array}{ccccccc}
+		\hspace{.5cm}\tau_0 & \hspace{.2cm}V & \hspace{.2cm}g & \hspace{.3cm}\rho & \hspace{.2cm}\nu & R_h & k\\
+	\end{array}\\
+	\left[
+	\begin{array}{rrrrrrr}
+		-1 &  1 &  1 & -3 &  2 &  1 &  1 \\
+		-2 & -1 & -2 &  0 & -1 &  0 &  0 \\
+		 1 &  0 &  0 &  1 &  0 &  0 &  0 \\
+	\end{array}
+	\right]
+\end{array}
+\left[
+\begin{array}{c}
+a_1\\a_2\\a_3\\a_4\\a_5\\a_6\\a_7
+\end{array}
+\right]
+=0
+$$
+
+The reduced row eschilon form of the matrix is:
+$$
+\begin{array}{l}
+	\left[
+	\begin{array}{rrrrrrr}
+		 1 &  0 &  0 &  1 &  0 &  0 &  0 \\
+		 0 &  1 &  0 & -2 &  3 &  2 &  2 \\
+		 0 &  0 &  1 &  0 & -1 & -1 & -1 \\
+	\end{array}
+	\right]
+\end{array}
+$$
+
+Row 1: $a_1=-a_4$
+
+Row 2: $a_2=2a_4-3a_5-2a_6-2a_7$
+
+Row 1: $a_3=a_5+a_6+a_7$
+
+$$
+\begin{array}{c}
+	\begin{array}{c}
+		~
+	\end{array}\\
+\left[
+\begin{array}{c}
+a_1\\a_2\\a_3\\a_4\\a_5\\a_6\\a_7
+\end{array}
+\right]
+\end{array}
+= 
+\begin{array}{c}
+	\begin{array}{c}
+		b^I
+	\end{array}\\
+	\left[
+	\begin{array}{r}
+		-1\\2\\0\\1\\0\\0\\0
+	\end{array}
+	\right]
+\end{array}
+a_4+
+\begin{array}{c}
+	\begin{array}{c}
+		b^{II}
+	\end{array}\\
+	\left[
+	\begin{array}{r}
+		0\\-3\\1\\0\\1\\0\\0
+	\end{array}
+	\right]
+\end{array}
+a_5+
+\begin{array}{c}
+	\begin{array}{c}
+		b^{III}
+	\end{array}\\
+	\left[
+	\begin{array}{r}
+		0\\-2\\1\\0\\0\\1\\0
+	\end{array}
+	\right]
+\end{array}
+a_6+
+\begin{array}{c}
+	\begin{array}{c}
+		b^{IV}
+	\end{array}\\
+	\left[
+	\begin{array}{r}
+		0\\-2\\1\\0\\0\\0\\1
+	\end{array}
+	\right]
+\end{array}
+a_7
+$$
+
+This gives the dimensionless groups
+
+$b^I: \displaystyle\frac{V^2\rho}{\tau_0}$
+
+$b^{II}: \displaystyle\frac{g\nu}{V^3}$
+
+$b^{III}: \displaystyle\frac{gR_h}{V^2}$
+
+$b^{IV}: \displaystyle\frac{gk}{V^2}$
+
+To get the groups shown in the notes/assignment carry out the following operations
+
+\begin{itemize}
+\item[1]: $\left(b^I\right)^{-1/2}$
+\item[2]: $b^{III}\left(b^{II}\right)^{-1}$
+\item[3]: $\left(b^{III}\right)^{-1/2}$
+\item[4]: $b^{III}\left(b^{IV}\right)^{-1}$
+\end{itemize}
+
+So the dimensional analysis tells us
+
+$$\frac{V}{\sqrt{\tau_0/\rho}} = 
+\phi\left(
+\frac{VR_h}{\nu},
+\frac{V}{\sqrt{gR_h}},
+\frac{R_h}{k}
+\right)$$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 2}
+
+<<echo=F,results=hide>>=
+source('jump.R')
+@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(a) Between points 1 and 2 since we assume no head loss, $E_1=E_2$
+
+$$E_1=d2+\frac{q^2}{2gd_2^2}$$
+
+Everything to calculate E1 is known so, rearranging
+
+$$d_2^3-d_2^2E_1+\frac{q^2}{2g}=0$$  
+
+The result (after solving using a rootfinder) is shown in Table 1. All the code which carries out calcualtions is shown in the Code section. 
+
+The depth at location 3 is given by
+
+$$d_3=\frac{d_2}{2}\left[\sqrt{1+8\mbox{Fr}_2^2}-1\right]$$
+
+The result is shown in Table 1. The Froude number at location i is given by is given by 
+
+$$Fr_i=\frac{q}{\sqrt{gd_i^3}}$$
+
+since the channel is rectangular.  The results are shown in Table 1.
+
+The average velocity at location i is given by is given by 
+
+$$V_i=\frac{q}{d_i}$$
+
+also since the channel is rectangular.  The results are also shown in Table 1.
+
+(b) Since $1< \mbox{Fr}_2 < 1.7$ the jump is undular. 
+
+(c) The change in energy as a percent of the depth is 
+
+$$100*\frac{\Delta E}{d_2} = \frac{1}{16}\frac{\left[\sqrt{1+8\mbox{Fr}_2^2}-3\right]}{\left[\sqrt{1+8\mbox{Fr}_2^2}-1\right]}$$
+
+which gives
+
+$$\boxed{100*\frac{\Delta E}{d_2} = \Sexpr{sprintf("%6.4f",deltaEp)}\%}$$
+
+
+\begin{table}[!ht]
+\centering
+\caption{Flow depth, Froude number and average velocity for points 1, 2 and 3.}
+\begin{tabular}{cccc}
+\toprule
+Point & $d$ [m] & Fr [] & $V$ [m/s]\\
+\midrule
+1 & \Sexpr{sprintf("%5.3f",d1)} & \Sexpr{sprintf("%5.3f",Fr1)} & \Sexpr{sprintf("%5.3f",V1)}\\
+2 & \Sexpr{sprintf("%5.3f",d2)} & \Sexpr{sprintf("%5.3f",Fr2)} & \Sexpr{sprintf("%5.3f",V2)}\\
+3 & \Sexpr{sprintf("%5.3f",d3)} & \Sexpr{sprintf("%5.3f",Fr3)} & \Sexpr{sprintf("%5.3f",V3)}\\
+\bottomrule\\
+\end{tabular}
+\end{table}
+
+
+(d) 
+
+\begin{figure}[!ht]
+\centering
 <<jump, fig=T, tikz=T>>=
-d <- seq(.4,.6,,100)
+d <- seq(.43,.52,,100)
 E <- d+q^2/(2*g*d^2)
 
 plot(E,d,type='l')
 dp <- c(d1,d2,d3)
 Ef <- function(d)d+q^2/(2*g*d^2)
 points(Ef(dp),dp)
-text(Ef(dp),dp,c("$d_1$","$d_2$","$d_3$"),pos=3:1)
+text(Ef(dp),dp,c("1","2","3"),pos=3:1)
 @
+\caption{Specific energy diagram showing depths before and after the jump.}
+\end{figure}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 3}
+
+<<echo=F,results=hide>>=
+source('triangular.R')
+@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(a) By geometry 
+
+$$\frac{B}{2d_N}=\tan(45^\circ)=1$$
+
+So the cross sectional area is
+
+$$A = \frac{1}{2}Bd_N = d_N^2.$$
+
+The wetted perimeter is 
+
+$$\cos(45^\circ)=\frac{\sqrt{2}}{2}=\frac{d_N}{P/2}$$
+
+$$P=2\sqrt{2}d_N.$$
+
+The hydraulic radius is
+
+$$R_h=\frac{A}{P}=\frac{d_N^2}{2\sqrt{2}d_N}=\frac{\sqrt{2}d_N}{4}$$
+
+So the section factor is 
+
+$$AR_h^{2/3}=d_N\frac{2^{1/3}d_N^{2/3}}{4^{2/3}}=\left(\frac{1}{8}\right)^{1/3}d_N^{8/3}$$
+
+and $d_N$ is given by
+
+$$d_N= \left[\frac{nQ8^{1/3}}{\sqrt{S_0}}\right]^{3/8}$$
+
+$$\boxed{d_N=\Sexpr{round(dn,3)}\mbox{ m}}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(b) Setting $\mbox{Fr}=1$ gives
+
+$$1 = \frac{Q}{A\sqrt{gd_c}} = \frac{Q}{\sqrt{gd_c^5}}$$
+
+$$d_c=\left(\frac{Q^2}{2}\right)^{1/5}$$
+
+$$\boxed{d_c=\Sexpr{round(dc,3)} \mbox{ m}}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(c) The slope is Mild since $d_N>d_c$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(d) At a critical slope $d_N=d_c$
+
+$$S_F=\frac{n^2Q^2}{A^2R_h^{4/3}} = \frac{(nQ)^2}{d_c^4(\frac{\sqrt{2}}{4})^{4/3}}$$
+
+$$S_{0_c} = \frac{(nQ)^2}{(d_c^16/64)^{1/3}}$$
+
+$$\boxed{S_{0_c} = \Sexpr{round(S0c,5)}}$$
 
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 4}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<echo=F,results=hide>>=
+source('trapezoidal.R')
+@
+(a)
+
+(i) Using $\mbox{Fr}=1$
+$$\frac{Q}{A\sqrt{gd_c}} = 1$$
+Using the expression for A from the notes and rearranging slightly, 
+$$\frac{Q}{\sqrt{g}} = B_0d_c^{3/2}+sd_c$$
+And for $d_N$ (which is given in the notes)
+$$
+\frac{[d_N(B_0+sd_N)]^{5/3}}{\left[B_0+2d_N\sqrt{s^2+1}\right]} = \frac{nQ}{S_0^{1/2}}
+$$
+Computed values (using a root finder):
+
+$$\boxed{d_N=\Sexpr{round(dn,2)} \mbox{ m}}$$
+$$\boxed{d_c=\Sexpr{round(dc,2)}\mbox{ m}}$$ 
+
+(ii)
+\begin{figure}[!ht]
+\centering
+<<trap, fig=T, tikz=T, height=4>>=
+plot(x/1000,d,type='l',xlab='Distance Upstream [km]',
+    ylab='Depth [m]',ylim=c(0,10),xlim=range(x/1000))
+
+@
+\caption{Computed (upstream) depth.}
+\end{figure}
+
+\newpage
+(iii)
+\begin{figure}[!ht]
+\centering
+<<slope-trap, fig=T, tikz=T, height=4>>=
+plot(x/1000,d-S0*x,type='l',xlab='Distance Upstream [km]',
+    ylab='Depth [m]',ylim=c(0,10),xlim=c(-14,0))
+lines(x/1000,-S0*x+dn,lty=2)
+lines(x/1000,-S0*x+dc,lty=3)
+lines(x/1000,-S0*x,lwd=3)
+xm <- min(x)
+text(xm/1000,c(dn,dc,0)-S0*xm,c("$d_N$","$d_c$","Bed"),pos=2)
+@
+\caption{Computed (upstream) water surface profile (solid thin line) with the bed, the critical depth and the normal depth (labeled).}
+\end{figure}
+
+(vi)
+The distance required to come within 1\% of the normal depth is \Sexpr{round(min(x),2)} m.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<echo=F,results=hide>>=
+source('rectangular.R')
+@
+(b)
+
+(i) Using $\mbox{Fr}=1$
+$$\frac{Q}{A\sqrt{gd_c}} = 1$$
+$$\frac{Q}{B\sqrt{gd_c^3}} = 1$$
+$$d_c=\left[\frac{1}{g}\left(\frac{Q}{B}\right)\right]^{1/3}$$
+For normal depth using $P=2d_N+B$ and $A=d_NB$ and Equation 11 from the notes and rearranging gives
+$$\frac{(d_NB)^{5/3}}{(2d_N+B)^{2/3}} = \frac{nQ}{S_0^{1/2}}$$
+Computed values ($d_N$ using a root finder):
+$$\boxed{d_N=\Sexpr{round(dn,2)} \mbox{ m}}$$
+$$\boxed{d_c=\Sexpr{round(dc,2)} \mbox{ m}}$$
+
+(ii)
+
+\begin{figure}[!ht]
+\centering
+<<rect, fig=T, tikz=T, height=3.5>>=
+plot(x,d,type='l',xlab='Distance Upstream [m]',
+    ylab='Depth [m]',ylim=c(0,2))
+@
+\caption{Computed (downstream) depth.}
+\end{figure}
+
+
+(iii)
+
+\begin{figure}[!ht]
+\centering
+<<slope-rect, fig=T, tikz=T, height=3.5>>=
+plot(x,d-S0*x,type='l',xlab='Distance Downstream [m]',
+    ylab='Depth [m]',ylim=range(-3.5,2),xlim=c(-20,max(x)))
+lines(x,-S0*x+dn,lty=2)
+lines(x,-S0*x+dc,lty=3)
+lines(x,-S0*x,lwd=3)
+xm <- min(x)
+text(xm,c(dn,dc,0)-S0*xm,c("$d_N$","$d_c$","Bed"),pos=c(1,3,1))
+@
+\caption{Computed (downstream) water surface profile (solid thin line) with the bed, the critical depth and the normal depth (labeled).}
+\end{figure}
+
+(vi)
+The distance required to come within 1\% of the normal depth is \Sexpr{round(max(x),2)} m.
+
+\clearpage
 \section*{Code}
 
+\subsection*{Problem 2d}
 <<code1, results=tex>>=
 pygmentize('jump.R')
+@
+
+\subsection*{Problem 3}
+<<code2, results=tex>>=
+pygmentize('triangular.R')
+@
+
+\subsection*{Problem 4a}
+<<code3, results=tex>>=
+pygmentize('trapezoidal.R')
+@
+
+\subsection*{Problem 4b}
+<<code4, results=tex>>=
+pygmentize('trapezoidal.R')
 @
 
 
