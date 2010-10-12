@@ -1,5 +1,5 @@
 % !TEX TS-program = Sweave
-\documentclass[12pt,twoside]{article}
+\documentclass[11pt,twoside]{article}
 
 %%------------font choices
 \usepackage[sc]{mathpazo}

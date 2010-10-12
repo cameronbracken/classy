@@ -38,5 +38,5 @@ for(i in 2:length(d)){
 
     
 }
-x <- x[1:i] # put in km
+x <- x[1:i] 
 d <- d[1:i]

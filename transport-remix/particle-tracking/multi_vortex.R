@@ -5,7 +5,7 @@
 name <- 'multi_vortex'
 nd <- 2        # dimensions
 np <- 10*8    # particles
-nv <- 8        # vortexes
+nv <- 6        # vortexes
 nt <- 300      # timesteps
 nc <- 2        # number of constituents
 nb <- 100
@@ -21,7 +21,7 @@ ntrack <- 6
 nadd <- 3500 # max number of points to add in a single iteration
 reaction <- FALSE
 movie <- TRUE
-imgtype <- 'pdf'
+imgtype <- 'jpg '
 imgdir <- 'img'
 
 D <- c(0.00,0.00)  #c(0.001,0.001) Diffusion coefficient
