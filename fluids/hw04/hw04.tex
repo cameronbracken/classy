@@ -1,6 +1,3 @@
-% !TEX TS-program = pgfSweave
-
-\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,20 +8,6 @@
 \usepackage[sc]{mathpazo}
 \linespread{1.05}         % Palatino needs more leading (space between lines)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Verbatim
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\usepackage{fancyvrb}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  PGF/TikZ
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{tikz}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -32,81 +15,9 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[margin=1in]{geometry} %changes margins
-\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+%\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
 \usepackage{multicol}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Section Styles
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{sectsty}
-	%Put period after section number
-\makeatletter 
-\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
-{\csname the#1\endcsname\quad}% default 
-{\csname #1@cntformat\endcsname}% individual control 
-} 
-\def\section@cntformat{\thesection.\quad} 
-\def\subsection@cntformat{\thesubsection.\quad} 
-\makeatother
-\sectionfont{\bf\large\raggedright}
-\subsectionfont{\bf\normalsize\raggedright}
-\subsubsectionfont{\bf}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Graphics
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{graphicx} 
-\usepackage{subfigure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Mathematics
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{amsmath,amssymb,amsthm}
-%\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
-\newcommand{\p}{\partial}
-
-% roman numerals
-\makeatletter
-\newcommand{\rmnum}[1]{\romannumeral #1}
-\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
-\makeatother
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Tables
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{booktabs}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Misc
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
-\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Bibliography
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{natbib}   
-%\setcitestyle{square,aysep={},yysep={;}}
-\bibliographystyle{agufull04}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  Captions
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -125,11 +36,38 @@
 \fancyhead[CO]{\small Problem Set 4}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{cancel}
+%\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+
+% roman numerals
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\renewcommand{\d}{\partial}
+%\newcommand{\vect}[1]{\underbar{#1}}
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\grad}{\nabla}
+\newcommand{\tensor}[1]{\underline{\underline{#1}}}
+\newcommand{\cross}{\times}
+\newcommand{\curl}{\mbox{curl}}
+\newcommand{\gradf}{\mbox{grad}}
+\newcommand{\divf}{\mbox{div}}
+\newcommand{\inline}[1]{\mbox{$#1$}}
+
+
 \begin{document}
 
 
 \thispagestyle{empty}
-\textbf{Cameron Bracken}\\
+\noindent\textbf{Cameron Bracken}\\
 CVEN 5313, Fall 2010\\
 Problem Set 4
 
@@ -144,8 +82,251 @@ Problem Set 4
 \item 
 \begin{enumerate}
 
-\item 
+\item $ \vect{a} \cdot \nabla \vect{a} = a_{i}\d _{j}a_{i} $
+\item $ (\vect{a}\cdot\nabla)\vect{a} = a_{i}\d _{j}a_{i} $
+\item $ \vect{a}\grad\vect{a} = a_{j}\d_{j}a_{i} $
+\item $ \tensor{A}:\tensor{A} = A_{ij}A_{ji} $
+\item $ \tensor{A}:\tensor{A}^{T} = A_{ij}A_{ij} $
+\item $ \curl(\gradf(\divf(\vect{a}\cross\vect{b}))) = \epsilon_{nml}\d_{m}\d_{l}\d_{i}(\epsilon_{ijk}a_{j}b_{k}) $
 \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\tensor{\smash[b]{Q}}:\tensor{R} = \tensor{R}:\tensor{\smash[b]{Q}} = 0$ if $\tensor{\smash[b]{Q}}$ is symmetric and $\tensor{R}$ is antisymmetric. 
+
+\textit{Proof} Wrting the tensors in index notation, $Q_{ij}R_{ji} = R_{ij}Q_{ji}$ by commuting the terms and renaming the dummy indicies so $\tensor{\smash[b]{Q}}:\tensor{R} = \tensor{R}:\tensor{\smash[b]{Q}}$.  By definition of symmetry and antisymmetry, $Q_{ij} = Q_{ji}$ and $R_{ij} = -R_{ji}$, so $Q_{ij}R_{ji} = - Q_{ji}R_{ij} = - Q_{ij}R_{ji} = 0. \qed$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $A_{ijkl}B_{jklm}=0$ if $\tensor{A}$ is symmetric with respect to indicies $j$ and $k$ and $\tensor{B}$ is antisymemtric with respect to $j$ and $k$.
+
+\textit{Proof} By the definitions of symetry and antisymmetry, $A_{ijkl}= A_{ikjl}$ and $B_{jklm}=-B_{kjlm}$, so $A_{ijkl}B_{jklm} = - A_{ikjl}B_{kjlm} = -A_{ijkl}B_{jklm} = 0. \qed$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item If $\nabla\rho=0 $ then $ \nabla\cdot(\rho\vect{u}\vect{u}) = \rho\vect{u}\cdot\nabla\vect{u} + \rho\vect{u}(\nabla\cdot\vect{u})$.
+
+\textit{Proof} In index notation $\nabla\rho=\d_i\rho = 0$. In index notation, apply the product rule twice
+
+\begin{align*}
+\d_i(\rho u_iu_j) &= \rho u_i\d_i u_j +u_j\d_i(\rho u_i)\\
+&= \rho u_i\d_i u_j +u_j\d_i(\rho u_i)\\
+&= \rho u_i\d_i u_j +u_j\rho\d_i u_i + u_ju_i\cancelto{0}{\d_i\rho}&&\\
+& = \rho\vect{u}\cdot\nabla\vect{u} + \rho\vect{u}(\nabla\cdot\vect{u})&&\qed
+\end{align*}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 5
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $a_i\d_ja_i=\grad(\frac{1}{2}\vect{a}\cdot\vect{a})$. 
+
+\textit{Proof} 
+\begin{align*}
+a_i\d_ja_i &= \inline{\frac{1}{2}}\left(a_i\d_ja_i + a_i\d_ja_i\right) && \\
+           &= \inline{\frac{1}{2}}\d_j(a_ia_i) &&\text{Reverse product rule} \\
+           &= \d_j(\inline{\frac{1}{2}}a_ia_i) &&\\
+           &= \grad\left(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a}\right) &&\qed
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 6
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\curl(\gradf(\phi)) = 0$. 
+
+\textit{Proof} 
+\begin{align*}
+\curl(\gradf(\phi)) & = \grad\cross(\grad\phi)\\
+                    & = \epsilon_{ijk}\d_j(\d_k\phi)\\
+                    & = - \epsilon_{ikj}\d_j\d_k\phi\\
+                    & = - \epsilon_{ijk}\d_k\d_j\phi\\
+                    & = 0 && \qed
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 7
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\vect{a}\cross(\vect{b}\cross\vect{c}) = (\vect{a}\cdot\vect{c})\vect{b} - (\vect{a}\cdot\vect{b})\vect{c}$
+
+\textit{Proof}
+\begin{align*}
+\vect{a}\cross(\vect{b}\cross\vect{c}) & = \epsilon_{ijk}a_j(\epsilon_{klm}b_lc_m)\\
+                                       & = \epsilon_{ijk}\epsilon_{klm}a_jb_lc_m\\
+                                       & = (\delta_{il}\delta_{jm}-\delta_{im}\delta_{jl})a_jb_lc_m\\
+                                       & = \delta_{il}\delta_{jm}a_jb_lc_m-\delta_{im}\delta_{jl}a_jb_lc_m 
+                                         && \text{Enforce $l=i$, $j=m$ on the first term}\\
+                                       & && \text{and $l=j$ and $m=i$ on the second}\\
+                                       & = a_jb_ic_j-a_jb_jc_i \\
+                                       & = a_ic_ib_j-a_ib_ic_j \\
+                                       & = (\vect{a}\cdot\vect{c})\vect{b} - (\vect{a}\cdot\vect{b})\vect{c} && \qed
+\end{align*}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 8
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $(\vect{a}\cross\vect{b})\cdot(\vect{c}\cross\vect{d}) = (\vect{a}\cdot\vect{c})(\vect{b}\cdot{\vect{c}})-(\vect{a}\cdot\vect{d})(\vect{b}\cdot{\vect{c}})$
+
+\textit{Proof} 
+\begin{align*}
+(\vect{a}\cross\vect{b})\cdot(\vect{c}\cross\vect{d}) 
+            & = (\epsilon_{ijk}a_jb_k)(\epsilon_{ilm}c_ld_m)\\
+            & = (\delta_{il}\delta_{jm}-\delta_{im}\delta_{jl})a_jb_kc_ld_m\\  
+            & = \delta_{jl}\delta_{km}a_jb_kc_ld_m-\delta_{jm}\delta_{kl}a_jb_kc_ld_m
+              && \text{Enforce $l=j$, $k=m$ on the first term}\\
+            & && \text{and $l=k$ and $m=j$ on the second}\\
+            & = a_jb_kc_jd_k-a_jb_kc_kd_j\\
+            & = a_jc_jb_kd_k-a_jd_jb_kc_k\\
+            & = (a_jc_j)(b_kd_k)-(a_jd_j)(b_kc_k)\\
+            & = (\vect{a}\cdot\vect{c})(\vect{b}\cdot{\vect{c}})-(\vect{a}\cdot\vect{d})(\vect{b}\cdot{\vect{c}}) && \qed
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 9
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad\cdot(\grad\cross\vect{a})=0$
+
+\textit{Proof}
+\begin{align*}
+\grad\cdot(\grad\cross\vect{a}) & = \d_i(\epsilon_{ijk}\d_ja_k)\\
+                                & =  \epsilon_{ijk}\d_i\d_ja_k\\
+                                & = -\epsilon_{jik}\d_i\d_ja_k\\
+                                & = -\epsilon_{ijk}\d_j\d_ia_k && \text{Rename Indicies}\\
+                                & = -\epsilon_{ijk}\d_i\d_ja_k && \text{Reverse order of derivatives}\\
+                                & = -\d_i(\epsilon_{ijk}\d_ja_k)\\
+                                & = 0 && \qed\\
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 10
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad\cdot(\vect{a}\cross\vect{a})=\vect{b}\cdot(\grad\cross\vect{a})-\vect{a}\cdot(\grad\cross\vect{b})$
+
+\textit{Proof} 
+\begin{align*}
+\grad\cdot(\grad\cross\vect{a}) & = \d_i(\epsilon_{ijk}a_jb_k)\\
+                                & = \epsilon_{ijk}\d_i\d_ja_k\\
+                                & = \epsilon_{ijk}(a_j\d_ib_k+b_k\d_ia_j) && \text{Product rule}\\
+                                & = a_j\epsilon_{ijk}\d_ib_k+b_k\epsilon_{ijk}\d_ia_j\\
+                                & = -a_j\epsilon_{jik}\d_ib_k+b_k\epsilon_{kij}\d_ia_j\\
+                                & = b_k\epsilon_{kij}\d_ia_j-a_j\epsilon_{jik}\d_ib_k\\
+                                & = b_i\epsilon_{ijk}\d_ja_k-a_i\epsilon_{ijk}\d_jb_k &&\text{Renaming indicies}\\
+                                & = \vect{b}\cdot(\grad\cross\vect{a})-\vect{a}\cdot(\grad\cross\vect{b})&& \qed
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 11
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad\cross(\vect{a}\cross\vect{b}) = \vect{a}(\grad\cdot\vect{b})+\vect{b}\cdot\grad\vect{a}-\vect{a}\grad\vect{b}-\vect{b}(\grad\cdot\vect{a})$
+
+\textit{Proof}
+\begin{align*}
+\grad\cross(\vect{a}\cross\vect{b}) & = \epsilon_{ijk}\d_j(\epsilon_{klm}a_lb_m)\\
+                                    & = \epsilon_{ijk}\epsilon_{klm}\d_j(a_lb_m)\\
+                                    & = (\delta_{il}\delta_{jm}-\delta_{im}\delta_{jl})(a_l\d_jb_m+b_m\d_ja_l)\\
+                                    & = \delta_{il}\delta_{jm}a_l\d_jb_m-\delta_{im}\delta_{jl}a_l\d_jb_m+ \delta_{il}\delta_{jm}b_m\d_ja_l - \delta_{im}\delta_{jl}b_m\d_ja_l\\
+                                    & = a_i\d_jb_j-a_j\d_jb_i+b_j\d_ja_i-b_i\d_ja_j &&\text{Enforce right to left}\\
+                                    & = \vect{a}(\grad\cdot\vect{b})+\vect{b}\cdot\grad\vect{a}-\vect{a}\grad\vect{b}-\vect{b}(\grad\cdot\vect{a}) && \qed
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 12
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad[(\vect{u}\cross\vect{v})\cross\vect{w}] = \vect{w}\cdot[(\vect{v}\cdot\grad)\vect{u}-(\vect{u}\cdot\grad)\vect{v}]$ \\
+given \\ 
+$\divf(\vect{u})=\grad\cdot\vect{u}=\d_iu_i=0$\\ 
+$\divf(\vect{v})=\grad\cdot\vect{v}=\d_iv_i=0$\\ 
+$\curl(\vect{w})=\grad\cross\vect{w}=\epsilon_{ijk}\d_jw_k=0$
+
+\textit{Proof}
+\begin{align*}
+\grad[(\vect{u}\cross\vect{v})\cross\vect{w}] 
+            & = && \d_l[(\epsilon_{ijk}u_jv_k)\epsilon_{lim}w_m]\\
+            & = && \epsilon_{ijk}\epsilon_{lim}\d_l(u_jv_kw_m)\\
+            & = && \epsilon_{ijk}\epsilon_{lim}[u_j\d_l(v_kw_m)+v_kw_m\d_lu_j]\\
+            & = && \epsilon_{ijk}\epsilon_{lim}(u_jv_k\cancelto{0}{\d_lw_m}+u_jw_m\d_lv_k+v_kw_m\d_lu_j)\\
+            & = &&  (\delta_{jm}\delta_{kl}-\delta_{jl}\delta_{km})(u_jw_m\d_lv_k+v_kw_m\d_lu_j)\\
+            & = && \delta_{jm}\delta_{kl}u_jw_m\d_lv_k-\delta_{jl}\delta_{km}u_jw_m\d_lv_k\\
+            &   &&+ \delta_{jm}\delta_{kl}v_kw_m\d_lu_j-\delta_{jl}\delta_{km}v_kw_m\d_lu_j 
+                && \text{Enforce right to left}\\
+            & = && u_jw_j\cancelto{0}{\d_kv_k}-u_jw_k\d_jv_k+v_kw_j\d_ku_j-v_kw_k\cancelto{0}{\d_ju_j}\\
+            & = && w_jv_k\d_ku_j-u_kw_j\d_kv_j && \text{Rename dummy indicies}\\
+            & = && w_j[v_k\d_ku_j-u_k\d_kv_j]\\
+            & = && \vect{w}\cdot[(\vect{v}\cdot\grad)\vect{u}-(\vect{u}\cdot\grad)\vect{v}] && \qed
+\end{align*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 13
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] = \grad\cross(\vect{a}\cdot\grad\vect{a})$
+
+\textit{Proof}
+\begin{align*}
+\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] 
+   & = \epsilon_{npi}\d_p[\d_i(\inline{\frac{1}{2}}a_ja_j)-\epsilon_{ijk}a_j(\epsilon_{klm}\d_la_m)]\\
+   & = \epsilon_{npi}\d_p[a_j\d_ia_j-\epsilon_{ijk}\epsilon_{lmk}a_j\d_la_m] && \text{By problem 5}\\
+   & = \epsilon_{npi}\d_p[a_j\d_ia_j- (\delta_{il}\delta_{jm}-\delta_{im}\delta_{jl})a_j\d_la_m]\\
+   & = \epsilon_{npi}\d_p[a_j\d_ia_j - \delta_{il}\delta_{jm}a_j\d_la_m+\delta_{im}\delta_{jl}a_j\d_la_m] && \text{Enforce right to left}\\
+   & = \epsilon_{npi}\d_p[a_j\d_ia_j - a_j\d_ia_j + a_j\d_ja_i] \\
+   & = \epsilon_{npi}\d_p(a_j\d_ja_i) \\
+   & = \grad\cross(\vect{a}\cdot\grad\vect{a}) && \qed\\
+\end{align*}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 14
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item $\grad\cross(\vect{a}\cdot\grad\vect{a}) = \vect{a}\cdot(\grad\cross\vect{a})+(\grad\cdot\vect{a})(\grad\cross\vect{a})- (\grad\cross\vect{a})\cdot(\grad\vect{a})$\\
+given \\
+$\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] = \grad\cross(\vect{a}\cdot\grad\vect{a})$
+
+\textit{Proof}
+\begin{align*}
+\grad\cross(\vect{a}\cdot\grad\vect{a}) 
+       & = \grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] \\
+       & = \cancelto{0}{\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})]}-\grad\cross[\vect{a}\cross(\grad\cross\grad\vect{a})] && \text{By problem 6}\\
+       & = - \grad\cross[\vect{a}\cross(\grad\cross\grad\vect{a})]\\
+       & = \epsilon_{pnl}\d_n(\epsilon_{lmi}a_m \epsilon_{ijk}\d_ja_k) \\
+\end{align*}
+
 
 \end{enumerate}
 
