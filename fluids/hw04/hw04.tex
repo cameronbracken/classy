@@ -142,6 +142,7 @@ a_i\d_ja_i &= \inline{\frac{1}{2}}\left(a_i\d_ja_i + a_i\d_ja_i\right) && \\
            &= \grad\left(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a}\right) &&\qed
 \end{align*}
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 6
@@ -201,7 +202,7 @@ a_i\d_ja_i &= \inline{\frac{1}{2}}\left(a_i\d_ja_i + a_i\d_ja_i\right) && \\
             & = (\vect{a}\cdot\vect{c})(\vect{b}\cdot{\vect{c}})-(\vect{a}\cdot\vect{d})(\vect{b}\cdot{\vect{c}}) && \qed
 \end{align*}
 
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 9
@@ -258,7 +259,7 @@ a_i\d_ja_i &= \inline{\frac{1}{2}}\left(a_i\d_ja_i + a_i\d_ja_i\right) && \\
                                     & = \vect{a}(\grad\cdot\vect{b})+\vect{b}\cdot\grad\vect{a}-\vect{a}\grad\vect{b}-\vect{b}(\grad\cdot\vect{a}) && \qed
 \end{align*}
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 12
@@ -308,13 +309,13 @@ $\curl(\vect{w})=\grad\cross\vect{w}=\epsilon_{ijk}\d_jw_k=0$
 \end{align*}
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 14
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\item $\grad\cross(\vect{a}\cdot\grad\vect{a}) = \vect{a}\cdot(\grad\cross\vect{a})+(\grad\cdot\vect{a})(\grad\cross\vect{a})- (\grad\cross\vect{a})\cdot(\grad\vect{a})$\\
+\item $\grad\cross(\vect{a}\cdot\grad\vect{a}) = \vect{a}\cdot\grad(\grad\cross\vect{a})+(\grad\cdot\vect{a})(\grad\cross\vect{a})- (\grad\cross\vect{a})\cdot(\grad\vect{a})$\\
 given \\
 $\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] = \grad\cross(\vect{a}\cdot\grad\vect{a})$
 
@@ -324,7 +325,13 @@ $\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\gr
        & = \grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})-\vect{a}\cross(\grad\cross\grad\vect{a})] \\
        & = \cancelto{0}{\grad\cross[\grad(\inline{\frac{1}{2}}\vect{a}\cdot\vect{a})]}-\grad\cross[\vect{a}\cross(\grad\cross\grad\vect{a})] && \text{By problem 6}\\
        & = - \grad\cross[\vect{a}\cross(\grad\cross\grad\vect{a})]\\
-       & = \epsilon_{pnl}\d_n(\epsilon_{lmi}a_m \epsilon_{ijk}\d_ja_k) \\
+       & = -\epsilon_{pnl}\d_n(\epsilon_{lmi}a_m B_i) && \text{Where $B_i=\epsilon_{ijk}\d_ja_k$}\\
+       & = (\epsilon_{pnl}\epsilon_{lim})(a_m B_i)\\
+       & = (\delta_{pi}\delta_{nm}-\delta_{pm}\delta_{ni})(a_m\d_nB_i+B_i\d_na_m)\\
+       & = \delta_{pi}\delta_{nm}a_m\d_nB_i-\delta_{pm}\delta_{ni}a_m\d_nB_i + \delta_{pi}\delta_{nm}B_i\d_na_m-\delta_{pm}\delta_{ni}B_i\d_na_m\\
+       & = a_n\d_n\epsilon_{pjk}\d_ja_k - \cancelto{0, \epsilon_{njk} \mbox{ antisymmetric and }\d_n\d_ja_k \mbox{symmetric w.r.t $n$ and $j$}}{a_p\d_n\epsilon_{njk}\d_ja_k} + \epsilon_{pjk}\d_ja_k\d_na_n - \epsilon_{njk}\d_ja_k\d_na_p\\
+       & = a_n\d_n\epsilon_{pjk}\d_ja_k + \d_na_n\epsilon_{pjk}\d_ja_k - \epsilon_{njk}\d_ja_k\d_na_p\\
+       & = \vect{a}\cdot\grad(\grad\cross\vect{a})+(\grad\cdot\vect{a})(\grad\cross\vect{a})- (\grad\cross\vect{a})\cdot(\grad\vect{a}) \qed
 \end{align*}
 
 
