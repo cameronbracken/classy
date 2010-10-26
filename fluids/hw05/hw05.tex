@@ -1,0 +1,164 @@
+\documentclass[11pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1in]{geometry} %changes margins
+%\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small CVEN 5313 FALL 2010}
+\fancyhead[CO]{\small Problem Set 5}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{cancel}
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+
+% roman numerals
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\renewcommand{\d}{\partial}
+%\newcommand{\vect}[1]{\underbar{#1}}
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\grad}{\nabla}
+\newcommand{\tensor}[1]{\underline{\underline{#1}}}
+\newcommand{\cross}{\times}
+\newcommand{\curl}{\mbox{curl}}
+\newcommand{\gradf}{\mbox{grad}}
+\newcommand{\divf}{\mbox{div}}
+\newcommand{\inline}[1]{\mbox{$#1$}}
+
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+\begin{document}
+
+
+\thispagestyle{empty}
+\noindent\textbf{Cameron Bracken}\\
+CVEN 5313, Fall 2010\\
+Problem Set 5
+
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item In time $dt$ a differential element $dS$ expands or contracts at a rate $\vect{u}$ in the direction $\hat{n}$ a distance a distance $d\ell$. That is 
+
+$$d\ell=\vect{u}\cdot\hat{n}\,dS\,dt.$$
+
+Integrating (summing up) all the differential elements on the surface 
+
+$$\iint_{S(t)}d\ell=\iint_{S(t)}\vect{u}\cdot\hat{n}\,dS\,dt$$
+$$\frac{dV(t)}{dt}=\iint_{S(t)}\vect{u}\cdot\hat{n}\,dS$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+$$\frac{dV(t)}{dt} = \iiint_{\mathcal{R}(t)}\grad\cdot\vect{u}\,dV$$
+From part (a)
+$$\frac{dV(t)}{dt} = \iint_{S(t)}\vect{u}\cdot\hat{n}\,dS = \iint_{S(t)}\vect{u}\cdot\,d\vect{S}$$
+Where $\hat{n}\,dS=d\vect{S}$. So by analogy to the divergence theorem ($\vect{u}=\tensor{T}$)
+$$\frac{dV(t)}{dt} = \iiint_{\mathcal{R}(t)}\grad\cdot\vect{u}\,dV$$
+
+\item $\grad\cdot\vect{u}$ can be interpreted as the expansion or contraction of a fluid volume due to the velocity field. 
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item 
+Consider a function $f(x_1,t)$ defined over a region $\mathcal{R}$.  The three dimensional Liebnitz formula is: 
+\begin{equation}
+\frac{d}{dt}\iiint_{R(t)}f(x_1,t)dV = \iiint_V \p{f}{t} dV + \iint_A n_k w_k f\: dA\label{lieb}
+\end{equation}
+Exmaining the first term on the left hand side, 
+\begin{align}
+\frac{d}{dt}\iiint_{R(t)}f(x_1,t)dV &= \frac{d}{dt}\iiint_{R(t)}f(x_1,t)dx_1dx_2dx_3\nonumber\\
+                                    &= \frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1\iint_Adx_2dx_3\nonumber\\
+                                    &= A\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1\label{lhs}
+\end{align}
+
+Now examine the first term on the right hand side of \autoref{lieb}
+\begin{align}
+\iiint_V \p{f}{t} dV &= \iiint_V \p{f}{t} dx_1dx_2dx_3\nonumber\\
+&=A\int_a^b \p{f}{t} dx_1\label{rhs1}
+\end{align}
+
+Next, examine the second term on the right hand side of \autoref{lieb}. Use a rectangular region with face areas $A_A=A_B=A$ (in the $x_2-x_3$ plane). Since the other faces have normal vectors orthoginal to the $x_1$ direction we dont need to consider them because $f$ is only a function of $x_1$ so 
+
+\begin{align}
+\iint_A n_k w_k f\: dA &= \iint_{A_A} n_k w_k f\: dx_2\,dx_3 + \iint_{A_B} n_k w_k f\: dx_2\,dx_3 \nonumber\\
+                       &= \iint_{A_A} (-1) \frac{da}{dt} f (x_1,t)\: dx_2\,dx_3 + \iint_{A_B} (1) \frac{db}{dt} f (x_1,t)\: dx_2\,dx_3 \nonumber\\
+                       &=  - \frac{da}{dt} f (a,t)\iint_{A_A}\: dx_2\,dx_3 + \frac{db}{dt} f (b,t)\iint_{A_B}\: dx_2\,dx_3 \nonumber\\
+                       & = \frac{db}{dt} f (b,t) A - \frac{da}{dt} f (a,t)A\label{rhs2}
+\end{align}
+
+Finally combine Equations \ref{lhs}, \ref{rhs1} and \ref{rhs2}
+
+$$A\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = A\int_a^b \p{f}{t} dx_1 + \frac{db}{dt} f (b,t) A - \frac{da}{dt} f (a,t)A$$
+
+And divide by $A$
+
+$$\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = \int_a^b \p{f}{t} dx_1 + \frac{db}{dt} f (b,t)  - \frac{da}{dt} f (a,t).$$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{enumerate}
+
+
+
+
+
+
+\end{document}
