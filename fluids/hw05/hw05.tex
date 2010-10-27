@@ -1,4 +1,9 @@
+% !TEX TS-program = pdflatexmk
+\RequirePackage{atbegshi}
 \documentclass[11pt,twoside]{article}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,arrows}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -41,7 +46,7 @@
 %  Mathematics
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,esint}
 \usepackage{cancel}
 \newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
 
@@ -61,6 +66,7 @@
 \newcommand{\gradf}{\mbox{grad}}
 \newcommand{\divf}{\mbox{div}}
 \newcommand{\inline}[1]{\mbox{$#1$}}
+\newcommand{\lint}{\ointctrclockwise}
 
 \usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
 \hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
@@ -85,13 +91,13 @@ Problem Set 5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\item In time $dt$ a differential element $dS$ expands or contracts at a rate $\vect{u}$ in the direction $\hat{n}$ a distance a distance $d\ell$. That is 
+\item In time $dt$ a differential element $dS$ expands or contracts at a rate $\vect{u}$ in the direction $\hat{n}$. So the change in volume of the element is
 
-$$d\ell=\vect{u}\cdot\hat{n}\,dS\,dt.$$
+$$dV_{element}=\vect{u}\cdot\hat{n}\,dS\,dt.$$
 
 Integrating (summing up) all the differential elements on the surface 
 
-$$\iint_{S(t)}d\ell=\iint_{S(t)}\vect{u}\cdot\hat{n}\,dS\,dt$$
+$$\iint_{S(t)}dV_{element}=\iint_{S(t)}\vect{u}\cdot\hat{n}\,dS\,dt$$
 $$\frac{dV(t)}{dt}=\iint_{S(t)}\vect{u}\cdot\hat{n}\,dS$$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,8 +117,10 @@ $$\frac{dV(t)}{dt} = \iiint_{\mathcal{R}(t)}\grad\cdot\vect{u}\,dV$$
 % Problem 2
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \item 
+\begin{enumerate}
+\item[]
+
 Consider a function $f(x_1,t)$ defined over a region $\mathcal{R}$.  The three dimensional Liebnitz formula is: 
 \begin{equation}
 \frac{d}{dt}\iiint_{R(t)}f(x_1,t)dV = \iiint_V \p{f}{t} dV + \iint_A n_k w_k f\: dA\label{lieb}
@@ -130,11 +138,14 @@ Now examine the first term on the right hand side of \autoref{lieb}
 &=A\int_a^b \p{f}{t} dx_1\label{rhs1}
 \end{align}
 
-Next, examine the second term on the right hand side of \autoref{lieb}. Use a rectangular region with face areas $A_A=A_B=A$ (in the $x_2-x_3$ plane). Since the other faces have normal vectors orthoginal to the $x_1$ direction we dont need to consider them because $f$ is only a function of $x_1$ so 
+Next, examine the second term on the right hand side of \autoref{lieb}. Use a rectangular region with face areas $A_A=A_B=A$ (in the $x_2-x_3$ plane). Since the other faces have normal vectors orthoginal to the $x_1$ direction we don't need to consider them because $f$ is only a function of $x_1$ so 
+
+$$
+\iint_A n_k w_k f\: dA = \iint_{A_A} n_k w_k f\: dx_2\,dx_3 + \iint_{A_B} n_k w_k f\: dx_2\,dx_3 $$
+For face $A$ $n_k$ points in the negative $x_1$ direction and $w_k$ is the rate of chage of the position of the face $da/dt$. For face $B$ $n_k$ points in the positive $x_1$ direction and $w_k$ is the rate of chage of the position of the face $db/dt$ so
 
 \begin{align}
-\iint_A n_k w_k f\: dA &= \iint_{A_A} n_k w_k f\: dx_2\,dx_3 + \iint_{A_B} n_k w_k f\: dx_2\,dx_3 \nonumber\\
-                       &= \iint_{A_A} (-1) \frac{da}{dt} f (x_1,t)\: dx_2\,dx_3 + \iint_{A_B} (1) \frac{db}{dt} f (x_1,t)\: dx_2\,dx_3 \nonumber\\
+&= \iint_{A_A} (-1) \frac{da}{dt} f (x_1,t)\: dx_2\,dx_3 + \iint_{A_B} (1) \frac{db}{dt} f (x_1,t)\: dx_2\,dx_3 \nonumber\\
                        &=  - \frac{da}{dt} f (a,t)\iint_{A_A}\: dx_2\,dx_3 + \frac{db}{dt} f (b,t)\iint_{A_B}\: dx_2\,dx_3 \nonumber\\
                        & = \frac{db}{dt} f (b,t) A - \frac{da}{dt} f (a,t)A\label{rhs2}
 \end{align}
@@ -146,13 +157,178 @@ $$A\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = A\int_a^b \p{f}{t} dx_1 + \frac{
 And divide by $A$
 
 $$\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = \int_a^b \p{f}{t} dx_1 + \frac{db}{dt} f (b,t)  - \frac{da}{dt} f (a,t).$$
-
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 3
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+\begin{enumerate}
+\item $$\iiint_{\mathcal{R}}\grad\cdot\vect{u}\,dV = \iiint_{\mathcal{R}}0\,dV = 0$$
+\input{flux.pgf}
+\item For an infinitesimal surface element $dS$ if $\grad\cdot\vect{u}=0$ then the velocity flux in $\vect{u}\cdot\vect{S}$ will equal the velocity flux out so the total flux (in - out) will be zero.
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+\begin{enumerate}
+\item
+$$\iint_A \hat{n}\cdot(\grad\cross\vect{u})\,dA = \iint_A\vect{\omega}\cdot\hat{n}\,dA$$
+\input{surface.pgf}
+
+\item If we slice the surface at an arbitratry location, we get two pieces $a$, $b$, with volumes $V_b$ and $V_b$ where $V_a+V_b=V$.  To find the total flux across the sliced faces, we need to integrate $\vect{omega}d\vect{A}$ for both faces $A_b$, $A_b$. 
+
+\begin{align*}
+\iint_A\vect{\omega}d\vect{A} &= \iint_{A_a}\vect{\omega}d\vect{A}_a + \iint_{A_b}\vect{\omega}d\vect{A}_b\\
+&=\lint_{C_a}\vect{u}\cdot d\vect{\ell}_{a} + \lint_{C_b}\vect{u}\cdot d\vect{\ell}_{b}
+\end{align*}
+By inspection the tangent vectors to both curves are equal and opposite, $d\vect{\ell}_{a} = -d\vect{\ell}_{b}$, and since $C_a$ and $C_b$ are the same curve 
+
+$$\lint_{C_a}\vect{u}\cdot d\vect{\ell}_{a} - \lint_{C_b}\vect{u}\cdot d\vect{\ell}_{a} = 0 $$
+
+So 
+
+$$\iint_A\vect{\omega}d\vect{A} = 0 .$$
+
+\item 
+$$\iint \grad\cdot\vect{u}d\vect{A} = \iiint_{\mathcal{R}}\grad\cdot(\grad\cdot\vect{u})dV = \iiint_{\mathcal{R}}0dV = 0$$
+
+Since $\grad\cdot(\grad\cdot\vect{u}) = \divf(\curl(\vect{u})) = 0$ from the previous problem set. 
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 5
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+$$\omega_3=\left[\p{u_2}{x_1}-\p{u_1}{x_2}\right]$$
+
+\textit{Proof}
+
+For a differential element Stokes' theorem says
+
+\begin{equation}
+\vect{\omega}\cdot d\vect{A}=\vect{u}\cdot d\vect{\ell}\label{stokes}
+\end{equation}
+
+Consider the differential element below where the velocity field $\vect{u}$ is specified as $(u_1,u_2)$ at point $A$
+
+%\begin{figure}[!h]
+\begin{center}
+
+\begin{tikzpicture}[scale=2]
+	\coordinate [label=below left:$A$] (A) at (1,1);
+	\coordinate [label=below right:$B$] (B) at (0,1); 
+	\coordinate [label=above right:$C$] (C) at (0,0);
+	\coordinate [label=above left:$D$] (D) at (1,0);
+	\draw (A) node[above right]{$(u_1,u_2)$}-- (B) -- node[left]{$dx_2$} (C) -- node[below]{$dx_1$} (D) -- cycle;
+
+	\draw [->](-.5,-.5) -- (0,-.5) node[right] {$x_1$};
+	\draw [->] (-.5,-.5) -- (-.5,0) node[above] {$x_2$};
+	\node[fill,inner sep=.5mm,circle] at (A) {};
+\end{tikzpicture}
+\end{center}
+%\end{figure}
+
+If the element exists in the $x_1-x_2$ plane then the left hand side of \autoref{stokes} simplifies to $w_3dx_1dx_2$. Let $\vect{u}_{A\rightarrow B}$ be the velocity field along the line $AB$ for each line segment. Break down the right hand side of \autoref{stokes} for each of the edges of the element
+
+\begin{equation}
+\vect{u}\cdot d\vect{\ell} = 
+\vect{u}_{A\rightarrow B}\cdot d\vect{\ell}_{A\rightarrow B} + 
+\vect{u}_{B\rightarrow C}\cdot d\vect{\ell}_{B\rightarrow C} +
+\vect{u}_{C\rightarrow D}\cdot d\vect{\ell}_{C\rightarrow D} +
+\vect{u}_{D\rightarrow A}\cdot d\vect{\ell}_{D\rightarrow A}.
+\label{line}
+\end{equation}
+
+The vector field along each of the segments can be written in terms of the specified point and the gradient (since the gradient is linear for a differential length).
+
+\begin{align*}
+\vect{u}_{A\rightarrow B} = (u_1, \bullet)\quad&\quad\vect{u}_{B\rightarrow C} = (\bullet, u_2-\p{u_2}{x_1}dx_1)\\
+\vect{u}_{C\rightarrow D} = (u_1-\p{u_1}{x_2}dx_2, \bullet) \quad&\quad\vect{u}_{D\rightarrow A} = (\bullet,u_2)
+\end{align*}
+
+Where $\bullet$ is an actual component of the velocity field that does not need to be considered because it is perpendicular to the tangent vector $d\vect{\ell}$ for its respective segment. The tangent vectors are
+
+\begin{align*}
+d\vect{\ell}_{A\rightarrow B} = (-dx_1, 0)\quad&\quad d\vect{\ell}_{B\rightarrow C} = (0, -dx_2)\\
+d\vect{\ell}_{C\rightarrow D} = (dx_1,0) \quad&\quad d\vect{\ell}_{D\rightarrow A} = (0,dx_2)
+\end{align*}
+
+Combining the terms in \autoref{line} and the left hand side of \autoref{stokes} gives
+
+$$\omega_3dx_1dx_2 = -u_1dx_1 - u_2dx_2 + \p{u_2}{x_1}dx_1dx_2 +  u_1dx_1-\p{u_1}{x_2}dx_2dx_1 + u_2dx_2.$$
+
+Canceling terms and dividing by $x_1x_2$ we end up with
+
+$$\omega_3 =  \left[\p{u_2}{x_1}-\p{u_1}{x_2}\right].\qed$$
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item	
+
+$$\omega_z=\frac{1}{r}\left[\p{}{r}(ru_\theta)\frac{u_r}{\theta}\right]$$
+
+\textit{Proof}
+
+The logic is the same as in part (a). Consider a differential element in the $r-\theta$ plane
+
+\input{Arc.pgf}
+
+In this case $dA=rdrd\theta$ so we can rewrite the left hand side of \autoref{stokes} as $\omega_zrdrd\theta$.  Here we specify the falue of the velocity field at center point of the element so 
+
+\begin{align*}
+\vect{u}_{A\rightarrow B} = \left(u_r-\p{u_r}{\theta}\frac{d\theta}{2}, \bullet\right)\quad&\quad\vect{u}_{B\rightarrow C} = \left(\bullet, u_\theta+\p{u_\theta}{r}\frac{dr}{2}\right)\\
+\vect{u}_{C\rightarrow D} = \left(u_r+\p{u_r}{\theta}\frac{d\theta}{2}, \bullet\right) \quad&\quad\vect{u}_{D\rightarrow A} = \left(\bullet,u_\theta-\p{u_\theta}{r}\frac{dr}{2}\right)
+\end{align*}
+
+and the tangent vectors are
+
+\begin{align*}
+d\vect{\ell}_{A\rightarrow B} = (dr, 0)\quad&\quad d\vect{\ell}_{B\rightarrow C} = (0, (r+dr/2)d\theta)\\
+d\vect{\ell}_{C\rightarrow D} = (-dr,0) \quad&\quad d\vect{\ell}_{D\rightarrow A} = (0,-(r-dr/2)d\theta)
+\end{align*}
+
+Combining the terms in \autoref{line} and multiplying out the terms 
+
+\begin{align*}
+\omega_zrdrd\theta &= 
+u_rdr-\p{u_r}{\theta}\frac{d\theta}{2}dr+
+ru_\theta d\theta+
+\p{u_\theta}{r}\frac{dr}{2}\frac{dr}{2}d\theta+
+r\p{u_\theta}{r}\frac{dr}{2}d\theta+
+u_\theta\frac{dr}{2}d\theta \\
+& - u_rdr
+-\p{u_r}{\theta}\frac{d\theta}{2}dr
+-ru_\theta d\theta
+-\p{u_\theta}{r}\frac{dr}{2}\frac{dr}{2} d\theta
++ r\p{u_\theta}{r}\frac{dr}{2}\p{u_r}{\theta}
++u_\theta\frac{dr}{2}d\theta \\
+&= -\p{u_r}{\theta}d\theta dr + rdrd\theta\p{u_\theta}{d} + u_\theta drd\theta\\
+\omega_z & = -\frac{1}{r}\p{u_r}{\theta} + \p{u_\theta}{d} + \frac{u_\theta}{r}\\
+         & = \frac{1}{r}\left[ r\p{u_\theta}{r} + u_\theta\p{r}{r} - \p{u_r}{\theta}\right]\\
+         & \mbox{By the reverse chain rule}\\
+\omega_z & = \frac{1}{r}\left[ \p{}{r}(r u_\theta) - \p{u_r}{\theta}\right]\qed
+\end{align*}
+
+\end{enumerate}
+
+
 
 \end{enumerate}
 
