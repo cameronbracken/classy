@@ -1,0 +1,617 @@
+% !TEX TS-program = pgfSweave
+
+\RequirePackage{atbegshi}
+\documentclass[10pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Verbatim
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{fancyvrb}
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Sweave
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \usepackage[noae,nogin]{Sweave}
+% dont actually use Sweave.sty, just use its definitions
+%%%% Begin Sweave.sty definitions
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl}
+
+\newenvironment{Schunk}{}{}
+
+\newcommand{\Sconcordance}[1]{%
+  \ifx\pdfoutput\undefined%
+  \csname newcount\endcsname\pdfoutput\fi%
+  \ifcase\pdfoutput\special{#1}%
+  \else\immediate\pdfobj{#1}\fi}
+%%%%% End Sweave.sty definitions
+  
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+
+% make ' in verbatim copy-pasteable
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+% Redefine the verbatim environment for sweave output
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<echo=F,cache=F>>=
+require(xtable)
+options(prompt=" ", continue="  ")
+setCacheDir('cache')
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Code Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use pygmantize(file) to output highlighted code
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1.3in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Section Styles
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{sectsty}
+	%Put period after section number
+\makeatletter 
+\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
+{\csname the#1\endcsname\quad}% default 
+{\csname #1@cntformat\endcsname}% individual control 
+} 
+\def\section@cntformat{\thesection.\quad} 
+\def\subsection@cntformat{\thesubsection.\quad} 
+\makeatother
+\sectionfont{\bf\large\raggedright}
+\subsectionfont{\bf\normalsize\raggedright}
+\subsubsectionfont{\bf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage{subfigure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Captions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small CVEN 5313 FALL 2010}
+\fancyhead[CO]{\small Problem Set 1}
+
+\pgfrealjobname{hw06} 
+
+<<echo=F,results=hide>>=
+suppressMessages(require(R.matlab))
+suppressMessages(require(matlab))
+suppressMessages(require(ggplot2))
+@
+\begin{document}
+\SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F}
+
+\thispagestyle{empty}
+\textbf{Cameron Bracken}\\
+CVEN 5313, Fall 2010\\
+Problem Set \#6
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 1}
+\begin{enumerate}
+\item[(a)] Figure \ref{fig:poiselle} shows a sketch of the physical setup. 
+
+<<fig=T,echo=F,height=3,width=3,external=T,eval=F>>=
+
+U0 <- 1
+b <- 1
+x2 <- linspace(-b,b)
+u <- U0*(1-(x2/b)^2)
+plot(u,x2,xlim=extendrange(range(u),f=.3),axes=F,xlab="",ylab="",type='l')
+x2_1 <- rep(0,5)
+#x2_2 <- 
+#abline(0,pretty(u))
+abline(h=c(-b,b))
+#abline(v=0)
+
+@
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+	\input{poiselle.pgf}
+   \caption{Sketch for problem 1 (a)}
+   \label{fig:poiselle}
+\end{figure}
+
+
+\item[(b)] 
+
+$$\vec{u}=\left[U_0\left(1-\left(\frac{x_2}{b}\right)^2\right),0,0\right]$$
+
+The velocity gradient tensor is
+
+$$T_{ij}=
+\left[
+\begin{array}{ccc}
+\partial_1u_1 & \partial_1u_3 & \partial_1u_3 \\
+\partial_2u_1 & \partial_2u_3 & \partial_2u_3 \\
+\partial_3u_1 & \partial_3u_3 & \partial_3u_3 
+\end{array}
+\right]
+=
+\left[
+\begin{array}{ccc}
+0 & 0 & 0\\
+\partial_2u_1 & 0 & 0\\
+0 & 0 & 0
+\end{array}
+\right]
+$$
+
+Since the only component is $u_1$ and the only spatial variable is $x_2$, the velocity gradient is
+
+$$\partial_2u_1=-\frac{2U_0}{b}\frac{x_2}{b} = -2\frac{U_0x_2}{b^2}$$
+
+Decompose the velocity gradient tensor into symmetric and anti symmetric tensors
+
+$$S_{ij}=T_{(ij)}=\frac{1}{2}(T_{ij}+T_{ji}) = 
+\left[
+\begin{array}{ccc}
+0 & -U_0x_2/b^2 & 0\\
+-U_0x_2/b^2 & 0 & 0\\
+0 & 0 & 0
+\end{array}
+\right]$$
+
+$$r_{ij}=T_{[ij]}=\frac{1}{2}(T_{ij}-T_{ji}) = 
+\left[
+\begin{array}{ccc}
+0 & U_0x_2/b^2 & 0\\
+-U_0x_2/b^2 & 0 & 0\\
+0 & 0 & 0
+\end{array}
+\right]$$
+
+\item[(c)] 
+
+\begin{enumerate}
+\item[(i)] There is no linear strain since the diagonal entries of the $S_{ij}$ matrix are zero. 
+\item[(ii)] The angular strain rate is $-2U_0x_2/b^2$ (only in the $x_1-x_2$ plane, the other planes have no angular strain).
+\item[(iii)] The solid body rotation is $2U_0x_2/b^2$ only in the $x_1-x_2$ plane. 
+\end{enumerate}
+
+
+\item[(d)] Set up the eigen value analysis
+
+$$(S_{ij}-\lambda\delta_{ij})b_j=0$$
+
+Take the determinate of the coefficient matrix and solve the characteristic equation
+
+$$\det\left[
+\begin{array}{ccc}
+-\lambda & U_0x_2/b^2 & 0\\
+-U_0x_2/b^2 & -\lambda & 0\\
+0 & 0 & -\lambda
+\end{array}
+\right]=0$$
+
+$$-\lambda^3+\frac{U_0x_2}{b^2}\left(\frac{U_0x_2}{b^2}\lambda\right)=0$$
+$$\lambda^2=\frac{U_0^2x_2^2}{b^4}$$
+
+which gives two values for $\lambda$
+
+$$\lambda^{I}=\frac{U_0x_2}{b^2}\quad\lambda^{II}=-\frac{U_0x_2}{b^2}$$
+
+Put the value of $\lambda^{I}$ back in the coefficient matrix
+
+$$\left[
+\begin{array}{ccc}
+-U_0x_2/b^2 & -U_0x_2/b^2 & 0\\
+-U_0x_2/b^2 & -U_0x_2/b^2 & 0\\
+0 & 0 & -U_0x_2/b^2
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+b_1\\
+b_2\\
+b_3
+\end{array}
+\right]=0$$
+
+Which gives two equations
+
+$$-\frac{U_0x_2}{b^2}(b^I_1+b^I_2)=0 \longrightarrow b^I_1=-b_2^I$$
+and
+$$-\frac{U_0x_2}{b^2}b^I_3=0 \longrightarrow b^I_3=0$$
+
+Choosing $vec{b}$ to be unit length we get 
+
+$$\boxed{\vec{b}^I=\left(\frac{\sqrt{2}}{2},-\frac{\sqrt{2}}{2},0\right)}$$
+
+Similarly for $\lambda^{II}$ we get 
+
+$$b^I_1=b_2^I \mbox{ and } b^I_3=0$$
+
+So 
+
+$$\boxed{\vec{b}^{II}=\left(\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2},0\right)}$$
+
+The principal are the current axes rotated -45$^\circ$ (or 45$^\circ$ clockwise).  The principal axes do not vary spatially but the principal strain rates 
+
+$$S^\prime=\left[
+\begin{array}{ccc}
+U_0x_2/b^2 & 0 & 0\\
+0 & -U_0x_2/b^2 & 0\\
+0 & 0 & 0
+\end{array}
+\right]$$
+
+depend on $x_2$ and so are spatially varied. 
+
+\item[(e)] 
+
+$x_2<0$: Both angular strain and SBR, no linear strain, $\vec{u}$ is larger at the top of the element so rotation is clockwise. 
+
+\includegraphics[width=\textwidth]{e1.pdf}
+
+$x_2 = 0$: No strain or SBR, pure translation
+
+\includegraphics[width=\textwidth]{e2.pdf}
+
+$x_2>0$: Both angular strain and SBR, no linear strain, $\vec{u}$ is larger at the bottom of the element so rotation is counter-clockwise. 
+
+\includegraphics[width=\textwidth]{e3.pdf}
+
+\item[(f)] 
+
+$x_2<0$: Linear strain along the principal axes and SBR, no angular strain, $\vec{u}$ is larger at the bottom of the element so rotation is counter-clockwise. 
+
+\includegraphics[width=\textwidth]{f1.pdf}
+
+$x_2 = 0$: No strain or SBR, pure translation.
+
+\includegraphics[width=\textwidth]{f2.pdf}
+
+$x_2>0$: Linear strain along the principal axes and SBR, no angular strain, $\vec{u}$ is larger at the top of the element so rotation is clockwise. 
+
+\includegraphics[width=\textwidth]{f3.pdf}
+
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 2}
+\begin{enumerate}
+\item[(a)] The red element, aligned with the coordinate axes, shows pure angular strain at early times, which is expected, but later in the movie it begins to elongate indicating linear strain, which is not expected.  
+
+The blue element, aligned with the principal axes, begins by exhibiting pure linear strain as we would expect.  Later on the angles start to change from 90 degrees indicating angular strain, which again is not expected.
+
+\item[(b)] The unexpected behavior is due to solid body rotation.  At early times, SBR has not acted much on either element so they exhibit either pure linear or angular strain. At later times SBR has cause the elements to no longer be aligned with the original principal axes and so a mix of linear and angular strain is experienced. For example, the blue element rotates away from the principal axes and begins experiencing angular strain. 
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 3}
+\begin{enumerate}
+\item[(a)] \autoref{fig:vortex} shows the decay of the velocity profile over time ($\Gamma_0=1$ m$^2$/s, $\nu = 1$ m$^2$/s).
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+G0 <- 1
+v <- 1
+r <- linspace(0,30,1000)
+t <- c(0, .5, 1, 2, 5)
+vth <- matrix(NA,ncol=length(t),nrow=length(r))
+colnames(vth) <- paste("t = ",t)
+rownames(vth) <- r
+for(i in 1:length(t))
+	vth[,i] <- G0/(2*pi*r)*(1-exp(-r^2/(4*v*t[i])))
+vt <- melt(vth)
+names(vt) <- c('Radius','Time','Velocity')
+p <- qplot(Radius,Velocity,data=vt,geom="line",linetype=Time,ylim=c(0,.1)) + theme_bw()
+print(p)
+@
+   \caption{Velocity Profile}
+   \label{fig:vortex}
+\end{figure}
+
+\item[(b)] By inspection $\omega_r=\omega_\theta=0$ since the flow does not have a $z$ or $r$ component and $v_\theta$ does not depend on $z$.  
+
+$$\omega_z=\frac{1}{r}\p{(ru_\theta)}{r}-\frac{1}{r}\p{}{r}\left(\frac{\Gamma_0}{2\pi}-\frac{\Gamma_0}{2\pi}\exp\left(\frac{-r^2}{4\nu t}\right)\right)$$
+$$=\frac{2r\Gamma_0}{4\pi r\nu t}\exp\left(\frac{-r^2}{4\nu t}\right)$$
+$$\boxed{\omega_z=\frac{2\Gamma_0}{4\pi \nu t}\exp\left(\frac{-r^2}{4\nu t}\right)}$$
+
+\autoref{fig:vortex2} shows the vorticity ($w_z$) profile over time ($\Gamma_0=1$ m$^2$/s, $\nu = 1$ m$^2$/s).
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+G0 <- 1
+v <- 1
+r <- linspace(0,10,1000)
+t <- c(0, .5, 1, 2, 5)
+wz <- matrix(NA,ncol=length(t),nrow=length(r))
+colnames(wz) <- paste("t = ",t)
+rownames(wz) <- r
+for(i in 1:length(t))
+	wz[,i] <- G0/(2*pi*v*t[i])*exp(-r^2/(4*v*t[i]))
+wz <- melt(wz)
+names(wz) <- c('Radius','Time','Vorticity')
+p2 <- qplot(Radius,Vorticity,data=wz,geom="line",linetype=Time,ylim=c(0,.4)) + theme_bw()
+print(p2)
+
+@
+   \caption{Vorticity Profile}
+   \label{fig:vortex2}
+\end{figure}
+
+
+\item[(c)] The circulation is given by 
+
+$$\Gamma=\oint_C\vec{u}\cdot\partial\vec{\ell}=\int_0^{2\pi}u_\theta R d\theta$$
+$$=\frac{\Gamma_0R}{2\pi R}[1-\exp\left(\frac{-r^2}{4\nu t}\right)](2\pi)$$
+$$\boxed{\Gamma(R,t)=\Gamma_0\left[1-\exp\left(\frac{-r^2}{4\nu t}\right)\right]}$$
+
+\begin{enumerate}
+\item[(i)] \autoref{fig:vortex3} shows the circulation over time at a few fixed values of $R$. For a fixed finite $R$ the circulation will decay asymptotically to zero.  The decay occurs much quicker if the radius is smaller because the initial circulation of gradient is higher causing it do diffuse faster. 
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+G0 <- 1
+v <- 1
+r <- c(0, .5, 1, 2, 5)
+t <- linspace(0,10,1000)
+g <- matrix(NA,ncol=length(r),nrow=length(t))
+colnames(g) <- paste("R = ",r)
+rownames(g) <- t
+for(i in 1:length(r))
+	g[,i] <- G0*(1-exp(-r[i]^2/(4*v*t)))
+g <- melt(g)
+names(g) <- c('Radius','Time','Circulation')
+p4 <- qplot(Radius,Circulation,data=g,geom="line",linetype=Time,ylim=c(0,1)) + theme_bw()
+print(p4)
+
+@
+   \caption{Circulation over time at a fixed, finite radius}
+   \label{fig:vortex3}
+\end{figure}
+
+\item[(ii)] \autoref{fig:vortex4} shows the circulation over time at an infinte radius.  An an infinite radius, no matter much time goes by, the radius will always encompass all of the circulation ($\Gamma_0$).
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+G0 <- 1
+v <- 1
+r <- c(0, .5, 1, 2, 5)
+t <- linspace(0,10,1000)
+g <- matrix(NA,ncol=1,nrow=length(t))
+rownames(g) <- t
+	g[,1] <- 1
+g <- melt(g)
+names(g) <- c('Radius','Time','Circulation')
+p5 <- qplot(Radius,Circulation,data=g,geom="line",linetype=Time,ylim=c(0,1)) + theme_bw()
+print(p5)
+
+@
+   \caption{Circulation over time at an infinite radius}
+   \label{fig:vortex4}
+\end{figure}
+
+\item[(iii)] If we choose a value of $R$ to encompass most of the circulation it is sufficient to require that $R$ be very large, that is $R \gg 1$ which implies by the previous result that $\exp(-R^2/(4\nu t)) \ll 1$.  So we can neglect that term which gives us
+
+$$\frac{R^2}{4\nu t} \gg 1$$
+
+or 
+
+$$\boxed{R\propto\sqrt{\nu t}}$$
+
+The size of the region grows as the square root of time which is a familiar result.  In this case the vaiscocity plays the role of the diffusion coefficient, descibing the rate of diffusion of momentum. 
+
+\end{enumerate}
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 4}
+\begin{enumerate}
+\item[(a)] The stream function, $\Psi$ satisfies the relationship 
+
+$$u_1=\p{\Psi}{x_2}$$
+$$\int u_1\partial x_2=\int\partial\Psi$$
+$$\Psi=\int Ux_1^{-1/3}\mbox{sech}^2(\alpha x_2x_1^{-2/3})dx_2$$
+$$= \frac{Ux_1^{-1/3}}{\alpha x_1^{-2/3}}\mbox{tanh}(\alpha x_2x_1^{-2/3})+C$$
+Using the condition $\Psi=0$ when $x_2=0$ implies $C=0$ since $\mbox{tanh}(0)=0$. So
+
+$$\boxed{\Psi= \frac{Ux_1^{1/3}}{\alpha}\mbox{tanh}(\alpha x_2x_1^{-2/3})}$$
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+
+<<fig=T,echo=F,height=6,width=4,external=T>>=
+U <- 1
+alpha <- 1
+x1 <- linspace(0,10,100)
+x2 <- linspace(-10,10,100)
+dat <- expand.grid(x1,x2)
+dat <- data.frame(x1 =dat[,1], x2 = dat[,2], P=U*dat[,1]^(1/3)/alpha*tanh(alpha*dat[,2]*dat[,1]^(-2/3)))
+#names(dat) <- c("x1","y1","P")
+#p3 <- ggplot(dat,aes(x=x1,y=x2,z=P)) + geom_contour() + theme_bw() + xlab('$x_1$')+ylab('$x_2$')
+#print(p3)
+contour(x1,x2,matrix(dat$P,ncol=100),xlab='$x_1$',ylab='$x_2$')
+grid(lty=1,col=rgb(.7,.7,.7,.5))
+
+@
+   \caption{Stream function contours}
+   \label{fig:streamf}
+\end{figure}
+
+\autoref{fig:streamf} shows contours of the computed stream function. 
+
+\item[(b)] Using the result from part (a) and the chain rule
+
+$$u_2=-\p{\Psi}{x_1}=-\frac{Ux_1^{1/3}}{\alpha}\mbox{sech}^2(\alpha x_2x_1^{-2/3})\left(-\frac{2\alpha x_2 x_1^{-5/3}}{3}\right)-\mbox{tanh}(\alpha x_2x_1^{-2/3})\frac{Ux_1^{-2/3}}{3\alpha}$$
+$$\frac{Ux_1^{1/3}}{\alpha}\left[\frac{2x_2}{3x^2_1}\mbox{sech}^2(\alpha x_2x_1^{-2/3})-\frac{1}{3x_1}\mbox{tanh}(\alpha x_2x_1^{-2/3})\right]$$
+
+\item[(c)] Using the definition of jet width
+
+$$u_1(x_1,x_2=\delta/2)=e^{-1}u_1(x_1,x_2=0)$$
+$$Ux_1^{-1/3}\mbox{sech}^2[\alpha(\delta/2)x_1^{-2/3}]=e^{-1}Ux_1^{-1/3}\mbox{sech}^2[\alpha(0)x_1^{-2/3}]$$
+$$\mbox{sech}^2(\alpha x_1^{-2/3}\delta/2)=e^{-1}$$
+$$\alpha x_1^{-2/3}\delta/2=c$$
+where discarding the imaginary root, $c=\mbox{sech}^{-1}(\sqrt{e^{-1}})$, so
+$$\boxed{\delta\propto x_1^{2/3}}$$
+
+The jet width grows proportinally to $x^{2/3}$.
+ 
+\item[(d)] 
+
+At small $x_1$ values, the flow just outside of the jet must be nearly vertical to conserve mass and so most of the flow rate is due to the jet.  As the jet spreads, diffussion of its horizontal momentum causes the surrounding flow to gain a larger horizontal component which contributes to the net flow rate. 
+\end{enumerate}
+
+
+
+\end{document}

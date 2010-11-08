@@ -246,9 +246,12 @@ As $R_n/P \rightarrow \infty, E/P \rightarrow 1$.  For $R_n/P$ to approach $\inf
 % Problem 2
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \section*{Problem 2}
 \begin{figure}[htbp] %  figure placement: here, top, bottom, or page
    \centering
+ \begin{Large}
 <<fig=T,tikz=T,width=6,height=5,echo=F>>=
 plot(phi,EP,type='l', xlab='$R_n/P$',
     ylab='$E/P$', ylim=c(0,1))
@@ -258,6 +261,7 @@ legend('bottomright',
     c('Budyko','Choudhury, $\\alpha=2.6$','Choudhury, $\\alpha=1.8$'),
     lty=1:3,pch=-1)
 @
+\end{Large}
    \caption{Plots of Budyko and Choudhury equations.}
 \end{figure}
 
