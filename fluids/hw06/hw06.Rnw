@@ -208,6 +208,8 @@ suppressMessages(require(R.matlab))
 suppressMessages(require(matlab))
 suppressMessages(require(ggplot2))
 @
+
+\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
 \begin{document}
 \SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F}
 
@@ -350,7 +352,7 @@ $$-\frac{U_0x_2}{b^2}(b^I_1+b^I_2)=0 \longrightarrow b^I_1=-b_2^I$$
 and
 $$-\frac{U_0x_2}{b^2}b^I_3=0 \longrightarrow b^I_3=0$$
 
-Choosing $vec{b}$ to be unit length we get 
+Choosing $\vec{b}$ to be unit length we get 
 
 $$\boxed{\vec{b}^I=\left(\frac{\sqrt{2}}{2},-\frac{\sqrt{2}}{2},0\right)}$$
 
@@ -433,7 +435,7 @@ The blue element, aligned with the principal axes, begins by exhibiting pure lin
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+<<vortex,fig=T,echo=F,height=3.5,width=6.5,external=T>>=
 G0 <- 1
 v <- 1
 r <- linspace(0,30,1000)
@@ -462,7 +464,7 @@ $$\boxed{\omega_z=\frac{2\Gamma_0}{4\pi \nu t}\exp\left(\frac{-r^2}{4\nu t}\righ
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+<<vorticity,fig=T,echo=F,height=3.5,width=6.5,external=T>>=
 G0 <- 1
 v <- 1
 r <- linspace(0,10,1000)
@@ -482,19 +484,23 @@ print(p2)
    \label{fig:vortex2}
 \end{figure}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item[(c)] The circulation is given by 
 
 $$\Gamma=\oint_C\vec{u}\cdot\partial\vec{\ell}=\int_0^{2\pi}u_\theta R d\theta$$
-$$=\frac{\Gamma_0R}{2\pi R}[1-\exp\left(\frac{-r^2}{4\nu t}\right)](2\pi)$$
-$$\boxed{\Gamma(R,t)=\Gamma_0\left[1-\exp\left(\frac{-r^2}{4\nu t}\right)\right]}$$
+$$=\frac{\Gamma_0R}{2\pi R}[1-\exp\left(\frac{-r^2}{4\nu t}\right)]\int_0^{2\pi}d\theta$$
+$$\boxed{\Gamma(R,t)=\Gamma_0\left[1-\exp\left(\frac{-R^2}{4\nu t}\right)\right]}$$
 
 \begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item[(i)] \autoref{fig:vortex3} shows the circulation over time at a few fixed values of $R$. For a fixed finite $R$ the circulation will decay asymptotically to zero.  The decay occurs much quicker if the radius is smaller because the initial circulation of gradient is higher causing it do diffuse faster. 
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+<<circ-finite,fig=T,echo=F,height=3.5,width=6.5,external=T>>=
 G0 <- 1
 v <- 1
 r <- c(0, .5, 1, 2, 5)
@@ -505,20 +511,22 @@ rownames(g) <- t
 for(i in 1:length(r))
 	g[,i] <- G0*(1-exp(-r[i]^2/(4*v*t)))
 g <- melt(g)
-names(g) <- c('Radius','Time','Circulation')
-p4 <- qplot(Radius,Circulation,data=g,geom="line",linetype=Time,ylim=c(0,1)) + theme_bw()
+names(g) <- c('Time','Radius','Circulation')
+p4 <- qplot(Time,Circulation,data=g,geom="line",linetype=Radius,ylim=c(0,1)) + theme_bw()
 print(p4)
 
 @
-   \caption{Circulation over time at a fixed, finite radius}
+   \caption{Circulation over time at a fixed, finite radius.}
    \label{fig:vortex3}
 \end{figure}
 
-\item[(ii)] \autoref{fig:vortex4} shows the circulation over time at an infinte radius.  An an infinite radius, no matter much time goes by, the radius will always encompass all of the circulation ($\Gamma_0$).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(ii)] \autoref{fig:vortex4} shows the circulation over time at an infinite radius.  An an infinite radius, no matter much time goes by, the radius will always encompass all of the circulation ($\Gamma_0$).
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<fig=T,echo=F,height=3.5,width=5.5,external=T>>=
+<<circ-inf,fig=T,echo=F,height=3.5,width=6,external=T>>=
 G0 <- 1
 v <- 1
 r <- c(0, .5, 1, 2, 5)
@@ -530,21 +538,19 @@ g <- melt(g)
 names(g) <- c('Radius','Time','Circulation')
 p5 <- qplot(Radius,Circulation,data=g,geom="line",linetype=Time,ylim=c(0,1)) + theme_bw()
 print(p5)
-
 @
    \caption{Circulation over time at an infinite radius}
    \label{fig:vortex4}
 \end{figure}
 
-\item[(iii)] If we choose a value of $R$ to encompass most of the circulation it is sufficient to require that $R$ be very large, that is $R \gg 1$ which implies by the previous result that $\exp(-R^2/(4\nu t)) \ll 1$.  So we can neglect that term which gives us
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(iii)] If we choose a value of $r$ to encompass most of the circulation it is sufficient to require that $R$ be very large, that is $R \gg 1$ which implies by the previous result that $\exp(-R^2/(4\nu t)) \ll 1$. It also follows that 
 $$\frac{R^2}{4\nu t} \gg 1$$
-
 or 
-
 $$\boxed{R\propto\sqrt{\nu t}}$$
 
-The size of the region grows as the square root of time which is a familiar result.  In this case the vaiscocity plays the role of the diffusion coefficient, descibing the rate of diffusion of momentum. 
+The size of the region grows as the square root of time which is a familiar result.  In this case the viscosity plays the role of the diffusion coefficient, describing the rate of diffusion of momentum. 
 
 \end{enumerate}
 
@@ -571,7 +577,7 @@ $$\boxed{\Psi= \frac{Ux_1^{1/3}}{\alpha}\mbox{tanh}(\alpha x_2x_1^{-2/3})}$$
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
 
-<<fig=T,echo=F,height=6,width=4,external=T>>=
+<<contour, fig=T,echo=F,height=6,width=4,external=T>>=
 U <- 1
 alpha <- 1
 x1 <- linspace(0,10,100)
@@ -594,7 +600,30 @@ grid(lty=1,col=rgb(.7,.7,.7,.5))
 \item[(b)] Using the result from part (a) and the chain rule
 
 $$u_2=-\p{\Psi}{x_1}=-\frac{Ux_1^{1/3}}{\alpha}\mbox{sech}^2(\alpha x_2x_1^{-2/3})\left(-\frac{2\alpha x_2 x_1^{-5/3}}{3}\right)-\mbox{tanh}(\alpha x_2x_1^{-2/3})\frac{Ux_1^{-2/3}}{3\alpha}$$
-$$\frac{Ux_1^{1/3}}{\alpha}\left[\frac{2x_2}{3x^2_1}\mbox{sech}^2(\alpha x_2x_1^{-2/3})-\frac{1}{3x_1}\mbox{tanh}(\alpha x_2x_1^{-2/3})\right]$$
+$$\boxed{u_2=\frac{Ux_1^{1/3}}{\alpha}\left[\frac{2x_2}{3x^2_1}\mbox{sech}^2(\alpha x_2x_1^{-2/3})-\frac{1}{3x_1}\mbox{tanh}(\alpha x_2x_1^{-2/3})\right]}$$
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+
+<<u2x2,fig=T,echo=F,height=3.5,width=6>>=
+U <- 1
+alpha <- 1
+x1 <- 1
+x2 <- linspace(-10,10,300)
+dat <- expand.grid(x1,x2)
+x1 <- dat[,1]
+x2 <- dat[,2]
+
+dat <- data.frame(x2 = x2, u2=U*x1^{1/3}/alpha*(2*x2/(3*x1^2)*1/cosh(alpha*x2*x1^(-2/3))^2-1/(3*x1)*tanh(alpha*x2*x1^(-2/3))))
+p6 <- qplot(x2,u2,data=dat,geom='line',xlim=c(-5,5)) + theme_bw() + xlab('$x_2$')+ylab('$u_2$')
+print(p6)
+
+@
+   \caption{$u_2$ versus $x_2$ for $x_1=1$}
+   \label{fig:slice}
+\end{figure}
+
+\autoref{fig:slice} show how $u_2$ varies with $x_2$.  The region in the center of the plot indicates spreading of the jet, the vertical velocities are negative in the negative $x_2$ direction and positive in the positive $x_2$ direction.  For this slice there is a transition for which the vertical velocities start to converge on the jet.  This is the region that corresonds to flow toward the jet to conserve the mass moving horizontally (the $x_1$ direction) from the jet. 
 
 \item[(c)] Using the definition of jet width
 

@@ -142,10 +142,10 @@ Next, examine the second term on the right hand side of \autoref{lieb}. Use a re
 
 $$
 \iint_A n_k w_k f\: dA = \iint_{A_A} n_k w_k f\: dx_2\,dx_3 + \iint_{A_B} n_k w_k f\: dx_2\,dx_3 $$
-For face $A$ $n_k$ points in the negative $x_1$ direction and $w_k$ is the rate of chage of the position of the face $da/dt$. For face $B$ $n_k$ points in the positive $x_1$ direction and $w_k$ is the rate of chage of the position of the face $db/dt$ so
+For face $A$, $n_k$ points in the negative $x_1$ direction and $w_k$ is the rate of chage of the position of the face, $da/dt$. For face $B$, $n_k$ points in the positive $x_1$ direction and $w_k$ is the rate of chage of the position of the face, $db/dt$, so
 
 \begin{align}
-&= \iint_{A_A} (-1) \frac{da}{dt} f (x_1,t)\: dx_2\,dx_3 + \iint_{A_B} (1) \frac{db}{dt} f (x_1,t)\: dx_2\,dx_3 \nonumber\\
+&= \iint_{A_A} (-1) \frac{da}{dt} f (a,t)\: dx_2\,dx_3 + \iint_{A_B} (1) \frac{db}{dt} f (b,t)\: dx_2\,dx_3 \nonumber\\
                        &=  - \frac{da}{dt} f (a,t)\iint_{A_A}\: dx_2\,dx_3 + \frac{db}{dt} f (b,t)\iint_{A_B}\: dx_2\,dx_3 \nonumber\\
                        & = \frac{db}{dt} f (b,t) A - \frac{da}{dt} f (a,t)A\label{rhs2}
 \end{align}
@@ -167,8 +167,9 @@ $$\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = \int_a^b \p{f}{t} dx_1 + \frac{db
 \item 
 \begin{enumerate}
 \item $$\iiint_{\mathcal{R}}\grad\cdot\vect{u}\,dV = \iiint_{\mathcal{R}}0\,dV = 0$$
+
 \input{flux.pgf}
-\item For an infinitesimal surface element $dS$ if $\grad\cdot\vect{u}=0$ then the velocity flux in $\vect{u}\cdot\vect{S}$ will equal the velocity flux out so the total flux (in - out) will be zero.
+\item For an infinitesimal surface element $dS$ (shown above) if $\grad\cdot\vect{u}=0$ then the velocity flux in $\vect{u}\cdot\vect{S}$ will equal the velocity flux out so the total flux (in - out) will be zero.
 
 \end{enumerate}
 
@@ -183,7 +184,7 @@ $$\frac{d}{dt}\int_{a(t)}^{b(t)}f(x_1,t)dx_1 = \int_a^b \p{f}{t} dx_1 + \frac{db
 $$\iint_A \hat{n}\cdot(\grad\cross\vect{u})\,dA = \iint_A\vect{\omega}\cdot\hat{n}\,dA$$
 \input{surface.pgf}
 
-\item If we slice the surface at an arbitratry location, we get two pieces $a$, $b$, with volumes $V_b$ and $V_b$ where $V_a+V_b=V$.  To find the total flux across the sliced faces, we need to integrate $\vect{omega}d\vect{A}$ for both faces $A_b$, $A_b$. 
+\item If we slice the surface at an arbitratry location, we get two pieces $a$, $b$, with volumes $V_a$ and $V_b$ where $V_a+V_b=V$.  To find the total flux across the sliced faces, we need to integrate $\vect{\omega}d\vect{A}$ for both faces $A_b$, $A_b$. 
 
 \begin{align*}
 \iint_A\vect{\omega}d\vect{A} &= \iint_{A_a}\vect{\omega}d\vect{A}_a + \iint_{A_b}\vect{\omega}d\vect{A}_b\\
@@ -217,8 +218,6 @@ Since $\grad\cdot(\grad\cdot\vect{u}) = \divf(\curl(\vect{u})) = 0$ from the pre
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item 
 $$\omega_3=\left[\p{u_2}{x_1}-\p{u_1}{x_2}\right]$$
-
-\textit{Proof}
 
 For a differential element Stokes' theorem says
 
@@ -284,7 +283,6 @@ $$\omega_3 =  \left[\p{u_2}{x_1}-\p{u_1}{x_2}\right].\qed$$
 
 $$\omega_z=\frac{1}{r}\left[\p{}{r}(ru_\theta)\frac{u_r}{\theta}\right]$$
 
-\textit{Proof}
 
 The logic is the same as in part (a). Consider a differential element in the $r-\theta$ plane
 
