@@ -1,0 +1,418 @@
+% !TEX TS-program = pgfSweave
+
+\RequirePackage{atbegshi}
+\documentclass[10pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Verbatim
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{fancyvrb}
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Sweave
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \usepackage[noae,nogin]{Sweave}
+% dont actually use Sweave.sty, just use its definitions
+%%%% Begin Sweave.sty definitions
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl}
+
+\newenvironment{Schunk}{}{}
+
+\newcommand{\Sconcordance}[1]{%
+  \ifx\pdfoutput\undefined%
+  \csname newcount\endcsname\pdfoutput\fi%
+  \ifcase\pdfoutput\special{#1}%
+  \else\immediate\pdfobj{#1}\fi}
+%%%%% End Sweave.sty definitions
+  
+\renewcommand{\theFancyVerbLine}{\textcolor{red}{>}}
+
+% make ' in verbatim copy-pasteable
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\renewcommand{\(}{\begin{verbatim}}
+\renewcommand{\)}{\end{verbatim}}
+\newcommand{\R}{\textsf{R}}
+
+% Redefine the verbatim environment for sweave output
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{numbers=left,gobble=1,numbersep=2pt,xleftmargin=5mm}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{frame=double}
+
+<<echo=F,cache=F>>=
+require(xtable)
+options(prompt=" ", continue="  ")
+setCacheDir('cache')
+
+print.xtable.booktabs <- function(x){
+
+print(xtable(x),
+	floating=F,
+	hline.after=NULL, 
+	add.to.row=list(pos=list(-1,0, nrow(x)), 
+	command=c(
+		'\\toprule ',
+		'\\midrule ',
+		'\\bottomrule ')))
+		
+}
+
+if(!file.exists('figs')) dir.create('figs')
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Code Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use pygmantize(file) to output highlighted code
+<<pygment,results=tex,echo=F>>=
+cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+pygmentize <- function(file){
+	cat(system(paste('pygmentize -f latex',file),intern=T),sep='\n')
+}
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1.3in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Section Styles
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{sectsty}
+	%Put period after section number
+\makeatletter 
+\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
+{\csname the#1\endcsname\quad}% default 
+{\csname #1@cntformat\endcsname}% individual control 
+} 
+\def\section@cntformat{\thesection.\quad} 
+\def\subsection@cntformat{\thesubsection.\quad} 
+\makeatother
+\sectionfont{\bf\large\raggedright}
+\subsectionfont{\bf\normalsize\raggedright}
+\subsubsectionfont{\bf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage{subfigure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\ansbox}[1]{%
+	\begin{center}
+		\tikz{\node[draw,rectangle]{%
+			$\displaystyle#1$};}
+	\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Captions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small CVEN 5313 FALL 2010}
+\fancyhead[CO]{\small Problem Set 7}
+
+\pgfrealjobname{hw07} 
+
+<<echo=F,results=hide>>=
+suppressMessages(require(R.matlab))
+suppressMessages(require(matlab))
+suppressMessages(require(ggplot2))
+@
+
+%\long\def\beginpgfgraphicnamed#1#2\endpgfgraphicnamed{\includegraphics{#1}}
+\begin{document}
+\SweaveOpts{keep.source=F,prefix.string=figs/fig,pdf=F,eps=F}
+
+\thispagestyle{empty}
+\textbf{Cameron Bracken}\\
+CVEN 5313, Fall 2010\\
+Problem Set \#7
+
+
+
+\section*{Problem 1}
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1a
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(a)] Start from the general solution
+
+$$u_1(x_3)=-\frac{\lambda}{2\mu}x_3^2+C_1x_3+C_2$$
+
+and apply the boundary conditions for Couette flow ($u_i(0)=0$, $u_i(H)=U$) and $\lambda = 0$
+
+$$u_1(0)=0\longrightarrow C_2=0$$
+$$u_1(H)=U\longrightarrow U = C_1H\longrightarrow C_1 = \frac{U}{H}$$
+
+$$\boxed{u_1(x_3)=\frac{U}{H}x_3}$$
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+	\input{shear.pgf}
+   \caption{Sketch of Couette flow}
+   \label{fig:shear}
+\end{figure}
+
+Let $u_1^*=u_1/U$ and $x_3^*=x_3/H$, the nondimensional solutions is 
+
+$$\boxed{u_1^*=x_3^*}$$
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+	\input{shear-nd.pgf}
+   \caption{nondimensional sketch of Couette flow}
+   \label{fig:shear-nd}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1b
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(b)] Applying the boundary conditions for Poiseuille flow ($u_i(0)=0$, $u_i(H)=0$) and $U = 0$
+
+$$u_1(0)=0\longrightarrow C_2=0$$
+$$u_1(H)=0\longrightarrow U = C_1H\longrightarrow C_1 = \frac{\lambda H}{2\mu}$$
+
+$$\boxed{u_1(x_3)=-\frac{\lambda x_3^2}{2\mu}x_3^2+\frac{\lambda H}{2\mu}x_3}$$
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+	\input{pressure.pgf}
+   \caption{Sketch of Poiseuille flow}
+   \label{fig:pressure}
+\end{figure}
+
+Let $u_1^*=\frac{2\mu u_1}{\lambda H^2}$ and $x_3^*=x_3/H$, in this case, the nondimensional solution is
+
+$$\boxed{u_1^*=x_3^*-x_3^{*2}}$$
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+	\input{pressure-nd.pgf}
+   \caption{Nondimensional sketch of Poiseuille flow}
+   \label{fig:pressure-nd}
+\end{figure}
+
+<<fig=T,echo=F,width=6,height=4,external=T,eval=F>>=
+
+x3_star <- seq(0,1,,100)
+u1_star <- x3_star - x3_star^2
+plot(u1_star, x3_star, axes=F, type='l',xlab='',ylab='')
+abline(h=1)
+abline(h=0)
+
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1c
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)] $\mathbb{P}$ is normalization of the maximum pressure velocity by the maximum shear velocity.  The maximum shear velocity is at the plate, $U$.  The maximum pressure velocity occurs at $H/2$, the peak of the parabola, 
+
+$$u_{\mbox{max (pressure)}}=u_1(H/2)=\frac{-\lambda (H/2)^2}{2\mu}+\frac{-\lambda (H/2)}{2\mu}$$
+$$u_{\mbox{max (pressure)}}=\frac{\lambda H^2}{8\mu}$$
+
+Constructing the dimensionless group in this way normalizes the maximum nondimensional velocity.  It would be sufficient to use the dimensionless group, $\frac{\lambda H^2}{\mu}$ but in this case the maximim would occur at 1/4, a somewhat arbitrary and not physically relevant location. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1d
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\item[(d)]
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1a)i
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(i)] First develop an expression for average velocity, integrate $u_1$ w.r.t. $x_3$ assuming $B$ is constant
+
+\begin{align*}
+V = \frac{1}{A}\int u dA = & = \frac{1}{BH}\int u_1 B dx_3\\
+& = \frac{1}{H}\int^H_0\frac{\lambda}{2\mu}x_3^2+\left(\frac{U}{H}+\frac{\lambda H}{2\mu}\right)x_3dx_3\\
+&= \frac{1}{H}\left[\frac{\lambda}{2\mu}\frac{x_3^3}{3}+\left(\frac{U}{H}+\frac{\lambda H}{2\mu}\right)\frac{x_3^2}{2}\right]_0^H\\
+&= \frac{1}{H}\left[\frac{\lambda H^3}{6\mu}+\frac{UH}{2}+\frac{\lambda H^3}{4\mu}\right]\\
+& = \frac{\lambda H^2}{6\mu}+\frac{U}{2}+\frac{\lambda H^2}{4\mu}\\
+& = \frac{\lambda H^2}{12\mu}+\frac{U}{2}
+\end{align*}
+
+Arranging this expression in terms of $\mathbb{P}$
+
+$$\boxed{V = \frac{2U}{3}(\mathbb{P}+3/4)}$$
+
+Also arranging $u_3$ in terms of $\mathbb{P}$ and $x_3^*$
+
+$$u_3 = U[-4\mathbb{P}x_3^{*2}+x_3^*+4\mathbb{P}x_3^*]$$
+
+So
+
+$$u_3^*=\frac{u_3}{|V|} = \frac{U[-4\mathbb{P}x_3^{*2}+x_3^*+4\mathbb{P}x_3^*]}{(2U/3)|\mathbb{P}+3/4|}$$
+$$\boxed{u_3^*=\frac{6x_3^*\mathbb{P}-6\mathbb{P}x_3^{*2}+(3/2)x_3^*}{|\mathbb{P}+3/4|}}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1d)ii
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(ii)] Figure \ref{fig:nd} shows the nondimensional plot of P-C flow with the nondimensionalization from part (i).
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<fig=T,echo=F,width=6,height=4,external=T>>=
+require(ggplot2)
+
+P <- c(-100,-2.5,0,1,100)
+x_star <- seq(0,1,,100)
+u_star <- matrix(NA,nrow=length(x_star),ncol=length(P))
+rownames(u_star) <- x_star
+colnames(u_star) <- paste('$\\mathbb{P} =$ ',P)
+
+for(i in 1:length(P))
+  u_star[,i] <- (6*x_star*P[i] - 6*P[i]*x_star^2 + 3/2*x_star) / abs(P[i]+3/4)
+  
+w <- melt(u_star)
+names(w) <- c("x_star","P","u_star")
+
+p1 <- qplot(u_star,x_star,data=w,geom="path",linetype=P) + theme_bw() + 
+  labs(x="$x_3^*$", y="$u_1^*$",legend="")
+print(p1)
+@
+   \caption{Nondimensional plot of P-C flow}
+   \label{fig:nd}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1d)iii
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(iii)]  When $\mathbb{P}=-3/4$ the nondimensional solution is undefined since we are dividing by zero.  This corresponds to the physical situation where negative pressure forces perfectly balance the shear forces and there is no net flow.  We are essentially nondimensionalizing by flow so we end up dividing by zero and this particular nondimensionalization does not provide a meaningful result.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1d)iv
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\item[(iv)]
+The solution does not change for $|\mathbb{P}\gg 100|$.  When $|\mathbb{P}|$ is much greater than 100, the flow is essentially pressure driven and thus has a parabolic velocity profile.  For a parabolic profile, the velocity scaled by the average velocity will always be the same.  For example at the maximum, 
+
+$$u_1^*(x_3^*=1/2)=\frac{u_{\mbox{max}}}{(2/3)u_{\mbox{max}}}=\frac{3}{2}$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Problem 1d)v
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(v)]
+The first type of nondimensionalization is good for shear driven flows as the effect of shear is always evident.  Also this representation provides a meaningful result for shear driven flows. When pressure dominates, it becomes less useful because the profile contines to grow as $\mathbb{P}$ grows and we have to continually zoom out on the profile to see it. 
+
+The second type of nondimensionalization provides a good representation for pressure driven flows, the profile is invariant with respect to large values of $\mathbb{P}$.  It is not as useful for shear flows, the affects of shear are only very evident at low values of $\mathbb{P}$.  Also there is no meaningful solution for the case of no net flow.
+
+
+\end{enumerate}
+\end{enumerate}
+
+
+
+\end{document}
