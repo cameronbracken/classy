@@ -183,7 +183,7 @@
 
 <<setup, echo=F,cache=F>>=
 require(xtable)
-options(prompt=">", continue="+")
+options(prompt="> ", continue="+")
 setCacheDir('cache')
 
 print.xtable.booktabs <- function(x){
