@@ -94,10 +94,10 @@ theme_set(theme_bw())
 myopts <- opts(
 		panel.grid.major = theme_blank(), 
 		panel.grid.minor = theme_blank(),
-	  	axis.text.x = theme_text(size = 10), 
-		axis.text.y = theme_text(size = 10,angle=90),
-	 	axis.title.x = theme_text(size = 10), 
-		axis.title.y = theme_text(size = 10,angle=90),
+	  	axis.text.x = theme_text(size =  11), 
+		axis.text.y = theme_text(size =  11,angle=90),
+	 	axis.title.x = theme_text(size = 11), 
+		axis.title.y = theme_text(size = 11,angle=90),
 		panel.background = theme_rect())
 
 @
@@ -262,7 +262,7 @@ Problem Set \#6
 \item[(a)] 
 \item[(a)] 
 \begin{enumerate}
-\item[i]
+\item[i)]
 
 <<p4>>=
 	
@@ -304,15 +304,17 @@ Problem Set \#6
     plot(r,uth[,1],type='l',xlab='$r$',ylab='$u_\\theta$')
     mtext('$p$',4,line=2)
     par(usr=c(par("usr")[1:2], extendrange(p[,1])))
-    lines(r,p[,1], col="red")
+    lines(r,p[,1], col="red",lty=2)
     axis(4)
+    legend('topleft',c('Velocity','Pressure'),lty=1:2,col=1:2)
+    
 
 @
    \caption{$a_1=1$, $a_2=2$, $\Omega_1=1$, $\Omega_2=1$}
    \label{fig:pv1}
 \end{figure}
 
-\item[ii]
+\item[ii)]
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
 <<pv2,fig=T,width=6,height=4,external=T>>=
@@ -321,15 +323,16 @@ Problem Set \#6
     plot(r,uth[,2],type='l',xlab='$r$',ylab='$u_\\theta$')
     mtext('$p$',4,line=2)
     par(usr=c(par("usr")[1:2], extendrange(p[,2])))
-    lines(r,p[,2], col="red")
+    lines(r,p[,2], col="red",lty='dotted')
     axis(4)
+    legend('top',c('Velocity','Pressure'),lty=1:2,col=1:2)
 
 @
    \caption{$a_1=1$, $a_2=2$, $\Omega_1=1$, $\Omega_2=1$}
    \label{fig:pv2}
 \end{figure}
 
-\item[iii]
+\item[iii)]
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
 <<pv3,fig=T,width=6,height=4,external=T>>=
@@ -338,8 +341,9 @@ Problem Set \#6
     plot(r,uth[,3],type='l',xlab='$r$',ylab='$u_\\theta$')
     mtext('$p$',4,line=2)
     par(usr=c(par("usr")[1:2], extendrange(p[,3])))
-    lines(r,p[,3], col="red")
+    lines(r,p[,3], col="red",lty='dotted')
     axis(4)
+    legend('topleft',c('Velocity','Pressure'),lty=1:2,col=1:2)
 
 @
    \caption{$a_1=1$, $a_2=2$, $\Omega_1=1$, $\Omega_2=1$}
@@ -362,18 +366,37 @@ Problem Set \#6
 <<p5>>=
 	H <- 1
 	v <- 1
+	rho <- 1
 	t <- c(0.01, 0.02, 0.04, 0.1)
 	r <- seq(0,1.2,,1000)
-	g <- matrix(NA,ncol=length(t),nrow=length(r))
-	rownames(g) <- r
-	colnames(g) <- paste("t = ",t)
+	g <- p <- matrix(NA,ncol=length(t),nrow=length(r))
+	surf <- matrix(NA,ncol=1,nrow=2*length(r)) 
+	rownames(g) <- rownames(p) <- r
+	colnames(surf) <- paste("t = ",t[3])
+	colnames(g) <- colnames(p) <- paste("t = ",t)
+	rownames(surf) <- c(-rev(r),r)
+	
 	for(i in 1:length(t)){
 		g[,i] <- H*r/(8*pi*v*t[i]^2)*exp(-r^2/(4*v*t[i]))
+		p[,i] <- -H^2*rho/(64*pi^2*v*t[i]^3)*exp(-r^2/(2*v*t[i]))
 	}
-	g <- melt(g)
+	
+	surf[,1] <- -H^2*rho/(64*pi^2*v*t[3]^3)*exp(-c(-rev(r),r)^2/(2*v*t[3]))
+	
+	g <- melt(g); p <- melt(p); surf <- melt(surf)
 	names(g) <- c('Radius','Time','Velocity')
+	names(p) <- c('Radius','Time','Pressure')
+	names(surf) <- c('Radius','Time','Surface')
+	
 	p5a <- qplot(Radius,Velocity,data=g,geom="line",linetype=Time) + myopts +
 		opts(legend.position = c(0.9, 0.8)) + ylab('$v_\\theta$') + xlab('$r$')
+		
+	p5b <- qplot(Radius,Pressure,data=p,geom="line",linetype=Time,xlim=c(0,.4)) + myopts +
+		opts(legend.position = c(0.9, 0.3)) + ylab('$p$') + xlab('$r$')
+	
+	p5c <- qplot(Radius,Surface,data=surf,geom="line",linetype=Time) + myopts +
+		opts(legend.position = c(0.9, 0.3)) + ylab('Free Surface Elevation') + xlab('$r$')
+		
 @
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
@@ -390,9 +413,28 @@ Problem Set \#6
 
 \item[(b)]
 
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p5b,fig=T,width=6,height=4>>=
+
+	print(p5b)
+	
+@
+   \caption{Pressure profile for unsteady Taylor vortex for given values of time. }
+   \label{fig:p5b}
+\end{figure}
 
 \item[(c)] 
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p5c,fig=T,width=6,height=4>>=
 
+	print(p5c)
+	
+@
+   \caption{Surface profile for unsteady Taylor vortex for $t=0.04$. Datum defined at initial free surface profile.}
+   \label{fig:p5c}
+\end{figure}
 
 \item[(d)] 
 
