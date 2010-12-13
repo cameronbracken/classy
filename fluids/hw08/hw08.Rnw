@@ -180,9 +180,9 @@ pygmentize <- function(file){
 %  Bibliography
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{natbib}   
+%\usepackage{natbib}   
 %\setcitestyle{square,aysep={},yysep={;}}
-\bibliographystyle{agufull04}
+%\bibliographystyle{agufull04}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,6 +201,7 @@ pygmentize <- function(file){
 \fancyhead[CE]{\small CVEN 5313 FALL 2010}
 \fancyhead[CO]{\small Problem Set 8}
 
+\usepackage{cancel}
 
 \begin{document}
 \SweaveOpts{tidy=T,echo=F,prefix.string=figs/fig,pdf=F,eps=F}
@@ -208,7 +209,7 @@ pygmentize <- function(file){
 \thispagestyle{empty}
 \textbf{Cameron Bracken}\\
 CVEN 5313, Fall 2010\\
-Problem Set \#6
+Problem Set \#8
 
 
 
@@ -221,10 +222,134 @@ Problem Set \#6
 \begin{enumerate}
 \item[(a)] 
 
+$$
+\cancelto{A}{\p{u_1}{t}} 
+        + \cancelto{B}{u_1\p{u_1}{x_1}} 
+        + \cancelto{C}{u_2\p{u_1}{x_2}}
+        + \cancelto{D}{u_3\p{u_1}{x_3}}
+        = 
+		- \frac{1}{\rho}\p{p}{x_1} 
+		+ \nu\left(  \cancelto{B}{\p{^2u_1}{x_1^2}} 
+		           + \cancelto{C}{\p{^2u_1}{x_2^2}}
+		           + \p{^2u_1}{x_3^2}\right)
+$$
+
+The crossed out terms can be neglected for the following reasons:
+
+\begin{tabular}{cl}
+A & Steady State\\
+B & $u_1$ does not vary with $x_1$\\
+C & $u_2 = 0$, 2D problem, no variation in the $x_2$ direction\\
+D & $u_3 = 0$ (no vertical velocity)\\
+\end{tabular}
+
+The boundary conditions are
+
+\begin{tabular}{cll}
+BC1: & $u_1(x_3=0)=0$ & No slip condition\\
+BC2: & $\tau_{31}(x_3=H)=0$ & No Shear at the free surface\\
+\end{tabular}
+
+This leaves us with:
+
+$$
+\frac{1}{\rho}\p{p}{x_1}
+=
+\nu\p{^2u_1}{x_3^2}
+$$$$
+\lambda
+=
+\mu\p{^2u_1}{x_3^2}
+$$
+%
+Integrate w.r.t. $x_3$
+%
+$$
+\int\lambda\,dx_3
+=
+\int\mu\p{^2u_1}{x_3^2}\,dx_3
+$$
+%
+$$
+\lambda x_3 + C_1
+=
+\mu\p{u_1}{x_3}
+$$
+%
+Applying BC2
+$$C_1 = -\lambda H$$
+So
+$$\boxed{\tau_{31}= \lambda(x_3-H)}$$
+%
+Integrate a second time w.r.t. $x_3$
+$$
+\int\lambda x_3 - \lambda H \,dx_3
+=
+\int\mu\p{u_1}{x_3}\,dx_3
+$$
+$$
+\frac{\lambda x_3^2}{2}  - \lambda Hx_3 + C_2
+=
+\mu u_1
+$$
+and apply BC1 to see that $C_2=0$.  The final profile is
+$$
+\boxed{u_1(x_3)=\frac{\lambda x_3}{\mu}\left(\frac{x_3}{2}-H\right)}
+$$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(b)]
+
+$$
+\cancelto{A}{\p{u_3}{t}} 
+        + \cancelto{B}{u_1\p{u_3}{x_1}} 
+        + \cancelto{B}{u_2\p{u_3}{x_2}}
+        + \cancelto{B}{u_3\p{u_3}{x_3}}
+        = 
+		- \frac{1}{\rho}\p{p}{x_3} 
+		+ \nu\left(  \cancelto{B}{\p{^2u_1}{x_1^2}} 
+		           + \cancelto{B}{\p{^2u_1}{x_2^2}}
+		           + \cancelto{B}{\p{^2u_1}{x_3^2}}\right) + g
+$$
+
+The crossed out terms can be neglected for the following reasons:
+
+\begin{tabular}{cl}
+A & Steady State\\
+B & $u_3 = 0$ (no vertical velocity)\\
+\end{tabular}
+
+We are left with
+$$
+\p{p}{x_3} = \rho g
+$$
+Integrate w.r.t. $x_3$ and build the boundary condition into the rhs integral ($p(x_3=H)=0$)
+$$
+\int\p{p}{x_3}dx_3 = \int^H_{x_3}\rho g\,dx_3
+$$
+$$
+\boxed{p = \rho g(H-x_3)}
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)]
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+\subfigure[Velocity]{\input{graphics/1c1.pgf}}
+\subfigure[Pressure]{\input{graphics/1c2.pgf}}
+\subfigure[Shear]{\input{graphics/1c3.pgf}}
+   \caption{Problem 1 Sketches}
+   \label{fig:example}
+\end{figure}
+
 \end{enumerate}
 
 
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 2
@@ -232,11 +357,293 @@ Problem Set \#6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 2}
 \begin{enumerate}
-\item[(a)] 
+\item[(a)] For layer $i$
+
+$$
+\cancelto{A}{\p{u_1^i}{t}} 
+        + \cancelto{B}{u_1^i\p{u_1}{x_1}} 
+        + \cancelto{C}{u_2^i\p{u_1}{x_2}}
+        + \cancelto{D}{u_3^i\p{u_1}{x_3}}
+        = 
+		- \frac{1}{\rho_i}\p{p_i}{x_1} 
+		+ \nu_i\left(  \cancelto{B}{\p{^2u_1^i}{x_1^2}} 
+		           + \cancelto{C}{\p{^2u_1^i}{x_2^2}}
+		           + \p{^2u_1^i}{x_3^2}\right)
+$$
+
+The crossed out terms can be neglected for the following reasons:
+
+\begin{tabular}{cl}
+A & Steady State\\
+B & $u_1^i$ does not vary with $x_1$\\
+C & $u_2^i = 0$, 2D problem, no variation in the $x_2$ direction\\
+D & $u_3^i = 0$ (no vertical velocity)\\
+\end{tabular}
+
+Applying to each layer we get 
+$$
+\lambda=\mu_a\p{^2u_1^a}{x_3^2}\quad h_b\leq x_3\leq H
+$$
+and
+$$
+\lambda=\mu_b\p{^2u_1^b}{x_3^2}\quad 0<x_3\leq h_b
+$$
+
+The boundary conditions are
+
+\begin{tabular}{cll}
+BC1: & $u_1^b(x_3=0)=0$ & No slip condition\\
+BC2: & $u_1^a(x_3=h_b)=u_1^b(x_3=h_a)$ & Velocity equal at the interface\\
+BC3: & $\tau_{31}^a(x_3=H)=0$ & No Shear at the free surface\\
+BC4: & $\tau_{31}^a(x_3=h_b)=\tau_{31}^b(x_3=h_b)$ & Shear equal at the interface\\
+\end{tabular}
+
+For layer $a$
+
+$$
+\int\lambda\,dx_3
+=
+\int\mu_a\p{^2u_1^a}{x_3^2}\,dx_3
+$$
+%
+$$
+\lambda x_3 + C_1
+=
+\mu_a\p{u_1^a}{x_3}
+$$
+%
+Applying BC3
+$$C_1^a = -\lambda H$$
+So
+$$
+\boxed{\tau^a_{31}= \lambda(x_3-H)}
+$$
+Integrate a second time w.r.t. $x_3$
+$$
+\int\lambda x_3 - \lambda H \,dx_3
+=
+\int\mu_a\p{u_1^a}{x_3}\,dx_3
+$$
+%
+$$
+\frac{\lambda x_3^2}{2}  - \lambda Hx_3 + C_2
+=
+\mu_a u_1^a
+$$
+and apply BC2 to see that 
+$$
+C_2^a
+=
+\frac{\lambda h_b}{2}(h_b-H)-\mu_au_1^b
+$$
+and
+$$
+u_1^a(x_3)
+=
+ \frac{\lambda x_3^2}{2\mu_a}
+-\frac{2H\lambda x_3}{2\mu_a}
++\frac{\lambda h_b^2}{2\mu_a}
+-\frac{\lambda Hh_b}{2\mu_a}
+- u_1^b(h_b)
+$$
+
+For layer $b$
+
+$$
+\int\lambda\,dx_3
+=
+\int\mu_b\p{^2u_1^b}{x_3^2}\,dx_3
+$$
+%
+$$
+\lambda x_3 + C_1
+=
+\mu_b\p{u_1^b}{x_3}
+$$
+%
+Applying BC4
+$$
+C_1^b = -\lambda(h_b - H) - \lambda h_b
+$$
+$$
+C_1^b = \lambda H
+$$
+So
+$$
+\boxed{\tau^b_{31}= \lambda(x_3-H)}
+$$
+%
+Integrate a second time w.r.t. $x_3$
+$$
+\int\lambda x_3 - \lambda H \,dx_3
+=
+\int\mu_b\p{u_1^b}{x_3}\,dx_3
+$$
+%
+$$
+\frac{\lambda x_3^2}{2}  - \lambda Hx_3 + C_2^b
+=
+\mu_b u_1^b
+$$
+Apply BC1 to see that $C_2=0$. The final profile for layer $b$
+$$
+\boxed{u_1^b(x_3)=\frac{\lambda x_3}{\mu_b}[x_3/2-H]}
+$$
+%
+And the final profile for layer $a$ is
+$$
+u_1^a(x_3)
+=
+  \frac{\lambda x_3^2}{2\mu_a}
+- \frac{2H\lambda x_3}{2\mu_a}
++ \frac{\lambda h_b^2}{2\mu_a}
+- \frac{\lambda Hh_b}{2\mu_a}
+- \frac{\lambda h_b^2}{2\mu_b}
++ \frac{\lambda Hh_b}{2\mu_b}
+$$
+$$
+\boxed{
+u_1^a(x_3) = \left[
+\frac{x_3}{u_a}\left(\frac{x_3}{2}-H\right)
++\left(\frac{h_b^2}{2}+Hh_b\right)
+\left(\frac{1}{\mu_a}-\frac{1}{u_b}\right)
+\right]
+}
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(b)] Applying the same assumptions as problem 1b for each layer we get
+
+$$
+\p{p_a}{x_3}=\rho_a g\quad h_b\leq x_3< H
+$$
+and
+$$
+\p{p_b}{x_3}=\rho_b g\quad 0<x_3\leq h_b
+$$
+With the boundary conditions
+
+\begin{tabular}{cll}
+BC1: & $p_a(x3=H)=0$ & Free surface\\
+BC2: & $p_b(x_3=h_b)=p_a(x_3=h_b)$ & Pressure equal at the interface\\
+\end{tabular}
+
+For layer $a$ the pressure distribution is the same as for is the same as for Problem 1
+$$
+\boxed{p_a(x_3)=\rho_ag(H-x_3)}
+$$
+
+For layer $b$
+$$
+\int\p{p_b}{x_3}dx_3 = \int\rho_b g\,dx_3
+$$
+%
+$$
+p_b=\rho_bgx_3+C_p
+$$
+Apply pressure BC2
+$$
+p_ag(H-h_b)=\rho_bgh_b+C_p
+$$
+%
+$$
+C_p = g(\rho_ah_a-\rho_bh_b)
+$$
+%
+$$
+\boxed{p_b(x_3) = \rho_bg(h_b-x_3)+g\rho_ah_a}
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)]
+
+<<p2>>=
+
+	roA = 1
+	roB = 2 * roA
+	g = 1
+	H = 5
+	hb = 3
+	L <- -1
+	muA = 1;
+	muB = 2*muA;
+	
+	da = seq(0,(H-hb),.05 )
+	db = seq(0,hb,.05 )
+
+	pa = roA*g*da;
+	pb = roA*g*(H-hb) + roB*g*db
+
+
+
+	x3a = seq(H,hb,-.05)
+	x3b = seq(hb,0,-.05)
+	p <- c(pa,pb)
+	x <- c(x3a,x3b)
+	T <- L*x - L*H
+	
+	ub = L*x3b^2/muB/2 - L/muB*H*x3b
+	ua = L*x3a^2/2/muA - L*H*x3a/muA + L*hb^2/2*(1/muB - 1/muA) + L*H*hb*(1/muA - 1/muB)
+	u <- c(ua,ub)
+@
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p2c3,fig=T,width=6,height=3.5,cache=T,external=T>>=
+	plot(u,x,type='l',xlab='$u_1$',ylab='$x_3$',axes=F)
+	abline(h=hb)
+		par(xpd=NA)
+	box()
+	text(-.5,H,"$H$")
+	text(-.5,-.2,"0")
+	text(-.2,-.5,"0")
+	text(5.7,hb-.5,'$\\frac{\\lambda h_b}{2\\mu_b}\\left[\\frac{x_3}{2}-H\\right]$')
+	text(5,H-.5,'$\\lambda\\left[-\\frac{H^2}{2\\mu_a}+\\left(\\frac{h_b^2}{2}-Hh_b\\right)\\left(\\frac{1}{u_a}-\\frac{1}{u_b}\\right)\\right]$')
+@
+   \caption{Velocity Profile}
+   \label{fig:vel}
+\end{figure}
+
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p2c1,fig=T,width=6,height=3.5,cache=T,external=T>>=
+	plot(p,x,type='l',xlab='$p$',ylab='$x_3$',axes=F)
+	abline(h=hb)
+	par(xpd=NA)
+	box()
+	text(-.5,H,"$H$")
+	text(-.5,-.2,"0")
+	text(-.2,-.5,"0")
+	text(2.5,hb+.5,'$\\rho g(H-h_b)$')
+	text(7.5,-.5,'$\\rho g h_b + \\rho g(H-h_b)$')
+@
+   \caption{Pressure profile}
+   \label{fig:pressure}
+\end{figure}
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p2c2,fig=T,width=6,height=3.5,cache=T,external=T>>=
+	plot(T,x,type='l',xlab='$\\tau_{31}$',ylab='$x_3$',axes=F)
+	abline(h=hb)
+	par(xpd=NA)
+	box()
+	text(-.5,H,"$H$")
+	text(-.5,-.2,"0")
+	text(-.2,-.5,"0")
+	text(5,-.5,"$-\\lambda H$")
+	text(2.5,hb+.5,'$\\lambda (h_b-H)$')
+@
+   \caption{Shear stress profile}
+   \label{fig:shear}
+\end{figure}
 
 \end{enumerate}
 
-
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Problem 3
@@ -244,7 +651,48 @@ Problem Set \#6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 3}
 \begin{enumerate}
-\item[(a)] 
+\item[(a)] ~
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics{graphics/wind.pdf} 
+   \caption{Sketch for profile 3a}
+   \label{fig:wind}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(b)] 
+It is important to assume that the surface tilt is linear so that we can assume a constant pressure gradient. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)] 
+At the center of the lake, $\mathbb{P}=3/4$
+$$
+\mathbb{P}=\frac{\lambda H^2}{8\mu U}
+$$
+where $H$ is the height of the lake. Assuming a linear free surface tilt,
+$$
+\lambda = \p{p}{x_1}
+$$
+So looking at the pressure from the center of the lake to the right edge
+$$
+\lambda = \frac{6\mu U}{H^2} = \frac{p_b-p_a}{\Delta x_1}
+$$
+Evaluating the pressure, 
+$$
+\frac{6\mu U}{H^2} = \frac{\gamma(H+\Delta H)-\gamma H}{\Delta x_1} = \frac{\gamma\Delta H}{\Delta x_1}
+$$
+where $H$ is the height of the lake, and $\Delta H$ is the height of the rise.
+$$
+\frac{6\mu U}{H^2} = \frac{\gamma\Delta H}{\Delta x_1}
+$$
+%
+$$
+\Delta H = \frac{6\mu U\Delta x_1}{H^2\gamma} = \frac{6(1.787e-3\mbox{Ns}/\mbox{m}^2)(.5 \mbox{m}/\mbox{s})(100000 \mbox{m})}{(3\mbox{m}^2)(9806)\mbox{N}/\mbox{m}^3} = 0.00607 \mbox{m} = \boxed{6 \mbox{mm}}
+$$
+
 \end{enumerate}
 
 
@@ -255,14 +703,143 @@ Problem Set \#6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 4}
 \begin{enumerate}
-\item[(a)] 
-\item[(a)] 
-\item[(a)] 
-\item[(a)] 
-\item[(a)] 
-\item[(a)] 
+\item[(a)]
+\begin{align*}
+& r: \\
+& \rho \left( \p{u_r}{t} + u_r \p{u_r}{r} + \frac{u_\theta}{r}\p{u_r}{\theta} - \frac{u_\theta^2}{r} + u_z \p{u_r}{z} \right) = \\ 
+&- \p{p}{r} + \mu \left( \p{}{r} \left( \frac{1}{r} \p{(r u_r)}{r} \right) + \frac{1}{r^2}\p{^2u_r}{\theta^2} - \frac{2}{r^2}\p{u_\theta}{\theta} + \p{^2 u_r}{z^2} \right) \\
+& \theta: \\
+& \rho \left( \p{u_\theta}{t} + u_r \p{u_\theta}{r} + \frac{u_\theta}{r}\p{u_\theta}{\theta} + \frac{u_ru_\theta}{r} + u_z \p{u_\theta}{z} \right) = \\
+& \quad - \frac{1}{r}\p{p}{\theta} + \mu \left( \p{}{r} \left( \frac{1}{r} \p{(r u_\theta)}{r} \right) + \frac{1}{r^2}\p{^2u_\theta}{\theta^2} + \frac{2}{r^2}\p{u_r}{\theta} + \p{^2 u_\theta}{z^2} \right)
+\end{align*}
+
+\begin{tabular}{cl}
+BC1: & $u_\theta(r=a_1)=\Omega_1a_1$ \\
+BC2: & $u_\theta(r=a_2)=\Omega_2a_2$ \\
+\end{tabular}
+
+\item[(b)] 
+
+$$
+\frac{1}{r}\p{(r\,u_r)}{r} + \frac{1}{r}\cancelto{A}{\p{u_\theta}{\theta}} + \cancelto{B}{\p{u_z}{z}} = 0
+$$
+%
+\begin{tabular}{cl}
+A & Axisymmetric\\
+B & No vertical velocity\\
+\end{tabular}
+
+So:
+$$
+\p{(r\,u_r)}{r} = 0
+$$
+%
+Integrate w.r.t. $r$ to get 
+$$
+u_r=\frac{C}{r}
+$$
+The only way that the boundary conditions of zero vertical velocity at the boundaries can be satisfied is if $C=0$ so $u_r=0$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)] The problem is axisymmetric so $\p{(\cdot)}{\theta} = 0$, steady state so $\p{u_\theta}{t} = 0$, $u_r=0$, and no vertical velocity so $\p{u_\theta}{z} = 0$. Under these conditions, the $\theta$ direction momentum equation simplifies to
+$$
+\p{}{r}\left(\frac{1}{r}\p{(ru_\theta)}{r}\right)= 0 
+$$
+Integrate once
+$$
+\frac{1}{r}\p{(ru_\theta)}{r}= \hat{C}_1
+$$
+Integrage again w.r.t. $r$
+$$
+\int\partial(ru_\theta)=\int r\hat{C}_1\,dr
+$$
+%
+$$
+ru_\theta= \frac{r^2}{2}\hat{C}_1+C_2
+$$
+%
+$$
+\boxed{u_\theta= rC_1+\frac{C_2}{r}}
+$$
+
+Apply BC1
+$$
+\Omega_1a_1=a_1C_1+\frac{C_2}{a_1}
+$$
+and BC2
+$$
+\Omega_2a_2=a_2C_1+\frac{C_2}{a_2}
+$$
+Solving these two equations for $C_1$ and $C_2$ gives
+
+$$
+\boxed{C_1=\frac{\Omega_2a_2^2-\Omega_1a_1^2}{a_2^2-a_1^2}}
+$$
+and
+$$
+\boxed{C_2=\frac{a_2^2a_1^2(\Omega_2-\Omega_1)}{a_2^2-a_1^2}}
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(d)] 
+Under the assumptions from part c, $\omega_r=\omega_\theta=0$ and 
+\begin{align*}
+\omega_z& = \frac{1}{r}\p{(ru_\theta)}{r}\\
+        & = \p{}{r}[r(rC_1+C_2/r)]\\
+        & = \p{}{r}[r^2C_1+C_2]\\
+\end{align*}
+$$
+\boxed{\omega_z = 2C_1}
+$$
+
+In order for the flow to be irrotational, $C_1$ must be zero. THis can can happen if $\Omega_1=\Omega_2$.  This corresponds to a free vortex, $u_\theta=C_2/r$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(e)] 
+Under the previously stated assumptions, 
+%
+$$
+\rho\left(-\frac{u_\theta^2}{r}\right)= -\p{p}{r}
+$$
+$$
+\rho u_\theta^2 = r\p{p}{r}
+$$
+%
+$$
+\rho(rC_1+C_2/r)^2 = r\p{p}{r}
+$$
+%
+$$
+\rho\left(r^2C_1^2+\frac{2C_1C_2}{r}+\frac{C_2^2}{r^3}\right)^2 = \p{p}{r}
+$$
+Now integrate w.r.t. $r$,
+$$
+\int\p{p}{r}\,dr = \int\rho\left(rC_1^2+\frac{2C_1C_2}{r}+\frac{C_2^2}{r^3}\right)^2\,dr
+$$
+%
+$$
+\frac{p}{\rho} = \frac{r^2C_1^2}{2}+2C_1C_2\ln(r)-\frac{C_2^2}{2r^2}+C
+$$
+Impose zero pressure at the inner cylinder to get 
+$$
+C = -\frac{C_2^2}{2a_1^2}+\frac{a_1^2C_1^2}{2}-2C_1C_2\ln(a_1)
+$$
+So the final pressure distribution is
+$$
+p(r) = \rho\left( \frac{r^2C_1^2}{2}+2C_1C_2\ln(r)-\frac{C_2^2}{2r^2} +\frac{C_2^2}{2a_1^2}-\frac{a_1^2C_1^2}{2}-2C_1C_2\ln(a_1)\right)
+$$
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(f)] 
 \begin{enumerate}
-\item[i)]
+\item[(i)]
+
+Velocity increases linearly with radius.  In this case $C_2=0$, resulting in a forced vortex. The pressure force must also increase with radius to balance the centrifugal acceleration. 
 
 <<p4>>=
 	
@@ -285,7 +862,7 @@ Problem Set \#6
 	  
 	  r <- seq(a1,a2,,n)
 	  
-	  c1 <- 2*(omega2*a2^2-omega1*a1^2)/(a2^2-a1^2)
+	  c1 <- (omega2*a2^2-omega1*a1^2)/(a2^2-a1^2)
 	  c2 <- a1^2*a2^2*(omega1-omega2)/(a2^2-a1^2)
 	  #cat('C1',c1,'C2',c2,'\n')
 	  
@@ -314,8 +891,12 @@ Problem Set \#6
    \label{fig:pv1}
 \end{figure}
 
-\item[ii)]
-\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(ii)] This is essentially the same case as (i), except that the fluid is moving in the opposite direction so the velocit profile linearly decreases (gets greater in magnitude though) with radius. 
+
+\begin{figure}[!h] %  figure placement: here, top, bottom, or page
    \centering
 <<pv2,fig=T,width=6,height=4,external=T>>=
 	
@@ -332,7 +913,13 @@ Problem Set \#6
    \label{fig:pv2}
 \end{figure}
 
-\item[iii)]
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(iii)]
+
+Both $C_1$ and $C_2$ are non-zero in this case and the cylinders are rotating in opposite directions. There is a region between about $r=1.5$ to $r=2$ where the velocity chenges directions, (and transitions through zero).  Pressure must still increase monotonically with radius to balance the centrifugal force but when the velocities are low, the pressure gradient does not change much. 
+
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
 <<pv3,fig=T,width=6,height=4,external=T>>=
@@ -361,7 +948,7 @@ Problem Set \#6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Problem 5}
 \begin{enumerate}
-\item[(a)] 
+\item[(a)] ~
 
 <<p5>>=
 	H <- 1
@@ -369,23 +956,25 @@ Problem Set \#6
 	rho <- 1
 	t <- c(0.01, 0.02, 0.04, 0.1)
 	r <- seq(0,1.2,,1000)
-	g <- p <- matrix(NA,ncol=length(t),nrow=length(r))
+	g <- p <- d <- matrix(NA,ncol=length(t),nrow=length(r))
 	surf <- matrix(NA,ncol=1,nrow=2*length(r)) 
-	rownames(g) <- rownames(p) <- r
+	rownames(g) <- rownames(p) <- rownames(d) <- r
 	colnames(surf) <- paste("t = ",t[3])
-	colnames(g) <- colnames(p) <- paste("t = ",t)
+	colnames(g) <- colnames(p) <- colnames(d) <- paste("t = ",t)
 	rownames(surf) <- c(-rev(r),r)
 	
 	for(i in 1:length(t)){
 		g[,i] <- H*r/(8*pi*v*t[i]^2)*exp(-r^2/(4*v*t[i]))
 		p[,i] <- -H^2*rho/(64*pi^2*v*t[i]^3)*exp(-r^2/(2*v*t[i]))
+		d[,i] <- H/(8*pi*v*t[i]^2)*(2-r^2/(2*v*t[i]))*exp(-r^2/(2*v*t[i]))
 	}
 	
 	surf[,1] <- -H^2*rho/(64*pi^2*v*t[3]^3)*exp(-c(-rev(r),r)^2/(2*v*t[3]))
 	
-	g <- melt(g); p <- melt(p); surf <- melt(surf)
+	g <- melt(g); p <- melt(p); d <- melt(d); surf <- melt(surf)
 	names(g) <- c('Radius','Time','Velocity')
 	names(p) <- c('Radius','Time','Pressure')
+	names(d) <- c('Radius','Time','Vorticity')
 	names(surf) <- c('Radius','Time','Surface')
 	
 	p5a <- qplot(Radius,Velocity,data=g,geom="line",linetype=Time) + myopts +
@@ -396,12 +985,15 @@ Problem Set \#6
 	
 	p5c <- qplot(Radius,Surface,data=surf,geom="line",linetype=Time) + myopts +
 		opts(legend.position = c(0.9, 0.3)) + ylab('Free Surface Elevation') + xlab('$r$')
+	
+	p5d <- qplot(Radius,Vorticity,data=d,geom="line",linetype=Time) + myopts +
+		opts(legend.position = c(0.9, 0.8)) + ylab('$\\omega_z$') + xlab('$r$')
 		
 @
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<p5a,fig=T,width=6,height=4>>=
+<<p5a,fig=T,width=6,height=4,external=T,cache=T>>=
 
 
 	print(p5a)
@@ -411,11 +1003,40 @@ Problem Set \#6
    \label{fig:p5a}
 \end{figure}
 
-\item[(b)]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(b)] From problem 4 part e, 
+
+$$
+\frac{u_\theta^2}{r}=\frac{1}{\rho}\p{p}{r}
+$$
+%
+$$
+\p{p}{r} = \frac{H^2r\rho}{64\pi^2\nu^2t^4}\exp\left[-\frac{r^2}{2\nu t}\right]
+$$
+%
+$$
+\int\p{p}{r}\,dr = \int\frac{H^2r\rho}{64\pi^2\nu^2t^4}\exp\left[-\frac{r^2}{2\nu t}\right]\,dr
+$$
+%
+$$
+p = \left(\frac{H^2\rho}{64\pi^2\nu^2t^4}\right)(-\nu t)\exp\left[-\frac{r^2}{2\nu t}\right]+C
+$$
+%
+$$
+p(r) = -\frac{H^2\rho}{64\pi^2\nu t^3}\exp\left[-\frac{r^2}{2\nu t}\right]+C
+$$
+Apply the boundary condition $p(\infty)=0$ to get $C=0$.  The final pressure distribution is
+$$
+\boxed{p(r) = -\frac{H^2\rho}{64\pi^2\nu t^3}\exp\left[-\frac{r^2}{2\nu t}\right]}
+$$
+
+
 
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<p5b,fig=T,width=6,height=4>>=
+<<p5b,fig=T,width=6,height=4,external=T,cache=T>>=
 
 	print(p5b)
 	
@@ -424,10 +1045,22 @@ Problem Set \#6
    \label{fig:p5b}
 \end{figure}
 
-\item[(c)] 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(c)] Using the same assumptions as problem 4c, we get 
+$$
+\rho g = \p{p}{z}
+$$
+and integrating we get
+$$
+p = \rho gz + c
+$$
+Since there is no velocity in the $z$ direction all elements in a vertical profile are moving at the same rate and only feel the weight of the fluid above them.  In other words, there is no vertical profile to cause shear.  This is just another way of stating hydrostatic conditions. Since the fluid is hydrostatic the pressure distribution is the same as the free surface profile, shown in Figure \ref{fig:pc5}.
+
+
 \begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
    \centering
-<<p5c,fig=T,width=6,height=4>>=
+<<p5c,fig=T,width=6,height=4,external=T,cache=T>>=
 
 	print(p5c)
 	
@@ -436,13 +1069,68 @@ Problem Set \#6
    \label{fig:p5c}
 \end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item[(d)] 
+\begin{align*}
+\omega_z & = \frac{1}{r}\p{(ru_\theta)}{r} \\
+         & = \frac{1}{r}\p{}{r}\left(\frac{H^2r^2}{8\pi\nu t^2}\exp\left[-\frac{r^2}{4\nu t}\right]\right)\\
+         & = \frac{H}{8r\pi\nu t^2}\left(2r\exp\left[-\frac{r^2}{4\nu t}\right]-\frac{r^3}{2\nu t}\exp\left[-\frac{r^2}{4\nu t}\right]\right)\\
+\end{align*}
+$$
+\boxed{\omega_z = \frac{H}{8\pi\nu t^2}\left(2-\frac{r^2}{2\nu t}\right)\exp\left[-\frac{r^2}{4\nu t}\right]}
+$$
+
+Vorticity diffuses outward over time. Corresponding to the velocity profile, the inner region has positive vorticity because the profile is increasing with radius causing an element to spin counter clockwise. The outer region, where the velocity profile is decreasing with radius, has negative vorticity (clockwise rotation). At the peak angular velocity, there is no vorticity. 
 
 
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p5d,fig=T,width=6,height=4,external=T,cache=T>>=
+
+
+	print(p5d)
+
+@
+   \caption{Vorticity of Taylor vortex for given values of time.}
+   \label{fig:p5d}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item[(e)]  
+\begin{align*}
+\Gamma & = \oint\vec{u}\cdot d\vec{\ell}\\
+       & = \int^{2\pi}_0u_\theta R\,d\theta\\
+       & = \int^{2\pi}_0\frac{H^2R^2}{8\pi\nu t^2}\exp\left[-\frac{R^2}{4\nu t}\right]\,d\theta\\
+       & = \frac{2\pi H^2R^2}{8\pi\nu t^2}\exp\left[-\frac{R^2}{4\nu t}\right]
+\end{align*}
+$$
+\boxed{\Gamma = \frac{H^2R^2}{4\nu t^2}\exp\left[-\frac{R^2}{4\nu t}\right]}
+$$
+There is no net circulation for an infinitly large radius (exponential wins out over parabolic), which indicates that the positive and negative regions of vorticity are always equal. 
 
 
-\item[(f)] 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item[(f)] At a fixed point, an observer will initially see no velocity or vorticity. As the momentum diffuses past him, he will see increased velocity and negative vorticity (clockwise rotation){} (Figure \ref{fig:p5f}). After the velocity peaks, and starts to decline, the observer will start to rotate in the opposite direction, corresponding to positive vorticity. The further the observer is from the center, the less severe the effects and more prolonged. 
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+<<p5f,fig=T,width=6,height=3.5,external=T,cache=T>>=
+	H <- 1
+	v <- 1
+	rho <- 1
+	r <- 2
+	t <- seq(0,10,,1000)
+	
+	y <- H*r/(8*pi*v*t^2)*exp(-r^2/(4*v*t))		
+	plot(t,y,xlab='Time',ylab='$u_\\theta$',type='l')
+@
+   \caption{Velocity from the perspective of an observer at a fixed $R$.}
+   \label{fig:p5f}
+\end{figure}
 
 
 \end{enumerate}

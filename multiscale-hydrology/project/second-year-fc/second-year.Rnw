@@ -1,0 +1,293 @@
+% !TEX TS-program = pgfSweave
+% !TEX encoding = UTF-8 Unicode
+
+\RequirePackage{atbegshi}
+\documentclass[11pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage{mathpazo}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Verbatim
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{fancyvrb}
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Sweave
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[noae,nogin]{Sweave}
+<<setup,fig=F,echo=F,results=hide,cache=F>>=
+	
+	suppressPackageStartupMessages(require(ggplot2))
+	
+	cashdir = "./cache"
+	setCacheDir(cashdir)
+	
+	if(!file.exists('figs')) dir.create('figs')
+	
+	options('tikzDocumentDeclaration' = '\\documentclass[11pt]{article}')
+
+@
+%<<pygment,results=tex,echo=F>>=
+%    cat(system('pygmentize -f latex -S perldoc',intern=T),sep='\n')
+%@
+\SweaveOpts{echo=F, prefix.string=figs/fig, fig=T, cache=T, external=T}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Code Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{minted}
+%\usemintedstyle{perldoc}
+%\definecolor{bg}{rgb}{0.95,0.95,0.95}
+%\newminted{R}{bgcolor=bg}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Section Styles
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{sectsty}
+	%Put period after section number
+\makeatletter 
+\def\@seccntformat#1{\@ifundefined{#1@cntformat}% 
+{\csname the#1\endcsname\quad}% default 
+{\csname #1@cntformat\endcsname}% individual control 
+} 
+\def\section@cntformat{\thesection.\quad} 
+\def\subsection@cntformat{\thesubsection.\quad} 
+\makeatother
+\sectionfont{\bf\large\raggedright}
+\subsectionfont{\bf\normalsize\raggedright}
+\subsubsectionfont{\bf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage{subfigure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{amsmath,amssymb,amsthm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Captions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small CVEN5333 FALL 2010}
+\fancyhead[CO]{\small\uppercase{A method for multi-year forecasting of peak season streamflow}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Begin Document
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\thispagestyle{empty} 
+
+{\bf\Large A method for multi-year forecasting of peak season streamflow}
+{\\Cameron Bracken \\}
+CVEN6833 Fall, 2010
+
+{\flushleft
+The availability of tree ring reconstructions of streamflow in the Colorado River Basin 
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction and Background}
+
+Nearly 80\% of flow in the Upper Colorado River Basin (UCRB) is due to snowmelt which is a strongly seasonal phenomenon.  70\% of the flow (by volume) on average occurs in the months of April-July.  Current operational forecasting methods used by the Colorado River Forecast Center (CBRFC) use antecedent flow and soil moisture conditions, snowpack and climate indicies \citep{Brandon2005}.  Experimental methods include large scale climate drivers and obtain similar results \citep{Bracken:2010p2682, Regonda2006, Grantz:2005p115}.  These methods, especially those using snowpack information, are very skilful in predicting seasonal flow volumes. 
+
+Despite the skill of these methods, they only provide reasonable results in the first year.  Longer term informaton, especially for large reservoirs, is useful to water managers in terms of planning. Every month the Bureau of Reclamation (BOR) updates their primary midterm operational forecast model for the UCRB, the ``24 Month Study.'' The 24 month study takes inputs of forecasted inflow and outflow on a monthly time step and provides managers with projections of water availability at major reservoirs\footnote{\url{http://www.usbr.gov/uc/water/crsp/studies/index.html}}.  In the 24 Month Study streamflow after the first year is set to climatology for lack of skilful actual forecasts.  In fact most current forecasting methods in the literature which use ocean and atmospheric variables only extend out a single water year \citep{Bracken:2010p2682, Grantz:2005p115, Regonda2006}. In large reservoirs, skilful forecasts for inflow are useful for operations, especially in extreme cases. For example, the knowledge that two years in a row will be extremely low could significantly affect operations.
+
+For our purposes we will only consider the problem of making multi-year forecasts of naturalized streamflow at Lees Ferry, the outlet to the UCRB (Figure \ref{fig:ucrb}).  This is sufficient because Lees Ferry acts as an aggregator of nearly all the flow in the UCRB and the methods for spatially and/or temporally disaggregating \cite{Nowak:2010p2738, Prairie:2008p59} flows of this nature may be applied.
+
+\begin{figure}[!htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=3in]{graphics/colorado.pdf} 
+   \caption{Upper Colorado River Basin}
+   \label{fig:ucrb}
+\end{figure}
+
+In the absence of predictors for out-year seasonal flows, we might consider more traditional time-series forecasting methods such as Markov chains, Autoregressive models, or a K-Nearest Neighbor (KNN) resampling \citep{Lall:1996p216}.  Markov chain models are promising because they incorporate state information but for annual streamflow there is generally inadequate data to calculate transition probabilities \citep{Lall:1996p216}.  Lack of data for higher order markov chains such as this is a very real concern if we are interested in annual or seasonal total data. For example, with 100 years of data and we use a 5th order model to estimate transition probabilities, there are $2^5=32$ different transitions to estimate, which is just over 3 data points per transition.  This lack of data motivates the search for other sources of data to estimate transition probabilities.  Autoregressive models are not feasible for forecasting Lees Ferry because there is almost no autocorrelation to exploit in the historical record ($r=0.198$). KNN has desirable nonparmetric properties but with Lees Ferry data has simiar problems as autoregressive models. 
+
+Paleo reconstructed streamflow data provides an attractive solution to some of these problems.  Paleo reconstructions of Lees Ferry streamflow \citep{Woodhouse:2006p1287} are available for many hundreds of years. These data provide an rich source of information about streamflow conditions in the past. Paleo reconstucted streamflow tends not to agree on flow magnitude but agrees well on the ``wet'' or ``dry'' state of of the system \cite{Prairie:2008p59,Woodhouse:2006p1287}.    Their much longer period of record provides ample information for higher order markov models. This work attempts to incorporate the long time scale variability of the paleo record into a forecasting framework for seasonal streamflow. 
+
+Two recent studies, \cite{Prairie:2008p59} and \cite{Gangopadhyay:2009p61}, are of particular interest in this work since they have considered the combination of paleo reconstructed flows and tree ring cronologies with observational data.  \cite{Prairie:2008p59} develop a method for synthetic streamflow generation which incorporates state information from paleoreconstructed data.  A nonhomogeneous markov chain is used to simulate the state of the system and magnitudes are then generated based on a KNN resampling of the historical record.  \cite{Gangopadhyay:2009p61} used  51 tree ring chronologies in conjunction with a KNN resampling technique to generate ensemble paleo flows.  The historical record is used as a verification period for the method.  
+
+In this study we extend these ideas to a forecast setting in order generate estimates of peak season runoff for multiple years in the future based on current system conditions. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+
+Let $x_{t}$ be the historical flow time series and $y_{t}$ be the paleo flow series with some overlap period of length $g$.  Also let $h_{t}$ and $p_{t}$ be timeseries representing original data in terms of $n$ states.  For example, if we consider an $n=2$ state system, then $h_{t}$ and $p_{t}$ may only take on values of $0$ or $1$.  
+
+Consider a $q$th order Markov chain like model for $p_{t}$ where the future state of the system is an ordered $r$-tuple. If $r>1$ then the model is not really a Markov chain but has similar properties. If for example,  $q=2$ and $r=1$ then the model is a standard second order markov chain. The idea behind this is that the system has a memory of length $q$ over which there is structure (in terms of transition probabilties) in how the system transitions to a future set of states.   In this model, the probability of transitioning to a future state of the system at time $t+1$, depends on the current state of the system at time $t$. That is 
+
+$$\mbox{Pr}((p_{t+1},p_{t+2},...,p_{t+r}) | p_{t}, p_{t-1}, ... ,  p_{1}) = Pr((p_{t+1},p_{t+2},...,p_{t+r}) | p_{t}, p_{t-1}, ... ,  p_{t-q+1})$$
+Another limitation when $r>1$ is that we lose the ability to simulate series, though for this framework we are only concerned with forecasting so the loss is acceptable. 
+
+Using the long record of the paleo data we can construct a $n^{q}\times{}n^{r}$ transition probability matrix There will be $n^{q+r}$ 
+
+in which the states of the system $S_t, S_{t-1}, ..., S_{t-q+1}$, determine the state $S_{t+1}$ but also comes with information about the state at $t+2,...,t+r$ (which we will consider a forecast).  Let $x(t)$ be the historical timeseries of interest.  Let $\mathbf{S}^-(t)=[S_{t-q+1}, S_{t-q+2}, ..., S_t]$ and $\mathbf{S}^+(t)=[S_{t+1}, ..., S_{t+r}]$, where $q$ is the number of previous states used to determine determine $r$ future states.  In the same way let the quantiles of the current and future flows be represented by $\mathbf{Q}^-(t)=[Q_{t-q+1}, Q_{t-q+2}, ..., Q_t]$, and $\mathbf{Q}^-(t)=[Q_{t+1}, ..., Q_{t+r}]$.  We are interested in constructing a model for forecasting the future magnitudes of flow given $\mathbf{S}^-(t)$ and $\mathbf{Q}^-(t)$.  Conceptually we wish to construct 
+
+$$\mathbf{f}(\mathbf{x}^+(t) | \mathbf{S}^-(t), \mathbf{Q}^-(t))$$
+
+the probability distribution of the next $r$ years of seasonal total flow. In this study we additionally rely on the quantiles of the paleo data to map paleo values to historical values.  This method of bias correction is commonly used to downscale global climate models \citep{Wood2004}.  This also allows use to use annual flow in the paleo record and seasonal total flow in the historical record side by side.  One future state, $\mathbf{S}^+(t)$, determines many possible sets, of quantiles, $\mathbf{Q}^+(t)$.  In this approach we sample from the set of possible future quantiles based on a KNN approach \citep{Lall:1996p216,Rajagopalan:1999p163}. The measure of distance we use is the euclidean norm of the difference between the historical and paleo current quantiles 
+$$||_p\mathbf{Q}^-(t)-\mathbf{Q}^-(t)||.$$
+We select from the $K=\sqrt{n}$ nearest neighbors \citep{Lall:1996p216} based on the weight function 
+$$W(i)=\frac{1/i}{\displaystyle\sum^K_{i=1}1/i}$$
+
+Combining these ideas, a forecasting algorithm is presented:
+
+\begin{enumerate}
+\item Use the paleoreconstructed data to generate the transition probabilities from all $2^q$ starting states to all $2^r$ following states.
+
+\item Use the current state of the system, $\mathbf{S}^-(t)$,  to simulate a future state of the system,$~_p\mathbf{S}^+(t)$, using the transition probabilities.
+
+\item Sample a nearest neighbor future quantile from the marginal probability distribution $f(_p\mathbf{Q}^+(t)\,|\, _p\mathbf{S}^+(t))$ based on the distance measure $||_p\mathbf{Q}^-(t)-\mathbf{Q}^-(t)||$. Use the resampled quantile to obtain a future magnitude $\mathbf{x}^+(t)$.
+
+\item Repeat 2-4 to obtain ensembles. 
+\end{enumerate} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Application}
+
+The proposed framework is applied to observed naturalized seasonal total (April-July) volumes at Lees Ferry for the period (1906-2006) \citep{Prairie:2005p3760}.  We use the recent paleoreconstructed annual flows at Lees Ferry for the period (1490-1997) from \cite{Woodhouse:2006p1287}.  We use 11 year running means for each data set \cite{Gangopadhyay:2009p61}, though is is not certain if this has an impact on the forecasts. Since we are using seasonal totals, it is not appropriate to use the median of the historical to compare   
+
+The parameters $q$ and $r$ are available to change in this framework.  We fix $r$ at 2 since we are only interested in the first and second year forecasts. Presumably increasing $r$ would degrade the forecast but this has yet to be investigated. A few values of $q=$2, 3 and 4 were tested.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+
+Results are shown for two sets of forecasts using 11 year running means.  \autoref{11yrm-q2} shows first and second year forecasts withe $q=2$ and $r=2$.  Qualitatively, the first year forecasts show better agreement than the second year forecasts which is to be expected.  \autoref{11yrm-q3} shows first and second year forecasts with $q=3$ and $r=2$. \autoref{11yrm-q4} shows first and second year forecasts withe $q=4$ and $r=2$.  These results are similar to those with $q=3$. 
+
+
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+
+A framework for obtaining ensemble forecasts of second year peak season streamflow has been presented.  This method uses paleoreconstructed streamflow data to obtain information about the state and quantile of future years.  This forecast could be issued on September 1st for the subsequent 2 years.  These forecasts could be disaggregated to obtain diverse spatial and temporal information.  The forecasts show good agreement with historical data, though a much more thorough investigation of sensitivity and forecast errors is necessary. 
+
+Many things still need to be investigated:
+\begin{enumerate}
+\item The use of different running mean lengths
+\item Many more combinations of $q$ and $r$
+\item The use of different values of $K$, the heuristic criteria of $K=\sqrt{n}$ was developed for use with magnitudes and the criteria for quantiles may need to be refined. 
+\item Quantify forecast skill with RPSS. 
+\item Quantify the benefit from second year forecasts.
+\end{enumerate}
+
+Possible extensions include:
+\begin{enumerate}
+\item The incorporation of a multivariate state from other paleoreconstructed variables. 
+\item The use of nonstationary transition probabilities.
+\end{enumerate} 
+
+\clearpage
+\bibliography{../references}
+
+%\section*{Appendix - Source code}
+%<<code,results=tex,fig=F,cache=F>>=
+%code <- system('pygmentize -f latex src/second-year.R',intern=T)
+%cat(code,sep='\n')
+%@
+
+\end{document}
+
+<<cleanup,echo=F,results=hide,fig=F,cache=F>>=
+if(!file.exists('Rplots.pdf'))dummy <- file.remove('Rplots.pdf')
+@
+
+
+
+
+

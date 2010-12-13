@@ -1,0 +1,52 @@
+chrono	species	beginyr	endyr	lon	lat	elevft	state	sitename
+arc5	pied	1508	2002	-106.38	37.82	8750	CO	Natural Arch
+atr4	psme	1319	1999	-106.80	38.73	9600	CO	Almont Triangle
+bfb3	psme	350	2005	-109.80	37.90	7400	UT	Beef Basin
+cat51	psme	1372	2002	-107.00	38.08	9500	CO	Cathedral Creek
+ccc5	pied	1450	2003	-105.57	37.55	8450	CO	Chokecherry Canyon
+cod21	pipo	1437	2002	-106.67	38.25	9300	CO	Cochetopa Dome
+col5	pied	1168	2001	-108.20	39.83	6726	CO	Collins Gulch
+dil13	psme	1372	2002	-105.90	39.60	9450	CO	Dillon
+dis5	pied	1604	2002	-108.62	37.90	6300	CO	Disappointment Val.
+djm	pied	1365	2001	-109.42	40.97	7183	UT	Dutch John Mtn.
+dou6	psme	1382	2000	-108.80	39.60	8500	CO	Douglas Pass
+dry8	pied	1536	2000	-108.33	38.25	6550	CO	Dry Park
+efu4	pied	1569	1999	-108.33	38.65	5700	CO	Escalante Forks
+egl34	psme	203	2004	-106.87	39.65	6400	CO	Eagle
+enc13	psme	715	2005	-106.78	41.15	8203	WY	Encampment
+fbn	pifl	1480	1998	-110.80	41.87	7300	WY	Fossil Butte
+gmr20	psme	602	2004	-106.23	39.85	8250	CO	Green Mtn. Res.
+gou31	pied	1385	2002	-107.58	38.60	7450	CO	Gould Reservoir
+gvr6	pied	1566	2002	-107.85	37.22	6600	CO	Grandview Ridge
+har2	psme	834	2005	-110.30	39.80	6300	UT	Harmon Canyon
+hot1	psme	1571	1999	-106.13	40.07	8200	CO	Hot Sulphur Springs
+lan34	psme	380	2004	-108.15	39.00	9800	CO	Land's End
+lbc1	pifl	1160	1997	-110.65	42.50	9000	WY	LaBarge Ck
+ltb7	pipo	1520	2003	-106.02	36.53	7541	NM	Las Tablas
+mcp5	pied	1270	2002	-108.58	37.58	7200	CO	McPhee-Dolores
+mdp6	pifl	1202	1997	-110.60	42.80	9000	WY	McDougal Pass
+mtr3	pied	1440	2002	-108.02	38.38	7500	CO	Montrose
+nav2	psme	1230	2005	-108.50	37.20	7000	CO	Navajo Canyon
+nmm8	pied	1378	2002	-112.13	37.35	7000	CO	No Man's Mesa
+nmv6	pied	1584	2002	-108.43	37.35	6650	CO	Near Mesa Verde
+npu20	psme	635	2005	-106.33	40.95	8038	CO	North Park update
+nur	pied	1040	2001	-110.67	39.82	7331	UT	Nutter's Ridge
+pic14	pied	947	2004	-108.30	40.05	6234	CO	Piceance
+plu6	pied	1270	2000	-108.97	40.78	7000	CO	Plug Hat Butte
+prd31	psme	1169	2002	-106.23	38.80	9700	CO	Princeton Doug-fir
+pum85	pied	1100	2002	-106.52	39.97	7200	CO	Pump House
+rck6	psme	1524	2000	-107.22	38.53	9300	CO	Red Creek
+red4	pied	1336	1999	-106.73	39.70	7100	CO	Red Canyon
+rif16	pied	1291	2004	-107.88	39.67	6800	CO	Rifle
+rpc12	pied	1405	2001	-109.95	40.62	7659	UT	Red Pine Canyon
+sap4	pipo	1511	2000	-107.20	38.32	8860	CO	Sapinero Mesa
+sar21	psme	1275	2000	-106.43	38.40	8600	CO	Sargents
+sfk4	pipo	1566	2002	-106.65	37.67	8500	CO	South Fork
+slk21	pied	1350	2005	-108.92	38.02	6561	CO	Slickrock
+srs6	pied	1405	2002	-110.82	38.87	6900	UT	San Rafael Swell
+trg55	pied	996	2002	-106.98	39.72	7250	CO	Trail Gulch
+trp7	pipo	1575	2003	-105.98	36.62	8200	NM	Tres Piedras
+una43	pied	882	2002	-108.57	38.83	7300	CO	Unaweep Canyon
+vas4	psme	1454	1999	-106.07	40.03	9400	CO	Vasquez Mtn.
+wed31	pied	887	2005	-110.17	39.83	7036	UT	Well's Draw
+wil44	pied	1146	2002	-108.23	39.02	8650	CO	Wild Rose 
