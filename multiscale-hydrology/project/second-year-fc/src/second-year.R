@@ -224,4 +224,4 @@ rpss <- RPSS(hist.plot[[s]],sim[[1]][,-ncol(sim[[1]])])
 #cat('Median RPSS:',median(rpss[rpss>-3.5]),'\n')
 cat(median(rpss[!no.analog[-length(no.analog)]],na.rm=T),'\n')
 
-save(sim, hist.plot ,file='data/fc.Rdata')
+save(sim, hist.plot, hist ,file='data/fc.Rdata')

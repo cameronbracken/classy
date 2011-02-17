@@ -1,7 +1,7 @@
-nsi <- 2 # states
+nsi <- 3 # states
 q <- 2 #years back
 r <- 2 #years ahead
-m <- 1
+m <- 11
 nsims <- 250
 
 dataset <- 'meko'

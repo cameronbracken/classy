@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage{mathpazo}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{flushright}
+Cameron Bracken\\
+ATOC 7500-002\\
+Chapter 3
+\end{flushright}
+
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Table 1 shows all the possible combinations of wave numbers that produce aliasing. 
+
+\begin{table}[htdp]\begin{center}
+\begin{tabular}{p{1in}p{1in}p{1in}}
+\toprule
+\raggedright Wavenumber of unresolvable wave, $m+n$ & \raggedright Erroneous Energy Produced at Wavenumber, $s$ &   Wavelength of unresolvable wave \\
+\midrule
+2 & 22 & 11/12$\Delta x$ \\
+4 & 20 & 6/5$\Delta x$ \\
+6 & 18 & 4/3$\Delta x$ \\
+8 & 16 & 3/4$\Delta x$ \\
+10 & 14 & 7/12$\Delta x$\\
+\bottomrule
+\end{tabular} 
+\caption{}\end{center}\label{defaulttable}\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
+The five point approximation to the derivative is
+$$
+\frac{\partial f}{\partial x} = \frac{1}{2\Delta x}\left[ \frac{4}{3}\left(f(x+\Delta x)-f(x-\Delta x)\right)-\frac{1}{6}\left(f(x+2\Delta x)-f(x-2\Delta x)\right)\right]
+$$
+
+Let $f=A\cos kx$ so 
+
+$$
+\frac{\partial f}{\partial x} = -kA\sin{kx}
+$$
+
+and the approximation is
+
+$$
+\frac{\Delta f}{\Delta x} = \frac{1}{2\Delta x}\left[ \frac{4}{3}\left(A\cos k(x+\Delta x)-A\cos k(x-\Delta x)\right)-\frac{1}{6}\left(A\cos k(x+2\Delta x)-A\cos k(x-2\Delta x)\right)\right]
+$$
+
+Using the identity $\cos(u\pm v)=\cos(u)\cos(v)\pm\sin(u)\sin(v)$, the above expression simplifies to 
+
+$$
+\frac{\Delta f}{\Delta x} = \frac{A}{\Delta x}\left[ \frac{4}{3}\left(\sin{kx}\sin{k\Delta x}\right)-\frac{1}{6}\left(\sin{kx}\sin{2k\Delta x} \right)\right]
+$$
+
+Then 
+
+$$
+\boxed{\frac{\frac{\Delta f}{\Delta x}}{\frac{\partial f}{\partial x}} = \frac{1}{k\Delta x}\left[\frac{4}{3}\sin{k\Delta x}- \frac{1}{6}\sin{2k\Delta x}\right]}
+$$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+The most influential truncated terms in equation 3.25 will be the second order terms (those with second derivatives in them).  For this reason, the error will be greater in regions of the wave where there is greater curvature, i.e. the second derivatives are large. This effect can be lessened by better resolving waves (increasing resolution) effectively reducing the curvature between any two particular grid points and decreasing second order error. 
+
+\setcounter{enumi}{6}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+Near LBC's there could be effects from the low resolution of data, errors in the meteorology of the LBC's, and phase/group speed contrasts. Further away from the lateral boundaries, effects could include the lack of interaction with the larger scales, noise generation, and physical process parameterization inconsistancies. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
+Synoptic scale processes may be resonably represented by radiosonde soundings but typically not mesoscale or smaller.
+
+\item 
+In this particular case the smaller domain was much more smoothed than the larger domain because its boundaries were close the area affected by the storm.  This caused smoothing of the feature and misplacement of the low-pressure center. 
+
+
+\end{enumerate}
+
+
+\end{document}  

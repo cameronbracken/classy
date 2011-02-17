@@ -883,7 +883,7 @@ Velocity increases linearly with radius.  In this case $C_2=0$, resulting in a f
     par(usr=c(par("usr")[1:2], extendrange(p[,1])))
     lines(r,p[,1], col="red",lty=2)
     axis(4)
-    legend('topleft',c('Velocity','Pressure'),lty=1:2,col=1:2)
+    legend('topleft',c('Cheesyness','Pressure'),lty=1:2,col=1:2)
     
 
 @
