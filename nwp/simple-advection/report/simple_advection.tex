@@ -1,0 +1,283 @@
+
+\documentclass[11pt,twoside]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Font
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Verbatim
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{fancyvrb}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  PGF/TikZ
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Layout
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=1.3in]{geometry} %changes margins
+\usepackage[parfill]{parskip} % begin paragraphs with an empty line not indent
+\usepackage{multicol}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Graphics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} 
+\usepackage{subfigure}
+\usepackage[font={bf,small},textfont=md,margin=30pt,aboveskip=0pt,belowskip=0pt]{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Mathematics
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\p}[2]{\frac{\partial#1}{\partial#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Misc
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{natbib}   
+%\setcitestyle{square,aysep={},yysep={;}}
+\bibliographystyle{agufull04}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Page Header
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[LE,RO]{\thepage}   %page numbers
+
+\fancyhead[CE]{\small ATOC 7500 Numerical Weather Prediction, Spring 2011}
+\fancyhead[CO]{\small Linear Advection Tests}
+
+\graphicspath{{../results/}}
+
+\begin{document}
+
+
+\thispagestyle{empty}
+{\Large Linear Advection Tests}\\
+\textbf{Cameron Bracken}\\
+ATOC 7500, Numerical Weather Prediction, Spring 2011\\
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Objectives
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Objectives}
+The dynamical core of most atmospheric models consists of a system of seven equations.  These equations describe the movement of mass and energy in the atmosphere. These equations are complex and difficult to solve in a teaching setting.  The shallow fluid equations are a set of four differential equations that exhibit many of the same properties of the full atmospheric equations and can be useful for learning numerical methods.  These equations are derived from the full atmosphereic equations by assuming the fluid is autobarotropic, homogeneous, incompressible, hydrostatic and invicid. The most simple case of the shallow fluid equations is the 1D linear advection equation
+\[
+\p{h}{t} = - U \p{h}{x}
+\]
+where $h$ is the height of the fluid and $U$ is the bulk fluid speed. This report will describe properties of solutions to this equation under various initial conditions, courant numbers and resolutions. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Methodology
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+
+The explicit finite difference equation for each node $i$ using second order time and space differenceing is
+$$
+h_i^{t+1}=h_i^{t-1}-\frac{U\Delta t}{\Delta x}(h_{i+1}^t-h_{i-1}^t)
+$$
+for $i = 1,...,idim$.  This is a centered in time, centered in space scheme (CIT-CIS).  Periodic boundary conditions are used in this study,
+$$
+h_1 = h_{idim-1}
+$$$$
+h_{idim} = h_2
+$$
+These boundary conditions cause waves advected out one side of the boundary ``wrap around'' to the other side. A program to solve for the height of the fluid over time was implemented in Fortran 90. This program computes the value of $h$ over time and writes the solutions to a file. Visualization is done with the software \textsf{R}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Application
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Application}
+
+Six tests were done using the numerical scheme described above. The six tests are described in Table \ref{tab:tests}.  Additional parameters that are the same for all tests are shown in Table \ref{tab:pars}.  Each simulation was run until the wave advected exactly once around the domain ($\approx$28 hours) with results output every 10 minutes. 
+
+\begin{table}[!h]
+\centering
+\caption{Description of test conditions}\label{tab:tests}
+\begin{tabular}{rllll} 
+\toprule
+  & Test          & Initial Condition & CFL Number & $idim$\\
+\midrule
+A & Wave Shape    & Gaussian          & 0.8        & 100   \\
+B & ''            & Square            & ''         & ''    \\
+C & ''            & Triangular        & ''         & ''    \\
+D & CFL Violation & Gaissian          & 1.1        & ''    \\
+E & CFL Effect    & ''                & 0.1-0.99   & ''    \\
+F & Horiz. Res.   & ''                & 0.8        & 4 - 20\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+\centering
+\caption{Parameter Values}\label{tab:pars}
+\begin{tabular}{rl} 
+\toprule
+ Parameter & Value   \\
+\midrule
+$g$ & 9.81 m/s   \\
+$f$ &  1.45842$\times 10^{-4}$  rad/s        \\
+$U$ & 10 m/s           \\
+Fluid height & 8000 m\\
+Initial wave height & 100 m\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Results
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}
+\subsection{Test A}
+In this test a gaussian wave advects to the right.  Immidiately after the solution begins, a spurious wave is generated which moves in the opposite direction of the bulk velocity. This has to do with phase/group speed errors. Small waves in this case actually have a negative wave speed and so move in the opposite direction of the main wave. 
+
+After about 28 hours the wave has advected once around.  The main wave actually grows in height slightly because of the dip in the fluid height just to the left of the main wave. This error is due to numerical dispersion which creates smaller wavelength waves which in turn move slower than the group speed. 
+
+\begin{figure}[!h]
+\centering
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_a/001.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_a/020.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_a/090.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_a/126.pdf}}
+\caption{Test A Results}
+\end{figure}
+
+\clearpage
+\subsection{Test B}
+
+This test uses a square wave as an initial condition. The effects of numerical diffusion and poor resolution are very pronounced here. Many small wavelength waves are generated with phase/groups speed errors. The shape of the initial wave is nearly unrecognisable after one time around. Much of the initial wave is higher than the initial height after 28 hours. 
+
+\begin{figure}[!h]
+\centering
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_b/001.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_b/020.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_b/090.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_b/126.pdf}}
+\caption{Test B Results}
+\end{figure}
+
+
+\subsection{Test C}
+
+This test uses a triangular wave as an initial condition. The effects of numerical diffusion are evident here though not as much as the square wave. The shape of the initial wave is damped after one time around, thought the peak remains nearly in tact. 
+
+\begin{figure}[!h]
+\centering
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_c/001.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_c/020.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_c/090.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_c/126.pdf}}
+\caption{Test C Results}
+\end{figure}
+
+\subsection{Test D}
+
+In this test the CFL number was set to 1.1. In this situation the numerical sheme is unstable. The solution is similar to earlier cases until about 6 hours ino the integration when small signs of insability are evident. After 10 hours, the solution begins to behave eradically and after 13 hours the solution has "blown up." That is, numerical errors have caused floating point overflow in the computer program. 
+
+\begin{figure}[!h]
+\centering
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_d/001.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_d/021.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_d/034.pdf}}
+\subfigure[]{\includegraphics[width=.49\textwidth]{pdf_d/044.pdf}}
+\caption{Test D Results}
+\end{figure}
+
+\subsection{Test E}
+
+This test shows the results of varying the CFL number.  With this numerical scheme, higher CFL numbers produce more correct phase speeds and less numerical dispersion. 
+
+
+\begin{figure}[!h]
+\centering
+\subfigure[CFL = 0.1]{\includegraphics[width=.49\textwidth]{pdf_e1/167.pdf}}
+\subfigure[CFL = 0.3]{\includegraphics[width=.49\textwidth]{pdf_e2/167.pdf}}
+\subfigure[CFL = 0.6]{\includegraphics[width=.49\textwidth]{pdf_e3/167.pdf}}
+\subfigure[CFL = 0.99]{\includegraphics[width=.49\textwidth]{pdf_e5/102.pdf}}
+\caption{Test E Results}
+\end{figure}
+
+\subsection{Test F}
+
+This test (results on the next page) shows the results of varying drastically decreasing the horizontal resolution.  For each case the initial ans ending time steps are shown. For $L=5\Delta x$  the solution is so course that the intitial condition is barely recognisale due to the effects of numerial dispersion. For $L=15\Delta x$ the solution is recognisable but large errors exist. For $L=20\Delta x$ the soltion is at least somewhat smooth but there are still large affects from numerical dispersion. 
+
+
+\begin{figure}[!h]
+\centering
+\subfigure[L=5$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f1/001.pdf}}
+\subfigure[L=5$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f1/009.pdf}}
+\subfigure[L=15$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f2/001.pdf}}
+\subfigure[L=15$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f2/019.pdf}}
+\subfigure[L=20$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f3/001.pdf}}
+\subfigure[L=20$\Delta x$]{\includegraphics[width=.49\textwidth,height=2.5in]{pdf_f3/028.pdf}}
+\caption{Test E Results}
+\end{figure}
+
+\end{document}
+
+
+
+
+
+
