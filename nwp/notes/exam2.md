@@ -1,0 +1,436 @@
+# Exam 1 Notes
+
+## Chapter 5 - Land-surface params
+
+- Earth system models encompass more than just the atmosphere
+    - biosphere, hydrosphere, land surface/subsurface, air chemistry
+    - needed for longer simulations
+- Why model the land surface?
+    - need to represent: precip, melt, runoff, infiltration, ET, uptake, ...
+    - large spatial differences in diurnal cycles
+- LDAS: land data assimilation system 
+    - incorporates land surface model estimates, mapping and observed met
+- Need to model Urban landscapes
+    - climate change, sea-level, air quality, thermal stress, water res, floods
+    - Requires parameterization of building scale, "urban canopy"
+
+## Chapter 6 - Model Initialization
+
+- Initialization: defining the model state at the beginning of a forecast
+- Data Analysis: objectively combining observations to a grid 
+- Data Assimilation: Using a model to produce gridded obs for for init
+- Dynamic Initialization: initial state that is dynamically consistent with equations
+- Static Initialization: no model to produce initial state
+- Initialization Process
+    - QC
+    - Assimilate Obs
+    - Balance variable fields
+- Components of DA
+    - Obs, State of atmosphere, Dynamical constraints 
+- Source of Obs
+    - Radiosonde - T, RH, P, Wind
+    - Weather stations - T, RH, P, wind, precip
+    - Commercial Aircraft - wind, T, P, RH
+    - Doppler radar/lidar - radial winds
+    - Satelite - need to convert radiance to model variable
+- Problems
+    - Inconsistant measurement density and regularity
+- Quality assurance
+    - calibration, field inspection, numerical checks
+    - Reduces: wrong labeling, trans errors, systematic errors
+    - Representativeness error: obs having large impact on grid because of scale
+- Quality Control checks
+    - Limit tests: physical, sensor, climate
+    - Temporal Consistency - compare time rate of change
+    - Spatial consistancy - check with nearby stations
+- Metadata: information necessary to use data
+- Targeted adaptive observations
+    - Making obs where they will have the most impact
+- Data assimilation cycle
+    - QC, analysis of obs, dynamic balancing, short forecast for guess
+- Intermittent assimilation
+    - Uses state of previously initialized model 
+- Continuous assimilation ("Nudging")
+    - Use of observations as soon as they are available
+- Data assimilation
+    - Combine obs and background information in a statistically optimal way
+    - Estimate using least squares
+    - Real problem involve spreading of observation spatially
+    - Background Covariance Matrix
+        - Defines spatial influence of an observation
+        - Minimize analysis error
+        - Correlations cannot simply depend on distance
+        - Calc based on many observed states, theory, model simulations
+        - can be static or change based on terrain or weather dependence
+    - Cressman analysis
+    - Optimal Interpolation
+    - 3DVAR (mathematically equivalent to OI)
+    - Diabatic initialization
+        - prescribes LH release at each grid point
+- Dynamic balance in initial conditions
+    - causes initial model shock
+- Adjustment of mas and wind field
+    - Mesoscale and smaller: mass field adjusts not wind
+    - Synoptic and global scale: wind field does most adjusting
+- Advanced Data assimilation
+    - 4DVAR
+    - Kalman Filter
+    - Ensemble Kalman filter: merge ensemble method and stat data assimilation
+    - initialization based on idealized IC
+        - Test for bugs
+    
+## Chapter 7 - Ensemble Methods
+
+- Many sources of model error
+    - IC, LBC, UBC, Lower BC, Numerical approximations, parameterizations
+    - magnitude changes spatially and temporally
+- Ensemble prediction
+    - parallel forecasts using different choices for error sources
+- Benefits 
+    - Estimate of uncertainty
+    - mean ensemble is more accurate than single model run
+    - information on extremes from PDF
+- Downsides
+    - Must run on courser scale
+    - more comp intensive
+- Multi-model ensemble
+    - Many completely different models
+- Super-ensembles
+    - combine many separate ensemble sets
+- Reliability diagram
+    - Shows bias and calibration errors
+- rank histogram
+    - relate forecast to observations, 
+    - shows bias ans systematic errors
+- bias correcation
+    - should use reforecasts 
+- Time lagged ensembles
+    - not as good as true ensemble
+    - some benefits
+    - good at estimating model confidence
+- visualization
+    - Ensemble mean
+    - spaghetti plots
+    - meteograms (spaghetti at one point)
+    - exceedance probability plots
+    - ensemble member variance
+- Using probabilistic info 
+    - use in decision models
+    - balance cost and loss
+    - minimize "cost"
+    
+## Chapter 8 - Predictability
+
+- Predicability
+    - The length of time a forecast has useful skill
+    - theoretical - chaos theory
+    - practical - limit given a particular model
+- Limits
+    - butterfly effect, small perturbations grow exponentially
+- Errors 
+    - Initial condition error, from perturbation
+    - Model error, difference from obs
+- Land surface
+    - Should get cyclic behavior, diurnal, monsoon, orography 
+- Regional predictability
+    - easy: high pressure, trade winds
+    - hard: hurricanes, cyclones, convection
+- predictability of cycles
+    - super-diurnal, diurnal: relatively predicable
+    - sub-diurnal: unpredictable
+- Limit of predictability is one life cycle
+- dynamic models versus extrapolation
+    - different predictability limits
+    - may be combined
+- Model improvemnts may not improve predictability
+    - may not have all available inputs
+    - verification methods may not be able to capture improved behavior
+    - DA scheme may no use information effectively
+    
+## Chapter 9 - Verification
+
+- Reasons
+    - Model upgrades or bug fixes
+    - case studies, individual phenomenon 
+    - best parameterizations
+    - sense model weakness
+    - useful in decision-support systems
+- Terms
+    - Accuracy: correspondence with obs
+    - Bias: correspondence between model and observed mean
+    - Skill: accuracy relative to reference forecast
+    - Reference Forecast: easy to obtain, non-model based, minimal skill
+- Accuracy measure
+    - MAE, MSE, ME (Bias), anomaly correlation
+    - proportion correct, threat score, bias, false alarm rate/ratio, hit rate
+- Skill scores
+    - negative is bad
+    - Heidke skill score, gilbert skill score, equitable skill score
+    - MAE, MSE, RMSE
+- Reference forecasts
+    - Persistance
+    - diurnal persistance
+    - climatology
+    - random
+- Obs vs analysis of obs
+    - bad: comparing model to model, course scale
+    - good: info in regions where obs are sparse
+- Obs
+    - Interpolate model to obs location
+    - complex terrain is simplified
+    - what level should obs be compared at?
+    - representativeness error
+        - even perfect obs and model may not match
+- Horizontal res
+    - may decrease accuracy because of placement of features
+- Joint distributions
+    - Compare observed to forecast in 2d histogram
+- stratify stats to verify at different scales
+    - time, space and weather regime
+- Feature, event and object based verification
+    - comparte location, strength, timing, number
+- Space and time
+    - effects of filtering
+    - surface effects
+    - 'true resolution'
+    - illustrate mine scale info 
+    - spin up time
+- Spectrum
+    - temporal is easy
+    - spatial needs to use theory
+    
+    
+    
+    
+    
+## Chapter 10 - Experimental design/methods in model-based research
+
+- case studies
+    - Goal to analyze, understand or improve the predictability of a phenom
+    - Understand the physical process by using "control" simulations
+    - sensitivity experiments
+    - small scale exeriments
+    - basis for model improvements
+- sources of model output for case studies
+    - reanalysis
+        - good: no cost, easy to access, trusted, no model run required
+        - bad: cant do sensitivity experiments, resolutions may be too course
+    - run your own model
+        - good: customizable, can run sensitivity experiments
+        - bad: costly in terms of time, effort and resources
+- Steps 
+    - clearly define scientific objectives
+    - identify candidate case
+    - analyze obs to draw preliminary conclusions
+    - decide how to improve obs
+    - develop an experimental design
+    - choose horizontal and vertical grid increment
+    - identify sources for IC and LBC
+    - decide on best parameterizations and verify 
+    - decide how to handle LBC
+    - run simulation control and verify with obs
+    - perform sensitivity experiments
+- Observing System Simulation Experiments (OSSE)
+    - Identify benefits of new observation system or strategy
+    - Identify the impact of potentially expensive systems
+    - simulate the process of taking measurements within a model
+    - "Nature" run include simulated obs, do mock data assimilation and fc
+        - asses impacts relative to control
+        - use highest resolution available
+        - use a different model as in the forecast step
+        - simulate obs by interpolation 
+        - instrument forward model
+            - emulate interaction of sensor with environment
+- Observing System Experiments (OSE)
+    - Assess impacts of existing obs on forecast
+    - May want to eliminate an obs system
+    - same as OSSE except use real obs
+- Big-Brother Little-Brother experiments
+    - Evaluate the impact of LBC on the model solution
+    - Process
+        - Generate large area reference simulation (BB)
+        - use same model on a smaller grid using the larger scale for LBC
+        - compare solutions
+    - Use to assess spin up time
+- Sensitivity studies
+    - define sensitivity of solution to 
+        - initial data
+        - physics parameterizations 
+        - land-surface properties
+        - LBC
+    - Process
+        - Run control
+        - change aspect of model config
+        - rerun model
+        - subtract two solutions
+- Factor separation
+    - used to isolate more complex processes 
+    - identify all affecting processes and test them all
+    - con: time consuming, often not possible to identify 
+- Predictive skill studies
+    - define the skill of a model in an operational setting
+    - establish benefits of a model or optimally configure it
+- Reduced dimension and reduced physics models
+    - allow time consuming problems to be addressed (paleo)
+    
+## Chapter 11 - Techniques for Analyzing Model Output
+
+- Graphical Display
+    - Eulerian framework
+        - plan view maps
+            - Isobaric maps
+            - constant height maps
+        - cross sections
+        - Hovmoller plot
+            - longitude vs day contour
+    - Lagragian 
+        - Trajectories 
+        - Streamlines
+        - isochromes
+- Pattern analysis (clustering)
+    - summarize the climatology of regions 
+    - regime changes 
+    - verification based on regime
+    - challenges
+        - no dynamic constraints.
+        - number of groups is arbitrary
+- Derived variables
+    - Vorticity, divergence, vertical flux, latent-heating
+- Analysis of energetics
+    - map of where is energy stored (kinetic, potential)
+
+## Chapter 12 - Operational NWP
+
+- Run by 
+    - large weather serves (NCEP, ...)
+    - Universities
+    - insurance companies
+    - Consulting
+        - specialized products
+    - Small countries
+        - in place of obs
+    - defense organizations 
+- No clear distinction between climate (long) and weather (short) prediction
+- Model reliability 
+    - much bigger problem in operations
+    - use a smaller dt in operations to avoid crashes
+    - initialize from background if obs fail
+    - choose to wait for a global model or use other source of LBC for LAM
+- Factors that control speed
+    - Wait for obs to arrive
+    - LAM must wait for LBC
+    - time step, grid increment
+    - processor speed and number
+    - complexity of parameterizations
+    - constantly updated output (Large I/O)
+- Post processing
+    - Bias correction 
+    - statistical diagnosis of variables 
+    - secondary models
+
+## Chapter 13 - Statistical post processing of model output
+
+- Types of post processing
+    - Bias correction
+    - use of output in secondary models
+    - weather generators
+    - statistical and dynamic downscaling
+- Bias correction
+    - greatly improve skill
+    - small computing power
+    - not appropriate for research models where the goal is to improve physics
+    - Static method
+        - bias from long training period
+        - model is not changed during training 
+        - Con: need long forecast record, cannot update regularly
+    - Dynamic method
+        - bias from short training period
+    - Removes systematic error not random error
+    - Perfect prog
+        - develop relationships among obs for poorly predicted quantities
+        - apply to model output
+        - does not correct for model output because relationship is with obs
+    - Model output statistic MOS
+        - Relate forecasts to obs to identify systematic error
+        - does not identify source of bias
+        - Conventional
+            - use at least two year to train
+                - capture rare events and surface variables 
+            - regression for each lead time, observation location and variable
+    - UMOS
+        - new stats when model is updated
+        - weight old and new corrections
+    - very short update period dynamic MOS
+        - corrections based on errors in forecast prior to current
+        - weight recent errors more
+    - Kalman filters
+    - Gridded bias correction
+        - calculate bias on an entire grid
+- Stochastic weather generators
+    - add realistic variability to model output
+    
+## Chapter 14 - Coupled special-application models
+
+- Atmospheric model -> secondary special app model -> DSS -> Action
+- Examples
+    - River discharge
+    - Wave height
+    - Air quality
+    - Ocean circulation 
+- Coupling
+    - Code can be embedded in atmo model
+    - two models run sequentially (one-way coupling)
+        - flood models, plume transport
+    - two model run in parallel with interaction (two-way coupling)
+        - ocean wave, circulation, dust
+    - Multiple secondary models in a series
+- Complexity 
+    - DSS may give yes or no 
+    - Translation algorithm gives non-meteorological output
+- Verification of coupled models
+    - Type 1: verify atmo model alone 
+    - Type 2: Compare forecasts from coupled model
+    - Type 3: Compere secondary variable to secondary obs
+- More examples
+    - coupled infections desease model
+    - drought/floods
+    - vector populations
+    - Air quality plume spread
+    - Fire
+    - energy demand
+    - Military applications
+
+
+## Chapter 15 - CFD Models
+
+- Simulate processes on 
+    - Sub-Mesogamma scale
+    - Microscale
+    - Turbulence scale
+- Subfilter-scale
+    - Motions unresolved by a model
+- types of CFD models
+    - Reynolds averaged navier stokes
+        - No turbulent eddies
+        - ~1000m scale
+    - Large eddy simulation 
+        - Explicitly simulate large eddy-containing eddies
+        - parameterize unresolved SFS turbulence
+        - ~10m scale
+    - Direct numerical simulation
+        - all scales of motion 
+        - very computationally intensive
+- May or may not be building aware
+- Nesting of LES inside mesoscale model
+    - no turbulence entering the LES grid
+    - may need to impose turbulence on upstream boundary
+- Sensitivity of CFD models to large scale wind
+    - direction and magnitude
+    - depends on city design and release location
+- Verification 
+    - Analytical solutions
+    - Wind tunnel 
+    - Conventional measurements
+- Fast models for building impact
+    - use algorithms to asses impacts on buildings based on wind tunnel
+    - takes skimming flow and defines flow around building
